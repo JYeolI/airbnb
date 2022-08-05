@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.airbnb.airbnb_service.mapper.JyTempMapper;
 
 @RestController
-@RequestMapping("/api")
-public class JYAPIController {
+@RequestMapping("/api/h")
+public class HtempAPIController {
     @Autowired JyTempMapper mapper;
 
     @GetMapping("/main/search")

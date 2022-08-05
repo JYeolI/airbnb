@@ -11,4 +11,8 @@ public class HtempController {
     public String getHtemp() {
         return "/temp/Htemp";
     }
+    @GetMapping("/Ytest")
+    public String getYtest() {
+        return "/temp/Htemp2";
+    }
 }

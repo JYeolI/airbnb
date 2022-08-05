@@ -10,9 +10,6 @@
     <script>
         $(function() {
             $("section p").append("<img src='/api/images/get/category/sort1.png'>")
-            var num1 = parseInt("1");
-            var num2 = parseInt("2");
-            alert(num1+num2);
         })
     </script>
 </head>

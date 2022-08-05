@@ -8,5 +8,5 @@ import com.airbnb.airbnb_service.data.MainViewResponse;
 
 @Mapper
 public interface JyTempMapper {
-    public List<MainViewResponse> selectSearchHouseList();
+    public List<MainViewResponse> selectSearchHouseList(Integer start_dt, Integer end_dt, String keyword, Integer guest, Integer dog);
 }

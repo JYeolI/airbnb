@@ -26,10 +26,6 @@ public class HtempAPIController {
         @RequestParam @Nullable Integer dog
     ) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-<<<<<<< HEAD
-=======
-        resultMap.put("searchHouseList",mapper.selectSearchHouseList(checkIn, checkOut, keyword, Guest, dog));
->>>>>>> b7e7e5f (test (work1_1 브랜치 삭제 예정))
         
 
 

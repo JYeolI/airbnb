@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.JyTempMapper">
+    <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.MainViewResponse">
+        select a.hi_seq, 
+                c.cc_content as country,
+                b.hai_city as city,
+                b.hai_detail as address,
+                d.hfi_base_price as price,
+                round(g.total_avg*100)/100 as total_avg,
+                <if test='#{user_seq}!=null'>
+                IFNULL(h.wish,0) as wish,
+                </if>
+                i.hgi_guest as guest,
+                i.hgi_dog as dog,
+                IFNULL(j.booking,0) as booking,
+                IFNULL(k.cate_bar_place,0) as cate_bar_place,
+                himg.himg_file as main_img
+            from house_info a
+        left join house_address_info b on a.hi_seq = b.hai_seq
+        left join category_country c on b.hai_cc_seq = c.cc_seq  
+        left join category_sort_detail csd on  a.hi_csd_seq = csd.csd_seq
+        left join house_fee_info d on a.hi_seq = d.hfi_seq 
+        left join (
+                    select rev_hi_seq, 
+                        (
+                            avg(f.rpo_clean_point)
+                            + avg(f.rpo_correct_point)
+                            + avg(f.rpo_communication_point)
+                            + avg(f.rpo_location_point)
+                            + avg(f.rpo_checkin_point)
+                            + avg(f.rpo_cost_point)
+                        )/6 as total_avg
+                    from review_info e
+                    left join review_point f
+                    on e.rev_seq = f.rpo_seq
+                    group by e.rev_hi_seq, e.rev_public
+                    having e.rev_public = 1 
+                    )g
+        on a.hi_seq = g.rev_hi_seq
+        <if test='#{user_seq}!=null'>
+        left join (select wish_hi_seq, 1 as wish from wish_info wi where wish_mi_seq = #{user_seq})h
+        on a.hi_seq = h.wish_hi_seq
+        </if>
+        left join house_guest_info i
+        on a.hi_hgi_seq = i.hgi_seq
+        left join (
+                    select bi_hi_seq, count(*) as booking from booking_info
+                    where date(bi_start_dt) BETWEEN '2022-08-01' AND '2022-08-20' 
+                    or ('2022-08-20' BETWEEN date(bi_start_dt) AND date(bi_end_dt))
+                    group by bi_hi_seq
+                    )j
+        on a.hi_seq = j.bi_hi_seq
+        left join (
+                    select hpi_hi_seq, 1 as cate_bar_place
+                    from house_place_info hpi 
+                    where hpi_cp_seq =1
+                    group by hpi_hi_seq 
+                    )k
+        on a.hi_seq = k.hpi_hi_seq
+        left join (
+            select himg_hi_seq, himg_file
+            from house_img where himg_main = 1
+        )himg
+        on a.hi_seq = himg.himg_hi_seq
+    </select>
+
+
+
+
+</mapper>

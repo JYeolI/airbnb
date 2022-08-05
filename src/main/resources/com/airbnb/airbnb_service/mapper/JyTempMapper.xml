@@ -9,30 +9,15 @@
                 IFNULL(bi.booking,0) as booking
         from main_search_view a
         left join (
-                select wish_hi_seq, 1 as wish from wish_info wi where wish_mi_seq = 1
+                select wish_hi_seq, 1 as wish from wish_info wi where wish_mi_seq = #{user_seq}
                 )b
                 on a.hi_seq = b.wish_hi_seq
-
-       
         left join (
-                select bi_hi_seq, count(*) as booking from booking_info
-                where date(bi_start_dt) BETWEEN #{start_dt} AND #{end_dt} 
-                or (#{end_dt} BETWEEN date(bi_start_dt) AND date(bi_end_dt))
-                group by bi_hi_seq
-                )bi
-            on a.hi_seq = bi.bi_hi_seq
-
-where 
-            (c.cc_content like concat('%',#{keyword},'%') or b.hai_city like concat('%',#{keyword},'%') or b.hai_detail like concat('%',#{keyword},'%'))
-        and i.hgi_guest >= #{guest}
-        and i.hgi_dog = #{dog} 
-             <!-- left join (
                 select hpi_hi_seq, 1 as cate_bar_place
                 from house_place_info hpi 
                 where hpi_cp_seq = #{cate_place}
                 group by hpi_hi_seq 
                 )c
-<<<<<<< HEAD
                 on a.hi_seq = c.hpi_hi_seq
         left join (
                 select bi_hi_seq, count(*) as booking from booking_info
@@ -66,17 +51,6 @@ where
         and bathroom >= #{bathroom}
         and super_host = #{superhost}
 
-=======
-                on a.hi_seq = c.hpi_hi_seq -->
-        <!-- 
-        and csd.csd_seq = #{cate_sort_detail}
-        and d.hfi_base_price between #{min} and #{max}
-        and a.hi_type = #{type}
-        and hgi_bed >= #{bed}
-        and hgi_bedroom >= #{bedroom}
-        and hgi_bathroom >= #{bathroom}
-        and superhost = #{superhost} -->
->>>>>>> b7e7e5f (test (work1_1 브랜치 삭제 예정))
     </select>
 
     

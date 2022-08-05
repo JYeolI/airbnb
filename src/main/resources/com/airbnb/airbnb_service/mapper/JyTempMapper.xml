@@ -9,12 +9,6 @@
                 IFNULL(bi.booking,0) as booking
         from main_search_view a
         left join (
-<<<<<<< HEAD
-                select wish_hi_seq, 1 as wish from wish_info wi where wish_mi_seq = #{user_seq}
-                )b
-                on a.hi_seq = b.wish_hi_seq
-        left join (
-=======
                 select wish_hi_seq, 1 as wish from wish_info wi where wish_mi_seq = 1
                 )b
                 on a.hi_seq = b.wish_hi_seq
@@ -33,7 +27,6 @@ where
         and i.hgi_guest >= #{guest}
         and i.hgi_dog = #{dog} 
              <!-- left join (
->>>>>>> b7e7e5f (test (work1_1 브랜치 삭제 예정))
                 select hpi_hi_seq, 1 as cate_bar_place
                 from house_place_info hpi 
                 where hpi_cp_seq = #{cate_place}

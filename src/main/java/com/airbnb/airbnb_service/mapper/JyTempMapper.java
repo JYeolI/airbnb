@@ -16,4 +16,6 @@ public interface JyTempMapper {
     public List<CategoryAmenityVO> selectCategoryAmenityList();
     public List<CategoryLangVO> selectCategoryLangList();
 
+
+
 }

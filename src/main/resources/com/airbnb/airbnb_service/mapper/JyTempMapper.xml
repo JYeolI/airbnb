@@ -53,6 +53,17 @@
 
     </select>
 
+    
+    <select id="selectCategoryAmenityList" resultType="com.airbnb.airbnb_service.data.category.CategoryAmenityVO">
+            SELECT ca_seq, ca_type, ca_content, ca_icon
+            FROM category_amenity
+    </select>
+    
+    <select id="selectCategoryLangList" resultType="com.airbnb.airbnb_service.data.category.CategoryLangVO">
+            SELECT cl_seq, cl_content
+            FROM category_lang;
+    </select>
+
 
 
 

@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airbnb.airbnb_service.data.MainViewResponse;
+import com.airbnb.airbnb_service.data.SearchRequestVO;
 import com.airbnb.airbnb_service.mapper.JyTempMapper;
 
 @RestController
@@ -21,32 +20,16 @@ public class JYAPIController {
 
 
     // 메인화면 숙소 검색조회
-    @GetMapping("/main/search")
+    @PostMapping("/main/search")
     public Map<String,Object> getMainViewData(
-        @RequestParam @Nullable String in_dt, 
-        @RequestParam @Nullable String out_dt,
-        @RequestParam @Nullable Integer cate_place, 
-        @RequestParam @Nullable Integer lang,
-        @RequestParam @Nullable Integer amenity, 
-        @RequestParam @Nullable Integer guest, 
-        @RequestParam @Nullable Integer dog,
-        @RequestParam @Nullable Integer min, 
-        @RequestParam @Nullable Integer max, 
-        @RequestParam @Nullable Integer type,
-        @RequestParam @Nullable Integer bed, 
-        @RequestParam @Nullable Integer bedroom, 
-        @RequestParam @Nullable Integer bathroom, 
-        @RequestParam @Nullable Integer superhost
+        SearchRequestVO searchRequest
     ) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
 
         //임시회원번호
         Integer user_seq =1;
-        List<MainViewResponse> list = mapper.selectSearchHouseList(
-            user_seq, in_dt, out_dt, cate_place, lang, amenity, 
-            guest, dog, min, max, type, bed, bedroom, bathroom, superhost
-        );
-        resultMap.put("searchHouseList",list);
+        List<MainViewResponse> list = mapper.selectSearchHouseList(searchRequest, user_seq);        
+        resultMap.put("searchList",list);
         
         return resultMap;
     }

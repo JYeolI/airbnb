@@ -2,15 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.CategoryMapper">
-    <select id="SelectMainCatebar" resultType="com.airbnb.airbnb_service.data.category.CategorybarVO">
-        select 1 as table_no, cp_seq as cate_bar_seq, cp_content as cate_bar_content, cp_icon  as cate_bar_icon
+
+
+    <select id="selectMainCatebar" resultType="com.airbnb.airbnb_service.data.category.CategoryBarVO">
+        (
+        select 1 as table_no, 
+            cp_seq as cate_bar_seq,
+            cp_content as cate_bar_content,
+            cp_icon  as cate_bar_icon
         from category_place 
         where cp_type = 1
-        union all
-        select 3, csd_seq, csd_content, csd_icon
+        ) union all (
+        select 3 as table_no, 
+                csd_seq, 
+                csd_content, 
+                csd_icon
         from category_sort_detail
+        )
     </select>
-    <select id="SelctFilterCateSortList" resultType="com.airbnb.airbnb_service.data.category.CategorySortVO">
-        select * from category_sort
+
+
+    <select id="selectFilterCateAmenityList" resultType="com.airbnb.airbnb_service.data.category.CategoryAmenityVO">
+            SELECT ca_seq, ca_type, ca_content
+            FROM category_amenity
+    </select>
+    <select id="selectFilterCateLangList" resultType="com.airbnb.airbnb_service.data.category.CategoryLangVO">
+            SELECT cl_seq, cl_content
+            FROM category_lang
+    </select>
+    <select id="selectFilterCateSortList" resultType="com.airbnb.airbnb_service.data.category.CategorySortVO">
+            SELECT cs_seq, cs_content, cs_icon 
+            FROM category_sort
     </select>
 </mapper>

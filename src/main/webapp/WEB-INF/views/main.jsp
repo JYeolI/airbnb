@@ -18,7 +18,6 @@
         .icon {width: 50px; height: 50px; background-position: center; background-size: 50%; background-repeat: no-repeat;}
     </style>
     <script>
-
         $(function(){
             //카테고리바
             $.ajax({
@@ -26,14 +25,14 @@
                 type:"get",
                 success:function(r) {
                     console.log(r)
-                    for(let i = 0; i<r.cate_bar_list.length; i++){
+                    for(let i = 0; i<r.cateBarList.length; i++){
                         let tag =   
-                        '<button class="category" onclick="search('+r.cate_bar_list[i].table_no+','+r.cate_bar_list[i].cate_bar_seq+')">'+
+                        '<button class="category" onclick="search('+r.cateBarList[i].table_no+','+r.cateBarList[i].cate_bar_seq+')">'+
                             '<div class="bar_icon">'+
-                                '<div class="icon" style="background-image: url(/img/category/'+r.cate_bar_list[i].cate_bar_icon+');"></div>'+
+                                '<div class="icon" style="background-image: url(/img/category/'+r.cateBarList[i].cate_bar_icon+');"></div>'+
                             '</div>'+
                             '<div class="bar_content">'+
-                                r.cate_bar_list[i].cate_bar_content+
+                                r.cateBarList[i].cate_bar_content+
                             '</div>'+
                         '</button>';
                         $(".cate_bar").append(tag);
@@ -48,28 +47,28 @@
                 success:function(r) {
                     console.log(r)
                     
-                    for(let i = 0; i<r.sort_list.length; i++){
+                    for(let i = 0; i<r.sortList.length; i++){
                         let sort_tag =                    
-                        '<button class="filter_sort" onclick="toggle_btn()" cs_seq="'+r.sort_list[i].cs_seq+'">'+
+                        '<button class="filter_sort" onclick="toggle_btn()" cs_seq="'+r.sortList[i].cs_seq+'">'+
                             '<div class="filter_icon">'+
-                                '<div class="icon" style="background-image: url(/img/category/'+r.sort_list[i].cs_icon+');"></div>'+
+                                '<div class="icon" style="background-image: url(/img/category/'+r.sortList[i].cs_icon+');"></div>'+
                             '</div>'+
                             '<div class="filter_content">'+
-                                r.sort_list[i].cs_content+
+                                r.sortList[i].cs_content+
                             '</div>'+
                         '</button>';
                         $(".house_sort").append(sort_tag);
                     }
 
-                    for(let i = 0; i<r.amenity_list.length; i++){
-                        let amenity_tag = '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenity_list[i].ca_seq+'">'+
-                                            '<label for="amenity'+i+'">'+r.amenity_list[i].ca_content+'</label>';
+                    for(let i = 0; i<r.amenityList.length; i++){
+                        let amenity_tag = '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenityList[i].ca_seq+'">'+
+                                            '<label for="amenity'+i+'">'+r.amenityList[i].ca_content+'</label>';
                         $(".house_amenity").append(amenity_tag);
                     }
 
-                    for(let i = 0; i<r.lang_list.length; i++){
-                        let lang_tag = '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.lang_list[i].cl_seq+'">'+
-                                        '<label for="amenity'+i+'">'+r.lang_list[i].cl_content+'</label>';
+                    for(let i = 0; i<r.langList.length; i++){
+                        let lang_tag = '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.langList[i].cl_seq+'">'+
+                                        '<label for="amenity'+i+'">'+r.langList[i].cl_content+'</label>';
                         $(".host_lang").append(lang_tag);
                     }                    
                 }
@@ -167,7 +166,7 @@
             console.log(data);
             
             $.ajax({
-                url:"/api/house/search",
+                url:"/api/house",
                 type:"post",
                 contentType:"application/json",
                 data:JSON.stringify(data),           

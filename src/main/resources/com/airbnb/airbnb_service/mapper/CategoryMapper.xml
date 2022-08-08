@@ -4,7 +4,7 @@
 <mapper namespace="com.airbnb.airbnb_service.mapper.CategoryMapper">
 
 
-    <select id="selectMainCatebar" resultType="com.airbnb.airbnb_service.data.category.CategoryBarVO">
+    <select id="selectMainCatebar" resultType="com.airbnb.airbnb_service.data.response.CategoryBarResponseVO">
         (
         SELECT 1 AS table_no, 
             cp_seq AS cate_bar_seq,

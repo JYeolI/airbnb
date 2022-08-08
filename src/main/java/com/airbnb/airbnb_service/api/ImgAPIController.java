@@ -35,8 +35,8 @@ public class ImgAPIController {
     @GetMapping("/img/{type}/{filename}")
     public ResponseEntity<Resource> getImage(
         @PathVariable String type, @PathVariable String filename, HttpServletRequest request) {
-        Path folderLocation = Paths.get(path+"/"+type);     // path/type = d:/movie/actor
-        Path filePath = folderLocation.resolve(filename);   // path/type/filename = d:/movie/actor/default.jpg
+        Path folderLocation = Paths.get(path+"/"+type);
+        Path filePath = folderLocation.resolve(filename);
         Resource r = null;
         try {
             r = new UrlResource(filePath.toUri());
@@ -58,7 +58,7 @@ public class ImgAPIController {
             ResponseEntity.ok() //결과로 200ok를 설정
             //파일의 타입을 Spring프레임 워크를 통해 파일 유형을 결정
             .contentType(MediaType.parseMediaType(contentType))
-            //파일 이름의 표시방법을 설정(ekdnsfhem ehlsms vkdlfdml dlfma tjfwjd)
+            //파일 이름의 표시방법을 설정(다운로드 되는 파일의 이름 설정)
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=\""+r.getFilename()+"\"")
             //실제 리소스를 body에 포함
             .body(r);

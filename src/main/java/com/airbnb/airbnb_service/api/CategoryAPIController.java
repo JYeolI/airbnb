@@ -20,7 +20,7 @@ public class CategoryAPIController {
     @GetMapping("/bar")
     public Map<String, Object> getCateBarList() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("cate_bar_list", cate_mapper.selectMainCatebar());
+            resultMap.put("cateBarList", cate_mapper.selectMainCatebar());
         return resultMap;
     }
 
@@ -31,9 +31,9 @@ public class CategoryAPIController {
     @GetMapping("/filter")
     public Map<String, Object> getCateSortList() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("sort_list", cate_mapper.selectFilterCateSortList());
-            resultMap.put("amenity_list", cate_mapper.selectFilterCateAmenityList());
-            resultMap.put("lang_list", cate_mapper.selectFilterCateLangList());
+            resultMap.put("sortList", cate_mapper.selectFilterCateSortList());
+            resultMap.put("amenityList", cate_mapper.selectFilterCateAmenityList());
+            resultMap.put("langList", cate_mapper.selectFilterCateLangList());
             return resultMap;
     }
     

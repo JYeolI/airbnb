@@ -22,7 +22,7 @@
         $(function(){
             // 위시리스트
             $.ajax({
-                url:"/api/house/wish",
+                url:"/api/wish",
                 type:"get",
                 success:function(r){
                     console.log(r);

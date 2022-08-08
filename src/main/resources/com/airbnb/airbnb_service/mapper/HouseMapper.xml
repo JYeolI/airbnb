@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.HouseMapper">
-    <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.MainViewResponseVO">
+    <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.response.MainViewResponseVO">
         SELECT main.hi_seq,
             main.hi_mi_seq,
             main.hi_name,
@@ -117,48 +117,5 @@
         <if test="search.in_dt != null || search.out_dt != null">
             AND booking = 0
         </if>
-    </select>
-
-    <select id="selectWishList" resultType="com.airbnb.airbnb_service.data.WishViewResponseVO">
-        SELECT wish.*,
-            hi.hi_name,
-            cc.cc_content AS country,
-            hai.hai_city AS city,
-            hai.hai_detail AS detail,
-            himg.himg_file AS main_img,
-            hgi.hgi_guest AS guest,
-            hgi.hgi_bed AS bed,
-            hgi.hgi_bedroom AS bedroom,
-            hgi.hgi_bathroom AS bathroom,
-            hgi.hgi_dog AS dog,
-            hfi.hfi_base_price AS price,
-            rev.rev_cnt,
-            rpv.total_avg 
-        FROM wish_info wish
-        LEFT JOIN house_info hi 
-            ON hi.hi_seq = wish.wish_hi_seq 
-        LEFT JOIN house_address_info hai 
-            ON hi.hi_hai_seq = hai.hai_seq 
-        LEFT JOIN category_country cc 
-            ON hai.hai_cc_seq = cc.cc_seq 
-        LEFT JOIN house_guest_info hgi 
-            ON hgi.hgi_seq = hi.hi_hgi_seq 
-        LEFT JOIN house_fee_info hfi 
-            ON hfi.hfi_seq = hi.hi_hfi_seq 
-        LEFT JOIN (
-                SELECT * 
-                FROM house_img 
-                WHERE himg_main = 1
-        )himg 
-            ON himg.himg_hi_seq = hi.hi_seq 
-        LEFT JOIN (
-                SELECT rev_hi_seq, count(*) AS rev_cnt
-                FROM review_info
-                GROUP BY rev_hi_seq
-        )rev
-            ON rev.rev_hi_seq = hi.hi_seq
-        LEFT JOIN rev_point_view rpv 
-            ON rpv.rpv_hi_seq = wish.wish_hi_seq 
-        WHERE wish_mi_seq = #{user_seq}
     </select>
 </mapper>

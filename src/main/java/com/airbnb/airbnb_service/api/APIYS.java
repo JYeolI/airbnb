@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.airbnb.airbnb_service.data.house.WishInfoVO;
 import com.airbnb.airbnb_service.mapper.BookingMapper;
 import com.airbnb.airbnb_service.mapper.HouseMapper;
 
@@ -25,13 +24,6 @@ public class APIYS {
             resultMap.put("trip_list", book_mapper.selectTripResponse(seq));
         return resultMap;
     }
-    // 위시리스트
-    @GetMapping("/wish")
-    public Map<String, Object> getWishList(@RequestParam Integer seq, WishInfoVO data) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
-            resultMap.put("wish_list", house_mapper.selectWichList(seq));
-            resultMap.put("rev_cnt", house_mapper.selectReviewCount(data));
-        return resultMap;
-    }
+
 }
 

@@ -16,7 +16,7 @@ public class CategoryAPIController {
     @Autowired CategoryMapper cate_mapper;
     
     //카테고리바 /api/category/bar
-    //테이블넘버 1(위치특징1 )  3(상세유형sort_detail)
+    //테이블넘버 1(위치특징cate_place)  3(상세유형cate_sort_detail)
     @GetMapping("/bar")
     public Map<String, Object> getCateBarList() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();

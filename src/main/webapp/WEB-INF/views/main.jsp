@@ -18,59 +18,64 @@
         .icon {width: 50px; height: 50px; background-position: center; background-size: 50%; background-repeat: no-repeat;}
     </style>
     <script>
-        $.ajax({
-            url:"/api/category/bar",
-            type:"get",
-            success:function(r) {
-                console.log(r)
-                for(let i = 0; i<r.cate_bar_list.length; i++){
-                    let tag =   
-                    '<button class="category" onclick="search('+r.cate_bar_list[i].table_no+','+r.cate_bar_list[i].cate_bar_seq+')">'+
-                        '<div class="bar_icon">'+
-                            '<div class="icon" style="background-image: url(/img/category/'+r.cate_bar_list[i].cate_bar_icon+');"></div>'+
-                        '</div>'+
-                        '<div class="bar_content">'+
-                            r.cate_bar_list[i].cate_bar_content+
-                        '</div>'+
-                    '</button>';
-                    $(".cate_bar").append(tag);
+
+        $(function(){
+            //카테고리바
+            $.ajax({
+                url:"/api/category/bar",
+                type:"get",
+                success:function(r) {
+                    console.log(r)
+                    for(let i = 0; i<r.cate_bar_list.length; i++){
+                        let tag =   
+                        '<button class="category" onclick="search('+r.cate_bar_list[i].table_no+','+r.cate_bar_list[i].cate_bar_seq+')">'+
+                            '<div class="bar_icon">'+
+                                '<div class="icon" style="background-image: url(/img/category/'+r.cate_bar_list[i].cate_bar_icon+');"></div>'+
+                            '</div>'+
+                            '<div class="bar_content">'+
+                                r.cate_bar_list[i].cate_bar_content+
+                            '</div>'+
+                        '</button>';
+                        $(".cate_bar").append(tag);
+                    }
                 }
-            }
+            })
+
+            //검색필터 내부
+            $.ajax({
+                url:"/api/category/filter",
+                type:"get",
+                success:function(r) {
+                    console.log(r)
+                    
+                    for(let i = 0; i<r.sort_list.length; i++){
+                        let sort_tag =                    
+                        '<button class="filter_sort" onclick="toggle_btn()" cs_seq="'+r.sort_list[i].cs_seq+'">'+
+                            '<div class="filter_icon">'+
+                                '<div class="icon" style="background-image: url(/img/category/'+r.sort_list[i].cs_icon+');"></div>'+
+                            '</div>'+
+                            '<div class="filter_content">'+
+                                r.sort_list[i].cs_content+
+                            '</div>'+
+                        '</button>';
+                        $(".house_sort").append(sort_tag);
+                    }
+
+                    for(let i = 0; i<r.amenity_list.length; i++){
+                        let amenity_tag = '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenity_list[i].ca_seq+'">'+
+                                            '<label for="amenity'+i+'">'+r.amenity_list[i].ca_content+'</label>';
+                        $(".house_amenity").append(amenity_tag);
+                    }
+
+                    for(let i = 0; i<r.lang_list.length; i++){
+                        let lang_tag = '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.lang_list[i].cl_seq+'">'+
+                                        '<label for="amenity'+i+'">'+r.lang_list[i].cl_content+'</label>';
+                        $(".host_lang").append(lang_tag);
+                    }                    
+                }
+            })
         })
-
-        $.ajax({
-            url:"/api/category/filter",
-            type:"get",
-            success:function(r) {
-                console.log(r)
-                
-                for(let i = 0; i<r.sort_list.length; i++){
-                    let sort_tag =                    
-                    '<button class="filter_sort" onclick="toggle_btn()" cs_seq="'+r.sort_list[i].cs_seq+'">'+
-                        '<div class="filter_icon">'+
-                            '<div class="icon" style="background-image: url(/img/category/'+r.sort_list[i].cs_icon+');"></div>'+
-                        '</div>'+
-                        '<div class="filter_content">'+
-                            r.sort_list[i].cs_content+
-                        '</div>'+
-                    '</button>';
-                    $(".house_sort").append(sort_tag);
-                }
-
-                for(let i = 0; i<r.amenity_list.length; i++){
-                    let amenity_tag = '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenity_list[i].ca_seq+'">'+
-                                        '<label for="amenity'+i+'">'+r.amenity_list[i].ca_content+'</label>';
-                    $(".house_amenity").append(amenity_tag);
-                }
-
-                for(let i = 0; i<r.lang_list.length; i++){
-                    let lang_tag = '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.lang_list[i].cl_seq+'">'+
-                                    '<label for="amenity'+i+'">'+r.lang_list[i].cl_content+'</label>';
-                    $(".host_lang").append(lang_tag);
-                }                    
-            }
-        })
-
+        
         //외않되시부룰
         function toggle_btn(){
             if($(this).hasClass("sort_on")) { $(this).removeClass("sort_on"); return; }
@@ -90,8 +95,7 @@
 
         var chk_amenity = new Array();
         var chk_lang = new Array();
-
-        //검색(검색바/카테고리바/검색필터)
+        //검색버튼(검색바/카테고리바/검색필터)
         function search(table_no,cate_bar_seq){
 
             //검색바
@@ -161,6 +165,7 @@
             };
 
             console.log(data);
+            
             $.ajax({
                 url:"/api/house/search",
                 type:"post",
@@ -170,7 +175,8 @@
                     console.log(r)
                 }
             })
-        }    
+        }
+        
     </script>
 </head>
 

@@ -10,7 +10,7 @@ import com.airbnb.airbnb_service.data.category.CategoryAmenityVO;
 import com.airbnb.airbnb_service.data.category.CategoryLangVO;
 
 @Mapper
-public interface JyTempMapper {
+public interface HTempMapper {
 
     public List<MainViewResponse> selectSearchHouseList(SearchRequestVO searchRequest, Integer user_seq);
     public List<CategoryAmenityVO> selectCategoryAmenityList();

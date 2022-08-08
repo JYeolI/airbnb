@@ -3,32 +3,32 @@ package com.airbnb.airbnb_service.api;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.airbnb.airbnb_service.mapper.JyTempMapper;
+import com.airbnb.airbnb_service.data.SearchRequestVO;
+import com.airbnb.airbnb_service.mapper.HTempMapper;
 
 @RestController
 @RequestMapping("/api/h")
 public class HtempAPIController {
-    @Autowired JyTempMapper mapper;
+    @Autowired HTempMapper mapper;
 
-    @GetMapping("/main/search")
-    public Map<String,Object> getMainViewData(
-        @RequestParam @Nullable String keyword,        
-        @RequestParam @Nullable Integer checkIn,
-        @RequestParam @Nullable Integer checkOut,
-        @RequestParam @Nullable Integer Guest,
-        @RequestParam @Nullable Integer dog
-    ) {
+    @PostMapping("/main/search")
+    public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO searchRequest, HttpSession session) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
-
-
+        // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        
+        // mapper.selectSearchHouseList(searchRequest, user.getMi_seq());
+        resultMap.put("houseList", mapper.selectSearchHouseList(searchRequest, 1));
+        resultMap.put("cateAmenityList", mapper.selectCategoryAmenityList());
+        resultMap.put("cateLangList", mapper.selectCategoryLangList());
         
         return resultMap;
     }

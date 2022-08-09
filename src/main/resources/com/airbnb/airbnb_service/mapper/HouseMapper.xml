@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.HouseMapper">
+    <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.response.MainViewResponseVO">
+        SELECT main.hi_seq,
+            main.hi_mi_seq,
+            main.hi_name,
+            main.main_img,
+            main.country,
+            main.city,
+            main.address,
+            main.total_avg,
+            main.price,
+            main.super_host
+        <if test="user_seq != null">
+            ,        
+            IFNULL(wish.wish,0) AS wish,
+            IFNULL(wish.wish_seq,0) AS wish_seq
+        </if>
+        FROM main_search_view main
+        <if test="user_seq != null">
+            LEFT JOIN (
+                SELECT wish_seq, wish_hi_seq, 1 AS wish
+                FROM wish_info
+                WHERE wish_mi_seq = #{user_seq}
+            )wish
+            ON main.hi_seq = wish.wish_hi_seq
+        </if>
+        <if test="request.cate_place != null">
+            LEFT JOIN (
+                SELECT hpi_hi_seq, 1 AS place
+                FROM house_place_info
+                WHERE hpi_cp_seq = #{request.cate_place}
+                GROUP BY hpi_hi_seq 
+            )hpi
+            ON main.hi_seq = hpi.hpi_hi_seq
+        </if>
+        <if test="request.in_dt != null and request.out_dt != null">
+            LEFT JOIN (
+                SELECT bi_hi_seq, count(*) AS booking
+                FROM booking_info
+                WHERE 
+                    date(bi_start_dt) BETWEEN #{request.in_dt} AND #{request.out_dt}
+                    OR (#{request.out_dt} BETWEEN date(bi_start_dt) AND date(bi_end_dt))
+                GROUP BY bi_hi_seq
+            )bi
+            ON main.hi_seq = bi.bi_hi_seq
+        </if>
+        <if test="request.amenity.size != 0">
+            LEFT JOIN (
+                SELECT * FROM house_amenity_info
+                WHERE 
+                <foreach collection="request.amenity" item="amenity" separator="and">
+                    ham_ca_seq = #{amenity.amenity}
+                </foreach>
+                GROUP BY ham_hi_seq
+            )ham
+            ON main.hi_seq = ham.ham_hi_seq
+        </if>
+        <if test="request.lang.size != 0">
+            LEFT JOIN (
+                SELECT * FROM member_lang_info 
+                WHERE 
+                <foreach collection="request.lang" item="lang" separator="and">
+                    mli_cl_seq = #{lang.lang}
+                </foreach>
+                GROUP BY mli_mi_seq 
+            )mli
+            ON main.hi_mi_seq = mli_mi_seq
+        </if>
+        WHERE main.hi_status = 0
+        <if test="request.keyword != null">
+            AND (
+                    country like concat('%','${request.keyword}','%') 
+                    OR city like concat('%','${request.keyword}','%') 
+                    OR address like concat('%','${request.keyword}','%')
+                )
+        </if>
+        <if test="request.guest != 0">
+            AND guest <![CDATA[>=]]> #{request.guest}
+        </if>
+        <if test="request.dog != 0">
+            AND dog = #{request.dog}
+        </if>
+        <if test="request.cate_sort_detail != null">
+            AND main.cate_sort_detail = #{request.cate_sort_detail}
+        </if>
+        <choose>
+            <when test="request.min != null || request.max != null">
+                AND price BETWEEN #{request.min} AND #{request.max}
+            </when>
+            <when test="request.max != null">
+                AND price <![CDATA[>=]]> #{request.min}   
+            </when>
+            <when test="request.min != null">
+                AND price <![CDATA[<=]]> #{request.max}
+            </when>
+        </choose>
+        <if test="request.type != null">
+            AND hi_type = #{request.type}
+        </if>
+        <if test="request.bed != 0">
+            AND bed <![CDATA[>=]]> #{request.bed}
+        </if>
+        <if test="request.bedroom != 0">
+            AND bedroom <![CDATA[>=]]> #{request.bedroom}
+        </if>
+        <if test="request.bathroom != 0">
+            AND bathroom <![CDATA[>=]]> #{request.bathroom}
+        </if>
+        <if test="request.sort != null">
+            AND main.cate_sort = #{request.sort}
+        </if>
+        <if test="request.superhost == 0">
+            AND super_host = #{request.superhost}
+        </if>
+        <if test="request.in_dt != null || request.out_dt != null">
+            AND booking = 0
+        </if>
+    </select>
+</mapper>

@@ -16,10 +16,21 @@
         .type_content {width: 200px; border: 1px solid #000;}
         .filter_block {border-bottom: 1px solid #999;}
         .icon {width: 50px; height: 50px; background-position: center; background-size: 50%; background-repeat: no-repeat;}
+        .wish_heart {width: 20px; height: 20px;}
+
+        .house_content { border: 1px solid #000; }
+        .heart {
+            background-size: 100%; width: 20px; height: 20px; color: #000; background-repeat: no-repeat;
+            background-image: url(img/common/heart.png);
+        }
+        .heart_on {
+            background-image: url(img/common/red_heart.png);
+        }
     </style>
     <script>
         $(function(){
-            //카테고리바
+            search();
+            //카테고리바 태그작성
             $.ajax({
                 url:"/api/category/bar",
                 type:"get",
@@ -40,7 +51,7 @@
                 }
             })
 
-            //검색필터 내부
+            //검색필터 내부 태그작성
             $.ajax({
                 url:"/api/category/filter",
                 type:"get",
@@ -73,6 +84,7 @@
                     }                    
                 }
             })
+
         })
         
         //외않되시부룰
@@ -166,14 +178,97 @@
             console.log(data);
             
             $.ajax({
-                url:"/api/house",
+                url:"/api/house/list",
                 type:"post",
                 contentType:"application/json",
                 data:JSON.stringify(data),           
                 success:function(r) {
-                    console.log(r)
+                    // console.log(r);
+                    showHouseList(r);
                 }
             })
+        }
+
+        //숙소조회 후 태크 배치
+        function showHouseList(r) {
+            console.log(r);
+            $(".house_list").html("");
+
+            let wish_tag="";
+            let super_host_tag=""; 
+            for(let i = 0; i<r.houseList.length; i++){   
+                if(r.houseList[i].wish==1){
+                    wish_tag = '<div class="heart heart_on" id="heart'+r.houseList[i].hi_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].hi_seq+')"></div>';
+                }
+                else{
+                    wish_tag = '<div class="heart" id="heart'+r.houseList[i].hi_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].hi_seq+')"></div>';
+                }
+                if(r.houseList[i].super_host==1){
+                    super_host_tag = '<i class="super_host">슈퍼호스트</i>';
+                }
+                let house_tag=
+                    '<div class="house_content">'+
+                        '<div class="house_img_wrap">'+
+                            '<div class="house_img" style="background-image: url(img/house/'+r.houseList[i].main_img+');"></div>'+
+                        '</div>'+
+                        '<div>'+
+                            wish_tag+
+                        '</div>'+
+                        '<div class="super_host_mark">'+
+                            super_host_tag+
+                        '</div>'+
+                        '<div class="house_text_wrap">'+
+                            '<h1 class="address">'+r.houseList[i].country+','+r.houseList[i].city+','+r.houseList[i].address+'</h1>'+
+                            '<p class="house_name">'+r.houseList[i].hi_name+'</p>'+
+                            '<p></p>'+
+                            '<h3 class="price">'+r.houseList[i].price+'</h3>'+
+                        '</div>'+
+                        '<div class="house_point_wrap">'+
+                            '<p>'+
+                                '<span class="star">★</span>'+
+                                '<span class="point">'+r.houseList[i].total_avg+'</span>'+
+                            '</p>'+
+                    '</div>';
+                $(".house_list").append(house_tag);
+            }
+
+        }
+
+        //하트 클릭
+        function wish(wish_seq,house_seq) {
+            if(wish_seq==null) {
+                alert("위시리스트에 추가하시려면 로그인이 필요합니다.");
+                return;
+            }
+
+            //위시리스트 삭제 
+            if($("#heart"+house_seq+"").hasClass("heart_on")){
+                $("#heart"+house_seq+"").removeClass("heart_on");
+
+                $.ajax({
+                    url:"/api/wish?wish_seq="+wish_seq,
+                    type:"delete",
+                    success:function(r){
+                        console.log(r);
+                        return;
+                    }
+                })       
+            }
+            //위시리스트 추가
+            else{
+                $("#heart"+house_seq+"").addClass("heart_on");
+                alert("fejeifj");
+                $.ajax({
+                    url:"/api/wish?house_seq="+house_seq,
+                    type:"put",
+                    success:function(r){
+                        alert("fejeifj@@");
+                        console.log(r);
+                        return;
+                    }
+                })
+            }
+            
         }
         
     </script>
@@ -354,8 +449,29 @@
     <section>
         //숙소리스트
         <div class="house_list">
-
-
+            <div class="house_content">
+                <div class="house_img_wrap">
+                    <div class="house_img" style="background-image: url();"></div>
+                </div>
+                <div class="wish_heart">
+                    <div class="heart" style="background-image: url();"></div>
+                </div>
+                <div class="super_host_mark">
+                    <i class="super_host">슈퍼호스트</i>
+                </div>
+                <div class="house_text_wrap">
+                    <h1 class="address"></h1>
+                    <p class="house_name"></p>
+                    <p></p>
+                    <h3 class="price"></h3>
+                </div>
+                <div class="house_point_wrap">
+                    <p>
+                        <span class="star">★</span>
+                        <span class="point">점수</span>
+                    </p>
+                </div>
+            </div>
 
 
         </div>

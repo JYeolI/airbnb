@@ -45,5 +45,24 @@
             ON rpv.rpv_hi_seq = wish.wish_hi_seq 
         WHERE wish_mi_seq = #{user_seq}
     </select>
+
+    <insert id="insertWish">
+        INSERT INTO wish_info
+        (wish_mi_seq, wish_hi_seq, wish_order)
+        VALUES
+        (#{user_seq}, #{house_seq}, #{order})
+    </insert>
     
+    <select id="selectWishOrderMax" resultType="java.lang.Integer">
+        SELECT max(wish_order)
+        FROM wish_info
+        WHERE wish_mi_seq = #{user_seq}
+    </select>
+        
+    <delete id="deleteWish">
+        DELETE FROM wish_info
+        WHERE wish_mi_seq = #{user_seq} AND wish_seq= #{wish_seq}
+    </delete>
+
+
 </mapper>

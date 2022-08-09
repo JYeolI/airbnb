@@ -26,5 +26,4 @@
     left join wish_info wish on bi.bi_hi_seq = wish.wish_hi_seq and bi.bi_mi_seq = wish.wish_mi_seq 
     where bi_mi_seq = #{bi_mi_seq}
 </select>
-
 </mapper>

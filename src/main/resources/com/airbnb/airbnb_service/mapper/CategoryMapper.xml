@@ -4,20 +4,20 @@
 <mapper namespace="com.airbnb.airbnb_service.mapper.CategoryMapper">
 
 
-    <select id="selectMainCatebar" resultType="com.airbnb.airbnb_service.data.category.CategoryBarVO">
+    <select id="selectCategoryBar" resultType="com.airbnb.airbnb_service.data.response.CategoryBarResponseVO">
         (
-        select 1 as table_no, 
-            cp_seq as cate_bar_seq,
-            cp_content as cate_bar_content,
-            cp_icon  as cate_bar_icon
-        from category_place 
-        where cp_type = 1
-        ) union all (
-        select 3 as table_no, 
+        SELECT 1 AS table_no, 
+            cp_seq AS cate_bar_seq,
+            cp_content AS cate_bar_content,
+            cp_icon  AS cate_bar_icon
+        FROM category_place 
+        WHERE cp_type = 1
+        ) UNION ALL (
+        SELECT 3 as table_no, 
                 csd_seq, 
                 csd_content, 
                 csd_icon
-        from category_sort_detail
+        FROM category_sort_detail
         )
     </select>
 

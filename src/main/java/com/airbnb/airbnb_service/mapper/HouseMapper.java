@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.airbnb.airbnb_service.data.house.WishInfoVO;
-import com.airbnb.airbnb_service.data.house.WishListVO;
+import com.airbnb.airbnb_service.data.request.SearchRequestVO;
+import com.airbnb.airbnb_service.data.response.MainViewResponseVO;
 
 @Mapper
 public interface HouseMapper {
-    public List<WishListVO> selectWichList(Integer seq);
-    public WishInfoVO selectReviewCount(WishInfoVO data);
+    public List<MainViewResponseVO> selectSearchHouseList(SearchRequestVO searchRequest, Integer user_seq);
 }

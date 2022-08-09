@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     @GetMapping("/")
     public String getMain() {
-        return "/index";
+        return "/main";
+    }
+    @GetMapping("/wish")
+    public String getWish() {
+        return "/wish";
     }
 }

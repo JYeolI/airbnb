@@ -15,4 +15,5 @@ public class MainViewResponseVO {
     private String main_img;
     private Integer super_host;
     private Integer wish;
+    private Integer wish_seq;
 }

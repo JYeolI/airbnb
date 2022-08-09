@@ -9,5 +9,5 @@ import com.airbnb.airbnb_service.data.response.MainViewResponseVO;
 
 @Mapper
 public interface HouseMapper {
-    public List<MainViewResponseVO> selectSearchHouseList(SearchRequestVO searchRequest, Integer user_seq);
+    public List<MainViewResponseVO> selectSearchHouseList(SearchRequestVO request, Integer user_seq);
 }

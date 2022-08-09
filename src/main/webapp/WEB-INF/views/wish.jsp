@@ -16,11 +16,26 @@
         section {width: 1200px; border: 1px solid #000;}
         .wish_content {width: 800px; border: 1px solid #000;}
         .star {color: red;}
+        .wish_heart {width: 20px; height: 20px;}
+        .heart {
+            background-size: 100%; width: 20px; height: 20px; color: #000; background-repeat: no-repeat;
+            background-image: url(img/common/heart.png);
+        }
+        .heart_on {
+            background-image: url(img/common/red_heart.png);
+        }
     </style>
     <script>
         
         $(function(){
-            // 위시리스트
+
+            //위시리스트 조회
+            showWishList();
+
+        })
+
+        // 위시리스트 조회
+        function showWishList(){
             $.ajax({
                 url:"/api/wish",
                 type:"get",
@@ -30,9 +45,8 @@
                     for(let i=0; i<r.wishList.length; i++){
                         let tag = 
                             '<div class="wish_content">'+
-                                '<h3 class="wish_title"></h3>'+
-                                '<div class="wish_heart">'+
-                                    
+                                '<div onclick="wish('+r.wishList[i].wish_seq+')" class="wish_heart">'+
+                                    '<div class="heart heart_on" id="heart'+r.wishList[i].wish_seq+'"></div>'+
                                 '</div>'+
                                 '<p class="house_address">'+r.wishList[i].country+", "+r.wishList[i].city+", "+r.wishList[i].detail+'</p>'+
                                 '<dis class="img_wrap">'+
@@ -59,8 +73,30 @@
                     }
                 }
             })
+        }
+
+        //하트 클릭시 위시리스트 제거 및 재조회
+        function wish(wish_seq) {
+            // if($("#heart"+wish_seq+"").hasClass("heart_on")){
+                // $("#heart"+wish_seq+"").removeClass("heart_on");
+
+            //위시리스트 삭제 
+            $.ajax({
+                url:"/api/wish?wish_seq="+wish_seq,
+                type:"delete",
+                success:function(r){
+                    console.log(r);  
+
+                    //재조회
+                    showWishList();
+                    return;
+                }
+            })       
             
-        })
+            //위시리스트 추가 = 현재페이지에서 실행 못함
+            // $("#heart"+wish_seq+"").addClass("heart_on");
+        }
+
     </script>
 </head>
 <body>
@@ -70,8 +106,9 @@
             //위시리스트
             <div class="wish_list">
                 <div class="wish_content">
-                    <h1 class="wish_title"></h1>
-                    <div class="wish_heart"></div>
+                    <div class="wish_heart">
+                        <div class="heart" style="background-image: url(img/common/heart.png);"></div>
+                    </div>
                     <h3 class="house_name"></h3>
                     <dis class="img_wrap">
                         <div class="img" style="background-image: url();"></div>

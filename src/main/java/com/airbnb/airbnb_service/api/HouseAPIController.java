@@ -20,16 +20,16 @@ public class HouseAPIController {
     @Autowired HouseMapper house_mapper;
 
     //메인 숙소조회
-    @PostMapping("/")
-    public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO searchRequest, HttpSession session) {
+    @PostMapping("/list")
+    public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO request, HttpSession session) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
 
-        resultMap.put("houseList", house_mapper.selectSearchHouseList(searchRequest, user_seq));
-        System.out.println(searchRequest);
+        resultMap.put("houseList", house_mapper.selectSearchHouseList(request, user_seq));
+        System.out.println(request);
         return resultMap;
     }
 }

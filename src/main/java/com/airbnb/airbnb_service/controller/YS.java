@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class YS {
     @GetMapping("/ys")
     public String getMain() {
-        return "/ys";
+        return "/temp/Htemp";
     }
 }

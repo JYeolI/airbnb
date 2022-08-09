@@ -16,11 +16,11 @@ public class CategoryAPIController {
     @Autowired CategoryMapper cate_mapper;
     
     //카테고리바 /api/category/bar
-    //테이블넘버 1(위치특징1 )  3(상세유형sort_detail)
+    //테이블넘버 1(위치특징cate_place)  3(상세유형cate_sort_detail)
     @GetMapping("/bar")
-    public Map<String, Object> getCateBarList() {
+    public Map<String, Object> getCateBarData() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("cate_bar_list", cate_mapper.selectMainCatebar());
+            resultMap.put("cateBarList", cate_mapper.selectCategoryBar());
         return resultMap;
     }
 
@@ -29,11 +29,11 @@ public class CategoryAPIController {
     //amenity_list ca_seq,ca_type,ca_content 편의시설
     //lang_list cl_seq,cl_content 호스트 언어능력
     @GetMapping("/filter")
-    public Map<String, Object> getCateSortList() {
+    public Map<String, Object> getCateFilterData() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("sort_list", cate_mapper.selectFilterCateSortList());
-            resultMap.put("amenity_list", cate_mapper.selectFilterCateAmenityList());
-            resultMap.put("lang_list", cate_mapper.selectFilterCateLangList());
+            resultMap.put("sortList", cate_mapper.selectFilterCateSortList());
+            resultMap.put("amenityList", cate_mapper.selectFilterCateAmenityList());
+            resultMap.put("langList", cate_mapper.selectFilterCateLangList());
             return resultMap;
     }
     

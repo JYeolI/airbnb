@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.airbnb.airbnb_service.data.SearchRequestVO;
-import com.airbnb.airbnb_service.mapper.HTempMapper;
+import com.airbnb.airbnb_service.data.request.SearchRequestVO;
+import com.airbnb.airbnb_service.mapper.HouseMapper;
 
 @RestController
-@RequestMapping("/api/h")
-public class HtempAPIController {
-    @Autowired HTempMapper mapper;
+@RequestMapping("/api/house")
+public class HouseAPIController {
+    @Autowired HouseMapper house_mapper;
 
-    @PostMapping("/main/search")
+    //메인 숙소조회
+    @PostMapping("/")
     public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO searchRequest, HttpSession session) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
-        
-        // mapper.selectSearchHouseList(searchRequest, user.getMi_seq());
-        resultMap.put("houseList", mapper.selectSearchHouseList(searchRequest, 1));
-        resultMap.put("cateAmenityList", mapper.selectCategoryAmenityList());
-        resultMap.put("cateLangList", mapper.selectCategoryLangList());
-        
+        // Integer user_seq = user.getMi_seq();
+        Integer user_seq = 1;
+
+        resultMap.put("houseList", house_mapper.selectSearchHouseList(searchRequest, user_seq));
+        System.out.println(searchRequest);
         return resultMap;
     }
 }

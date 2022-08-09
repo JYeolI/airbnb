@@ -1,11 +1,11 @@
-package com.airbnb.airbnb_service.data.house;
+package com.airbnb.airbnb_service.data.response;
 
 import java.util.Date;
 
 import lombok.Data;
 
 @Data
-public class WishListVO {
+public class WishViewResponseVO {
     private Integer wish_seq;
     private Integer wish_mi_seq;
     private Integer wish_hi_seq;
@@ -23,5 +23,6 @@ public class WishListVO {
     private Integer bathroom;
     private Integer dog;
     private Integer price;
-    private Integer total_avg;
+    private Integer rev_cnt;
+    private Double total_avg;
 }

@@ -81,7 +81,7 @@
             AND guest <![CDATA[>=]]> #{request.guest}
         </if>
         <if test="request.dog != 0">
-            AND dog = #{request.dog}
+            AND dog = 1
         </if>
         <if test="request.cate_sort_detail != null">
             AND main.cate_sort_detail = #{request.cate_sort_detail}
@@ -109,10 +109,13 @@
         <if test="request.bathroom != 0">
             AND bathroom <![CDATA[>=]]> #{request.bathroom}
         </if>
-        <if test="request.sort != null">
-            AND main.cate_sort = #{request.sort}
+        <if test="request.sort.size != 0">
+            AND 
+            <foreach collection="request.sort" item="sort" separator="and">
+                main.cate_sort = #{sort.sort}
+            </foreach>
         </if>
-        <if test="request.superhost == 0">
+        <if test="request.superhost != 0">
             AND super_host = #{request.superhost}
         </if>
         <if test="request.in_dt != null || request.out_dt != null">

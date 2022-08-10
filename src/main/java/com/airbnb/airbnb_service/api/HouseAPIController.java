@@ -28,8 +28,9 @@ public class HouseAPIController {
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
 
+        resultMap.put("status", true);
+        resultMap.put("message", "숙소 데이터가 조회되었습니다.");
         resultMap.put("houseList", house_mapper.selectSearchHouseList(request, user_seq));
-        System.out.println(request);
         return resultMap;
     }
 }

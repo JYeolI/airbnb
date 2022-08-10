@@ -30,7 +30,9 @@ public class MemberAPIController {
         Integer user_seq = 1;
 
         resultMap.put("wishList", member_mapper.selectWishList(user_seq));
-
+        
+        resultMap.put("status", true);
+        resultMap.put("message", "위시리스트에 등록된 숙소 데이터가 조회되었습니다.");
         return resultMap;
     }
 
@@ -42,9 +44,15 @@ public class MemberAPIController {
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
 
-        Integer order = member_mapper.selectWishOrderMax(user_seq)+1;
+        Integer order = member_mapper.selectWishOrderMax(user_seq);
+        if(order==null){
+            order = 1;
+        }
         
         member_mapper.insertWish(user_seq, house_seq, order);
+        
+        resultMap.put("status", true);
+        resultMap.put("message", "위시리스트에 추가되었습니다.");
         return resultMap;
     }
 
@@ -57,6 +65,9 @@ public class MemberAPIController {
         Integer user_seq = 1;
 
         member_mapper.deleteWish(user_seq,wish_seq);
+        
+        resultMap.put("status", true);
+        resultMap.put("message", "위시리스트에서 삭제되었습니다.");
         return resultMap;
     }
 }

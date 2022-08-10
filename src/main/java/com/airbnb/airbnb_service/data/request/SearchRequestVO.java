@@ -22,7 +22,7 @@ public class SearchRequestVO {
     private Integer bed;
     private Integer bedroom;
     private Integer bathroom;
-    private Integer sort;
+    private List<Integer> sort;
     private List<Integer> amenity;
     private Integer superhost;
     private List<Integer> lang;

@@ -19,6 +19,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,12 @@ public class ImgAPIController {
     @Value("${spring.servlet.multipart.location}") String path;
     @GetMapping("/img/{type}/{filename}")
     public ResponseEntity<Resource> getImage(
-        @PathVariable String type, @PathVariable String filename, HttpServletRequest request) {
+        @PathVariable String type, @PathVariable @Nullable String filename, HttpServletRequest request) {
         Path folderLocation = Paths.get(path+"/"+type);
+        
+        //이미지DB등록 없을시 디폴트 이미지 가져옴
+        if(filename==null){filename = "default.png";}
+
         Path filePath = folderLocation.resolve(filename);
         Resource r = null;
         try {

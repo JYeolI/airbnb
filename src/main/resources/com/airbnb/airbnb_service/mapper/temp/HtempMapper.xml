@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.temp.HtempMapper">
+    <select id="selectMemberProfile" resultType="com.airbnb.airbnb_service.data.temp.Htemp.ProfileVO">
+        select
+            mi_host_grade,
+            mi_name,
+            mi_description,
+            cc_content,
+            mai_city,
+            mimg_file,
+            mi_reg_dt
+        from member_info a
+        left join member_address_info b
+        on a.mi_mai_seq = b.mai_seq
+        left join category_country c
+        on b.mai_cc_seq = c.cc_seq
+        left join member_img d
+        on a.mi_mimg_seq = d.mimg_seq
+        where a.mi_seq = #{member_seq}
+    </select>
+    <select id="selectHouseList" resultType="com.airbnb.airbnb_service.data.temp.Htemp.HostingHouseListVO">
+        
+    </select>
+</mapper>

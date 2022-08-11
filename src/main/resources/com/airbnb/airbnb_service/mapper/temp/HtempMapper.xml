@@ -21,6 +21,85 @@
         where a.mi_seq = #{member_seq}
     </select>
     <select id="selectHouseList" resultType="com.airbnb.airbnb_service.data.temp.Htemp.HostingHouseListVO">
-        
+        select
+            hi_seq,
+            hi_name,
+            himg_file,
+            total_avg,
+            hi_type,
+            cs_content,
+            csd_content,
+            hi_description
+        from member_info a
+        left join house_info b
+        on a.mi_seq = b.hi_mi_seq
+        left join (
+            select * from house_img
+            where himg_main = 1
+        ) c
+        on b.hi_seq = c.himg_hi_seq
+        left join (
+            select rpv_hi_seq, total_avg
+            from rev_point_view
+        ) d
+        on b.hi_seq = d.rpv_hi_seq
+        left join category_sort_detail e
+        on b.hi_csd_seq = e.csd_seq
+        left join category_sort f
+        on e.csd_cs_seq = f.cs_seq
+        where a.mi_seq = #{member_seq}
     </select>
+    <select id="selectReviewCountGuestToHost" resultType="java.lang.Integer">
+        select count(*) from review_info a
+        left join house_info b
+        on a.rev_hi_seq = b.hi_seq
+        where b.hi_mi_seq = #{member_seq}
+    </select>
+    <select id="selectReviewCountHostToGuest" resultType="java.lang.Integer">
+        select count(*) from guest_review_info a
+        left join member_info b
+        on a.grev_profile_mi_seq = b.mi_seq
+        where a.grev_profile_mi_seq = #{member_seq}
+    </select>
+    <select id="selectReviewListGuestToHost" resultType="com.airbnb.airbnb_service.data.temp.Htemp.ReviewListToHostVO">
+        select 
+            hi_name,
+            rev_reg_dt,
+            rev_content,
+            mimg_file,
+            mi_name,
+            cc_content,
+            mi_reg_dt
+        from house_info a
+        left join review_info b
+        on a.hi_seq = b.rev_hi_seq
+        left join member_info c
+        on c.mi_seq = b.rev_mi_seq
+        left join member_img d
+        on c.mi_mimg_seq = d.mimg_seq
+        left join member_address_info e
+        on c.mi_mai_seq = e.mai_seq
+        left join category_country f
+        on e.mai_cc_seq = f.cc_seq
+        where a.hi_mi_seq = #{member_seq} and b.rev_public =1
+    </select>
+    <select id="selectReviewListHostToGuest" resultType="com.airbnb.airbnb_service.data.temp.Htemp.ReviewListToGuestVO">
+        select 
+            grev_reg_dt,
+            grev_content,
+            mimg_file as writer_img,
+            mi_name as writer_name,
+            cc_content as writer_country,
+            mi_reg_dt as writer_reg_dt
+        from guest_review_info grev 
+        left join member_info mi
+        on grev.grev_writer_mi_seq = mi.mi_seq 
+        left join member_img mimg
+        on mi.mi_mimg_seq = mimg.mimg_seq
+        left join member_address_info mai
+        on mi.mi_mai_seq = mai.mai_seq
+        left join category_country cc 
+        on cc.cc_seq = mai.mai_cc_seq 
+        where grev.grev_profile_mi_seq = #{member_seq}
+</select>
 </mapper>

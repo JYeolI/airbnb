@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class HostingHouseListVO {
+    private Integer hi_seq;
     private String hi_name;
     private String himg_file;
     private Double total_avg;

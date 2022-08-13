@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.theme.min.css" integrity="sha512-9h7XRlUeUwcHUf9bNiWSTO9ovOWFELxTlViP801e5BbwNJ5ir9ua6L20tEroWZdm+HFBAWBLx2qH4l4QHHlRyg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         section {width: 1200px; border: 1px solid #000;}
-        .wish_content {width: 800px; border: 1px solid #000;}
+        .wish_list > div {width: 800px; border: 1px solid #000;}
         .star {color: red;}
         .wish_heart {width: 20px; height: 20px;}
         .heart {
@@ -37,15 +37,28 @@
         // 위시리스트 조회
         function showWishList(){
             $.ajax({
-                url:"/api/wish",
+                url:"/api/member/wish",
                 type:"get",
                 success:function(r){
                     console.log(r);
                     $(".wish_list").html("");
                     for(let i=0; i<r.wishList.length; i++){
+
+                        //리뷰개수가 없으면 리뷰개수 0, 평점 New표시
+                        let total_avg = "";
+                        let rev_cnt = "";
+                        if(r.wishList[i].rev_cnt==0){
+                            total_avg = "New";
+                            rev_cnt = 0;
+                        }
+                        else{
+                            total_avg = r.wishList[i].total_avg.toFixed(2);
+                            rev_cnt = r.wishList[i].rev_cnt;
+                        }
+
                         let tag = 
-                            '<div class="wish_content">'+
-                                '<div onclick="wish('+r.wishList[i].wish_seq+')" class="wish_heart">'+
+                            '<div id="wish_content'+r.wishList[i].wish_seq+'">'+
+                                '<div onclick="clickHeart('+r.wishList[i].wish_seq+')" class="wish_heart">'+
                                     '<div class="heart heart_on" id="heart'+r.wishList[i].wish_seq+'"></div>'+
                                 '</div>'+
                                 '<p class="house_address">'+r.wishList[i].country+", "+r.wishList[i].city+", "+r.wishList[i].detail+'</p>'+
@@ -61,8 +74,8 @@
                                 '</div>'+
                                 '<div class="review">'+
                                     '<p>'+
-                                        '<span class="star">★</span>'+'<span>'+r.wishList[i].total_avg.toFixed(1)+'</span>'+
-                                        '<span>(후기 </span><span>'+r.wishList[i].rev_cnt+'</span><span>개)</span>'+
+                                        '<span class="star">★</span>'+'<span>'+total_avg+'</span>'+
+                                        '<span>(후기 </span><span>'+rev_cnt+'</span><span>개)</span>'+
                                     '</p>'+
                                 '</div>'+
                                 '<div class="price">'+
@@ -76,25 +89,17 @@
         }
 
         //하트 클릭시 위시리스트 제거 및 재조회
-        function wish(wish_seq) {
-            // if($("#heart"+wish_seq+"").hasClass("heart_on")){
-                // $("#heart"+wish_seq+"").removeClass("heart_on");
-
+        function clickHeart(wish_seq) {
             //위시리스트 삭제 
             $.ajax({
-                url:"/api/wish?wish_seq="+wish_seq,
+                url:"/api/member/wish?wish_seq="+wish_seq,
                 type:"delete",
                 success:function(r){
-                    console.log(r);  
-
-                    //재조회
-                    showWishList();
+                    console.log(r);
+                    $("#wish_content"+wish_seq).hide();
                     return;
                 }
-            })       
-            
-            //위시리스트 추가 = 현재페이지에서 실행 못함
-            // $("#heart"+wish_seq+"").addClass("heart_on");
+            })
         }
 
     </script>
@@ -130,6 +135,7 @@
                 </div>
             </div>
         </section>
+        
     </main>
 </body>
 </html>

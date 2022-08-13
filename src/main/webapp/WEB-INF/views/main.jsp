@@ -163,7 +163,7 @@
             }
             
             let data = {
-                //검색바   !!keyword 공백일시 검색제외 in_dt out_dt ""일시 검색제외 guest0일시 검색제외
+                //검색바  !!keyword 공백일시 검색제외 in_dt out_dt ""일시 검색제외 guest0일시 검색제외
                 keyword: keyword,   in_dt: in_dt,           out_dt: out_dt,
                 guest: guest,       dog: dog,
                 
@@ -197,7 +197,6 @@
 
             let wish_tag="";
             let super_host_tag=""; 
-            let total_avg="";
 
             for(let i = 0; i<r.houseList.length; i++){   
                 if(r.houseList[i].wish==1){
@@ -209,8 +208,14 @@
                 if(r.houseList[i].super_host==1){
                     super_host_tag = '<i class="super_host">슈퍼호스트</i>';
                 }
+                
+                //평점이 널 = 후기없음 평점에 New표기
+                let total_avg="";
                 if(r.houseList[i].total_avg==null){
                     total_avg = "New";
+                }
+                else{
+                    total_avg = r.houseList[i].total_avg.toFixed(2);
                 }
                 let house_tag=
                     '<div class="house_content">'+
@@ -240,7 +245,7 @@
 
         }
 
-        //하트 클릭
+        //하트 클릭  ##로그인페이지 연결
         function wish(wish_seq,house_seq) {
             if(wish_seq==null) {
                 alert("위시리스트에 추가하시려면 로그인이 필요합니다.");
@@ -252,20 +257,20 @@
                 $("#heart"+house_seq+"").removeClass("heart_on");
 
                 $.ajax({
-                    url:"/api/wish?wish_seq="+wish_seq,
+                    url:"/api/member/wish?wish_seq="+wish_seq,
                     type:"delete",
                     success:function(r){
                         console.log(r);
                         return;
                     }
-                })       
+                })
             }
             //위시리스트 추가
             else{
                 $("#heart"+house_seq+"").addClass("heart_on");
                 
                 $.ajax({
-                    url:"/api/wish?house_seq="+house_seq,
+                    url:"/api/member/wish?house_seq="+house_seq,
                     type:"put",
                     success:function(r){
                         console.log(r);
@@ -302,7 +307,7 @@
                         <button class="plus" onclick="plus(0)">+</button>
                     </div>
                 </div>
-
+                
                 <div class="child_wrap">
                     <h3 class="inner_title">어린이</h3>
                     <p class="inner_desc">만 2~12세</p>

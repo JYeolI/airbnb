@@ -6,4 +6,5 @@ import lombok.Data;
 public class HouseAndReviewCntVO {
     private Integer hosting_house_cnt;
     private Integer total_review_cnt;
+    private Integer house_review_cnt;
 }

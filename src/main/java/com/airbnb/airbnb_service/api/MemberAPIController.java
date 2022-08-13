@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.airbnb.airbnb_service.mapper.MemberMapper;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/member")
 public class MemberAPIController {
     @Autowired MemberMapper member_mapper;
-    
+
     //위시리스트 위시리스트 숙소 조회
     @GetMapping("/wish")
     public Map<String, Object> getWishViewData(HttpSession session) {
@@ -49,7 +49,7 @@ public class MemberAPIController {
             order = 1;
         }
         
-        member_mapper.insertWish(user_seq, house_seq, order);
+        member_mapper.insertWish(user_seq, house_seq, order+1);
         
         resultMap.put("status", true);
         resultMap.put("message", "위시리스트에 추가되었습니다.");
@@ -70,4 +70,5 @@ public class MemberAPIController {
         resultMap.put("message", "위시리스트에서 삭제되었습니다.");
         return resultMap;
     }
+    
 }

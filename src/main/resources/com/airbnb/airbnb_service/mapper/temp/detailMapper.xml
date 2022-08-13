@@ -7,12 +7,15 @@
         SELECT 
             hi.hi_seq AS house_seq,
             hi.hi_name AS house_name,
+            cs.cs_content AS house_sort,
+            csd.csd_content AS house_sort_detail,
             hi.hi_description AS house_description,
             hi.hi_rule AS house_rule,
             hi.hi_refund_day AS house_refund_day,
             hi.hi_status AS house_status,
             cc.cc_content AS house_country,
-            hai.hai_city AS house_city, hai.hai_detail AS house_address,
+            hai.hai_city AS house_city,
+            hai.hai_detail AS house_address,
             hgi.hgi_guest AS house_guest,
             hgi.hgi_bed  AS house_bed,
             hgi.hgi_bedroom AS house_bedroom,
@@ -25,15 +28,19 @@
             mimg.mimg_file AS host_img
         FROM house_info hi
         LEFT JOIN house_address_info hai 
-            ON hi.hi_hai_seq = hai.hai_seq
+            ON hi.hi_seq = hai.hai_hi_seq 
         LEFT JOIN category_country cc
             ON cc.cc_seq = hai.hai_cc_seq
         LEFT JOIN member_info mi 
             ON hi.hi_mi_seq = mi.mi_seq
         LEFT JOIN member_img mimg 
-            ON mi.mi_mimg_seq = mimg.mimg_seq
+            ON mi.mi_seq = mimg.mimg_mi_seq
         LEFT JOIN house_guest_info hgi 
-            ON hgi.hgi_seq = hi.hi_hgi_seq
+            ON hgi.hgi_hi_seq = hi.hi_seq
+        LEFT JOIN category_sort_detail csd
+            ON csd.csd_seq = hi.hi_csd_seq
+        LEFT JOIN category_sort cs
+            ON cs.cs_seq = csd.csd_cs_seq 
         WHERE hi.hi_seq = #{house_seq}
     </select>
     
@@ -50,15 +57,20 @@
         LEFT JOIN member_info mi 
             ON rev.rev_mi_seq = mi.mi_seq
         LEFT JOIN member_img mimg 
-            ON mi.mi_mimg_seq = mimg.mimg_seq
+            ON mi.mi_seq = mimg.mimg_mi_seq
         LEFT JOIN review_reply rpl 
             ON rev.rev_seq = rpl.rpl_rev_seq
         WHERE rev.rev_public = 1
-        AND rev.rev_hi_seq = #{house_seq}
-        AND (
-                mi.mi_name like concat('%',#{keyword},'%')
-                OR rev.rev_content like concat('%',#{keyword},'%')
-            )
+            AND rev.rev_hi_seq = #{house_seq}
+        <if test="keyword!=null">
+            AND (
+                    mi.mi_name like concat('%',#{keyword},'%')
+                    OR rev.rev_content like concat('%',#{keyword},'%')
+                )
+        </if>
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
     </select>
 
     <select id="selectHouseAmenityList" resultType="com.airbnb.airbnb_service.data.temp.detail.HouseAmenityVO">
@@ -72,6 +84,9 @@
             ON ham.ham_ca_seq = ca.ca_seq
         WHERE ham_hi_seq = #{house_seq}
         ORDER BY ca.ca_type asc
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
     </select>
 
     <select id="selectHouseReviewPoint" resultType="com.airbnb.airbnb_service.data.temp.detail.HouseReviewPointVO">
@@ -87,28 +102,29 @@
         WHERE rpv_hi_seq = #{house_seq}
     </select>
 
+    <select id="selectHouseReviewCnt" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS house_review_cnt
+        FROM review_info
+        WHERE rev_hi_seq = #{house_seq}
+    </select>
+
     <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.temp.detail.HouseAndReviewCntVO">
-        SELECT 
-            COUNT(*) AS hosting_house_cnt,
-            SUM(rev_cnt) AS total_review_cnt
-        FROM house_info hi
-        LEFT JOIN (
-                    SELECT 
-                        rev_hi_seq, 
-                        COUNT(*) AS rev_cnt
-                    FROM review_info
-                    GROUP BY rev_hi_seq
-                )rev
-            ON hi.hi_seq = rev.rev_hi_seq
+        SELECT  
+                COUNT(DISTINCT rev_seq) as total_review_cnt,
+                COUNT(DISTINCT hi_seq) as hosting_house_cnt
+        FROM review_info rev
+        LEFT OUTER JOIN house_info hi 
+            ON rev.rev_hi_seq = hi.hi_seq 
+        WHERE rev.rev_public = 1
         GROUP BY hi_mi_seq
-        HAVING hi_mi_seq = #{house_seq}
+        HAVING hi_mi_seq = #{host_seq}
     </select>
 
     <select id="selectHouseImageList" resultType="java.lang.String">
         SELECT himg_file AS house_image
         FROM house_img himg
-        WHERE himg_hi_seq = #{house_seq}
-        ORDER BY himg_main desc
+        WHERE himg.himg_hi_seq = #{house_seq}
+        ORDER BY himg.himg_main DESC
     </select>
 
     <select id="selectHostLangList" resultType="java.lang.String">
@@ -116,7 +132,7 @@
         FROM member_lang_info mli
         LEFT JOIN category_lang cl 
             ON mli.mli_cl_seq = cl.cl_seq
-        WHERE mli.mli_mi_seq = 1
+        WHERE mli.mli_mi_seq = #{host_seq}
     </select>
 
 </mapper>

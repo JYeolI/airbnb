@@ -13,10 +13,12 @@ import com.airbnb.airbnb_service.data.temp.detail.HouseReviewVO;
 @Mapper
 public interface detailMapper {
     public HouseDetailVO selectHouseDetail(Integer house_seq);
-    public List<HouseReviewVO> selectHouseReview(Integer house_seq, String keyword);
-    public List<HouseAmenityVO> selectHouseAmenityList(Integer house_seq);
+    public List<HouseReviewVO> selectHouseReview(Integer house_seq, Integer limit, String keyword);
+    public List<HouseAmenityVO> selectHouseAmenityList(Integer house_seq, Integer limit);
     public HouseReviewPointVO selectHouseReviewPoint(Integer house_seq);
-    public HouseAndReviewCntVO selectHouseAndReviewCnt(Integer house_seq);
+    
+    public Integer selectHouseReviewCnt(Integer house_seq);
+    public HouseAndReviewCntVO selectHouseAndReviewCnt(Integer host_seq);
     public List<String> selectHouseImageList(Integer house_seq);
-    public List<String> selectHostLangList(Integer house_seq);
+    public List<String> selectHostLangList(Integer host_seq);
 }

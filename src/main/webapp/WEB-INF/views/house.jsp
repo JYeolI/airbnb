@@ -29,7 +29,7 @@
 
         $(function(){
             $.ajax({
-                url:"/api/temp/detail?house_seq="+house_seq,
+                url:"/api/house/?house_seq="+house_seq,
                 type:"get",
                 success:function(r){
                     console.log(r)
@@ -156,7 +156,7 @@
             })
 
             $.ajax({
-                url:"/api/temp/review/list?house_seq="+house_seq,
+                url:"/api/review/list?house_seq="+house_seq,
                 type:"get",
                 success:function(r){
                     console.log(r)

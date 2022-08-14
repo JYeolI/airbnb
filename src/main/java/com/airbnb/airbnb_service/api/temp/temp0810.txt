@@ -20,12 +20,12 @@ import com.airbnb.airbnb_service.mapper.temp.detailMapper;
 public class temp0810 {
     @Autowired detailMapper detail_mapper;
     
-    //숙소 상세정보 호스트정보
+    //숙소상세 숙소정보 호스트정보
     @GetMapping("/detail")
     @Transactional
     public Map<String, Object> getHouseDetailData(@RequestParam Integer house_seq) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-
+        
         HouseDetailVO houseDetail = detail_mapper.selectHouseDetail(house_seq);
         Integer host_seq = houseDetail.getHost_seq();
 
@@ -53,7 +53,7 @@ public class temp0810 {
 
 
 
-    //숙소 후기 숙소 점수 호스트 전체후기개수
+    //숙소상세 후기 숙소 점수 호스트 전체후기개수
     @GetMapping("/review/list")
     @Transactional
     public Map<String, Object> getHouseReviewData(@RequestParam Integer house_seq) {

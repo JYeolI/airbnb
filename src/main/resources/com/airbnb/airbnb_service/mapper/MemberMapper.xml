@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.MemberMapper">
-
     <select id="selectWishList" resultType="com.airbnb.airbnb_service.data.response.WishViewResponseVO">
         SELECT wish.*,
             hi.hi_name,
@@ -36,25 +35,52 @@
         WHERE wish.wish_mi_seq = #{user_seq} 
             AND himg.himg_main = 1
     </select>
-
     <insert id="insertWish">
         INSERT INTO wish_info
         (wish_mi_seq, wish_hi_seq, wish_order)
         VALUES
         (#{user_seq}, #{house_seq}, #{order})
-    </insert>
-    
+    </insert>    
     <select id="selectWishOrderMax" resultType="java.lang.Integer">
         SELECT max(wish_order)
         FROM wish_info
         WHERE wish_mi_seq = #{user_seq}
-    </select>
-        
+    </select>        
     <delete id="deleteWish">
         DELETE FROM wish_info
         WHERE wish_mi_seq = #{user_seq} 
             AND wish_seq= #{wish_seq}
     </delete>
 
-
+    <select id="selectMemberProfile" resultType="com.airbnb.airbnb_service.data.response.ProfileVO">
+        SELECT
+            mi_name as memeber_name,
+            mi_description as member_desc,
+            cc_content as country,
+            mai_city as city,
+            mai_detail as member_address,
+            mimg_file as profile_img,
+            mi_status as member_status,
+            mi_host_grade as host_grade,
+            mi_reg_dt as reg_dt
+        FROM member_info mi
+        LEFT JOIN member_address_info mai
+            ON mi.mi_seq = mai.mai_mi_seq
+        LEFT JOIN category_country cc
+            ON mai.mai_cc_seq = cc.cc_seq
+        LEFT JOIN member_img mimg
+            on mimg.mimg_mi_seq = mi.mi_seq
+        where mi.mi_seq = #{member_seq}
+    </select>
+    <select id="isDupChkId" resultType="java.lang.Boolean">
+        SELECT count(*) 
+        FROM member_info 
+        WHERE mi_id = #{id}
+    </select>
+    <insert id="insertMember">
+        INSERT INTO member_info
+        (mi_id, mi_pwd, mi_name, mi_gender)
+        VALUSES
+        (#{mi_id}, #{mi_pwd}, #{mi_name}, #{mi_gender})
+    </insert>
 </mapper>

@@ -39,7 +39,7 @@ public class ImgAPIController {
         Path folderLocation = Paths.get(path+"/"+type);
         
         //이미지DB등록 없을시 디폴트 이미지 가져옴
-        if(filename==null){filename = "default.png";}
+        if(filename==null||filename==""){filename = "default.png";}
 
         Path filePath = folderLocation.resolve(filename);
         Resource r = null;

@@ -1,4 +1,4 @@
-package com.airbnb.airbnb_service.data.temp.detail;
+package com.airbnb.airbnb_service.data.response;
 
 import lombok.Data;
 

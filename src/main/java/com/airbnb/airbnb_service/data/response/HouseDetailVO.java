@@ -1,4 +1,4 @@
-package com.airbnb.airbnb_service.data.temp.detail;
+package com.airbnb.airbnb_service.data.response;
 
 import java.util.Date;
 
@@ -30,5 +30,4 @@ public class HouseDetailVO {
     private Integer super_host;
     private Integer host_status;
     private String host_img;
-
 }

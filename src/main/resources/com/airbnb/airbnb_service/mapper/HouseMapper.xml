@@ -122,4 +122,100 @@
             AND booking = 0
         </if>
     </select>
+    
+    <select id="selectHouseList" resultType="com.airbnb.airbnb_service.data.response.ProfileHostingHouseVO">
+        SELECT
+            hi_seq as house_seq,
+            hi_name as house_name,
+            himg_file as house_img,
+            total_avg,
+            hi_type as type,
+            cs_content as sort,
+            csd_content as sort_detail,
+            hi_description as house_desc
+        FROM member_info mi
+        LEFT JOIN house_info hi
+            ON mi.mi_seq = hi.hi_mi_seq
+        LEFT JOIN house_img himg
+            ON hi.hi_seq = himg.himg_hi_seq
+        LEFT JOIN rev_point_view rpv 
+            ON rpv.rpv_hi_seq = hi.hi_seq 
+        LEFT JOIN category_sort_detail csd
+            ON hi.hi_csd_seq = csd.csd_seq
+        LEFT JOIN category_sort cs
+            ON csd.csd_cs_seq = cs.cs_seq
+        WHERE mi.mi_seq = #{member_seq} 
+            AND himg.himg_main = 1 AND hi.hi_status = 0
+    </select>
+    
+    <select id="selectHouseDetail" resultType="com.airbnb.airbnb_service.data.response.HouseDetailVO">
+        SELECT 
+            hi.hi_seq AS house_seq,
+            hi.hi_name AS house_name,
+            cs.cs_content AS house_sort,
+            csd.csd_content AS house_sort_detail,
+            hi.hi_description AS house_description,
+            hi.hi_rule AS house_rule,
+            hi.hi_refund_day AS house_refund_day,
+            hi.hi_status AS house_status,
+            cc.cc_content AS house_country,
+            hai.hai_city AS house_city,
+            hai.hai_detail AS house_address,
+            hgi.hgi_guest AS house_guest,
+            hgi.hgi_bed  AS house_bed,
+            hgi.hgi_bedroom AS house_bedroom,
+            hgi.hgi_bathroom AS house_bathroom,
+            mi.mi_seq AS host_seq,
+            mi.mi_name AS host_name,
+            mi.mi_description AS host_description,
+            mi.mi_reg_dt AS host_reg_dt,
+            mi.mi_host_grade AS super_host,
+            mi.mi_status AS host_status,
+            mimg.mimg_file AS host_img
+        FROM house_info hi
+        LEFT JOIN house_address_info hai 
+            ON hi.hi_seq = hai.hai_hi_seq 
+        LEFT JOIN category_country cc
+            ON cc.cc_seq = hai.hai_cc_seq
+        LEFT JOIN member_info mi 
+            ON hi.hi_mi_seq = mi.mi_seq
+        LEFT JOIN member_img mimg 
+            ON mi.mi_seq = mimg.mimg_mi_seq
+        LEFT JOIN house_guest_info hgi 
+            ON hgi.hgi_hi_seq = hi.hi_seq
+        LEFT JOIN category_sort_detail csd
+            ON csd.csd_seq = hi.hi_csd_seq
+        LEFT JOIN category_sort cs
+            ON cs.cs_seq = csd.csd_cs_seq 
+        WHERE hi.hi_seq = #{house_seq}
+    </select>    
+    <select id="selectHouseAmenityList" resultType="com.airbnb.airbnb_service.data.response.HouseAmenityVO">
+        SELECT
+            ca.ca_type AS amenity_type,
+            ca.ca_content AS amenity_content,
+            ca.ca_description AS amenity_description,
+            ca.ca_icon AS amenity_icon
+        FROM house_amenity_info ham
+        LEFT JOIN category_amenity ca 
+            ON ham.ham_ca_seq = ca.ca_seq
+        WHERE ham_hi_seq = #{house_seq}
+        ORDER BY ca.ca_type asc
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
+    </select>
+    <select id="selectHouseImageList" resultType="java.lang.String">
+        SELECT himg_file AS house_image
+        FROM house_img himg
+        WHERE himg.himg_hi_seq = #{house_seq}
+        ORDER BY himg.himg_main DESC
+    </select>
+    <select id="selectHostLangList" resultType="java.lang.String">
+        SELECT cl.cl_content AS lang
+        FROM member_lang_info mli
+        LEFT JOIN category_lang cl 
+            ON mli.mli_cl_seq = cl.cl_seq
+        WHERE mli.mli_mi_seq = #{host_seq}
+    </select>
+
 </mapper>

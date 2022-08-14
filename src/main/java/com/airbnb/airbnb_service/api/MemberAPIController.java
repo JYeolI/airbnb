@@ -112,13 +112,13 @@ public class MemberAPIController {
         Integer limit = 10;
         List<ProfileReviewVO> houseReviewList = review_mapper.selectHouseReviewList(member_seq,limit);
         List<ProfileReviewVO> profileReviewList = review_mapper.selectProfileReviewList(member_seq,limit);
-        Integer house_rev_total_cnt = review_mapper.selectHouseReviewTotalCnt(member_seq);
-        Integer profile_rev_total_cnt = review_mapper.selectProfileReviewTotalCnt(member_seq);
+        Integer houseReviewCnt = review_mapper.selectHouseReviewTotalCnt(member_seq);
+        Integer profileReviewCnt = review_mapper.selectProfileReviewTotalCnt(member_seq);
         
         resultMap.put("reviewListToHost", houseReviewList);
         resultMap.put("reviewListToGuest", profileReviewList);        
-        resultMap.put("house_rev_total_cnt", house_rev_total_cnt);
-        resultMap.put("profile_rev_total_cnt", profile_rev_total_cnt);
+        resultMap.put("houseReviewCnt", houseReviewCnt);
+        resultMap.put("profileReviewCnt", profileReviewCnt);
         
         // ##처리 이미지파일api쪽에서 겟할떄
         // if(member.getMimg_file() == null) { member.setMimg_file("default.png"); }

@@ -112,7 +112,7 @@
         FROM review_info
         WHERE rev_hi_seq = #{house_seq}
     </select>
-    <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.response.HouseAndReviewCntVO">
+    <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.response.HouseDetailCntVO">
         SELECT  
                 COUNT(DISTINCT rev_seq) as total_review_cnt,
                 COUNT(DISTINCT hi_seq) as hosting_house_cnt

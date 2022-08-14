@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.airbnb.airbnb_service.data.response.HouseAndReviewCntVO;
+import com.airbnb.airbnb_service.data.response.HouseDetailCntVO;
 import com.airbnb.airbnb_service.data.response.HouseReviewPointVO;
 import com.airbnb.airbnb_service.data.response.HouseReviewVO;
 import com.airbnb.airbnb_service.data.response.ProfileReviewVO;
@@ -21,5 +21,5 @@ public interface ReviewMapper {
     public List<HouseReviewVO> selectHouseReviewAndReply(Integer house_seq, Integer limit, String keyword);
     public HouseReviewPointVO selectHouseReviewPoint(Integer house_seq);
     public Integer selectHouseReviewCnt(Integer house_seq);
-    public HouseAndReviewCntVO selectHouseAndReviewCnt(Integer host_seq);
+    public HouseDetailCntVO selectHouseAndReviewCnt(Integer host_seq);
 }

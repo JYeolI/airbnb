@@ -1,4 +1,4 @@
-package com.airbnb.airbnb_service.data.temp;
+package com.airbnb.airbnb_service.data.response;
 
 import java.util.Date;
 

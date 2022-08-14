@@ -46,8 +46,9 @@
                     let side_profile_tag =
                         '<img src="/img/member/'+r.memberInfo.profile_img+'">'+
                         isSuperHost+
-                        '<p class="review_count">후기 '+(r.profile_rev_total_cnt+r.house_rev_total_cnt)+'개</p>';
+                        '<p class="review_count">후기 '+(r.profileReviewCnt+r.houseReviewCnt)+'개</p>';
                     $(".profile_side_area").append(side_profile_tag);
+                    
 
                     // first section
                     $(".main_profile_wrap h1 span").html(r.memberInfo.memeber_name);
@@ -96,19 +97,19 @@
                             $(".hosting_house_wrap").append(hosting_house_tag);
                         }
                     }
-
+                    
                     // third section
-                    $(".review_count span").append(r.profile_rev_total_cnt+r.house_rev_total_cnt);
-                    $(".review_from_guest span").append(r.house_rev_total_cnt);
-                    $(".review_from_host span").append(r.profile_rev_total_cnt);
+                    $(".review_count span").append(r.profileReviewCnt+r.houseReviewCnt);
+                    $(".review_from_guest span").append(r.houseReviewCnt);
+                    $(".review_from_host span").append(r.profileReviewCnt);
 
 
                     //리뷰 전환버튼 리뷰수0일시 제거/클릭시 클래스 추가
-                    if(r.house_rev_total_cnt != 0 ) {
+                    if(r.houseReviewCnt != 0 ) {
                         $(".host_review").addClass("on");
                         $(".on").show();
                     }
-                    if(r.house_rev_total_cnt == 0 || r.profile_rev_total_cnt == 0) {
+                    if(r.houseReviewCnt == 0 || r.profileReviewCnt == 0) {
                         $(".review_button").remove();
                     }
                     $(".swap_btn").click(function(){

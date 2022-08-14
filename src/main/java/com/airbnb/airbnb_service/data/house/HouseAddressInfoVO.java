@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class HouseAddressInfoVO {
     private Integer hai_seq;
+    private Integer hai_hi_seq;
     private Integer hai_cc_seq;
     private String hai_city;
     private String hai_detail;

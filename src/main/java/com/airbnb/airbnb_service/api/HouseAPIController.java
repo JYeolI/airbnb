@@ -9,25 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.airbnb.airbnb_service.data.request.HouseRequestVO;
 import com.airbnb.airbnb_service.data.request.SearchRequestVO;
-import com.airbnb.airbnb_service.data.response.HouseAndReviewCntVO;
+import com.airbnb.airbnb_service.data.response.HouseDetailCntVO;
 import com.airbnb.airbnb_service.data.response.HouseDetailVO;
 import com.airbnb.airbnb_service.mapper.HouseMapper;
 import com.airbnb.airbnb_service.mapper.ReviewMapper;
 
 @RestController
-@RequestMapping("/api/house")
+@RequestMapping("/api")
 public class HouseAPIController {
     @Autowired HouseMapper house_mapper;
     @Autowired ReviewMapper review_mapper;
 
     //메인 숙소조회
-    @PostMapping("/list")
+    @PostMapping("/house/list")
     public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO request, HttpSession session) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
@@ -42,7 +43,7 @@ public class HouseAPIController {
     }
     
     //숙소상세 숙소정보 호스트정보
-    @GetMapping("/")
+    @GetMapping("/house")
     @Transactional
     public Map<String, Object> getHouseDetailData(@RequestParam Integer house_seq) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
@@ -55,9 +56,12 @@ public class HouseAPIController {
         resultMap.put("houseDeatil", houseDetail);        
         
         Integer houseReviewCnt = review_mapper.selectHouseReviewCnt(house_seq);
-        HouseAndReviewCntVO houseDetailCnt =  review_mapper.selectHouseAndReviewCnt(host_seq);
-        houseDetailCnt.setHouse_review_cnt(houseReviewCnt);
-        resultMap.put("houseDetailCnt", houseDetailCnt);
+        if(houseReviewCnt!=null){
+            HouseDetailCntVO houseDetailCnt =  review_mapper.selectHouseAndReviewCnt(host_seq);
+            houseDetailCnt.setHouse_review_cnt(houseReviewCnt);
+            resultMap.put("houseDetailCnt", houseDetailCnt);
+        }
+        
 
         resultMap.put("imgList", house_mapper.selectHouseImageList(house_seq));
         resultMap.put("langList", house_mapper.selectHostLangList(host_seq));
@@ -71,4 +75,28 @@ public class HouseAPIController {
         return resultMap;
     }
 
+    @PutMapping("/house")
+    public Map<String, Object> putHostingSave(@RequestBody HouseRequestVO request, HttpSession session) {
+        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        System.out.println(request);
+        // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        // Integer user_seq = user.getMi_seq();
+        Integer user_seq = 1;
+        request.getHouse_info().setHi_mi_seq(user_seq);
+
+        house_mapper.insertHouseInfo(request.getHouse_info());
+        Integer house_seq = request.getHouse_info().getHi_seq();
+
+        request.getAddress_info().setHai_hi_seq(house_seq);
+        request.getGuest_info().setHgi_hi_seq(house_seq);
+        request.getFee_info().setHfi_hi_seq(house_seq);
+
+        house_mapper.insertHouseImg(house_seq, request.getImg_list());
+        house_mapper.insertHouseGuest(request.getGuest_info());
+        house_mapper.insertHouseAmenity(house_seq, request.getAmenity_list());
+        house_mapper.insertHouseFee(request.getFee_info());
+        house_mapper.insertHouseAddress(request.getAddress_info());
+
+        return resultMap;
+    }
 }

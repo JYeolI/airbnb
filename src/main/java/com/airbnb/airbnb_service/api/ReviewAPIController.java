@@ -19,7 +19,7 @@ import com.airbnb.airbnb_service.mapper.ReviewMapper;
 public class ReviewAPIController {
     @Autowired ReviewMapper review_mapper;
     
-    //숙소상세 후기 숙소 점수 호스트 전체후기개수
+    //숙소상세 후기 및 답글 / 숙소 점수 / 전체후기개수
     @GetMapping("/list")
     @Transactional
     public Map<String, Object> getHouseReviewData(@RequestParam Integer house_seq, @Nullable Integer limit, @Nullable String keyword) {

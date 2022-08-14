@@ -31,5 +31,16 @@ public class MainController {
     public String getJoin() {
         return "/join";
     }
+    //호스팅(호스트 시작하기 = 숙소추가)
+    @GetMapping("/hosting")
+    public String getHosting() {
+        return "/hosting";
+    }
+    //여행(예약정보 확인)
+    @GetMapping("/trip")
+    public String getTrip() {
+        return "/trip";
+    }
+    
     
 }

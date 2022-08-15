@@ -53,7 +53,7 @@ public class HouseAPIController {
 
 
         // 날짜 침대 침실 정보 변화 환불날짜 계산
-        resultMap.put("houseDeatil", houseDetail);        
+        resultMap.put("houseDetail", houseDetail);        
         
         Integer houseReviewCnt = review_mapper.selectHouseReviewCnt(house_seq);
         if(houseReviewCnt!=null){

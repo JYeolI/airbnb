@@ -9,7 +9,7 @@
             rev_content as content,
             mimg_file as writer_img,
             mi_name writer_name,
-            cc_content as writer_conutry,
+            cc_content as writer_country,
             mi_reg_dt as join_dt
         FROM house_info hi
         LEFT JOIN review_info rev

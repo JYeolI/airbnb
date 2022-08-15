@@ -75,6 +75,7 @@ public class HouseAPIController {
         return resultMap;
     }
 
+    //호스팅 숙소 추가
     @PutMapping("/house")
     public Map<String, Object> putHostingSave(@RequestBody HouseRequestVO request, HttpSession session) {
         Map<String,Object> resultMap=new LinkedHashMap<String, Object>();

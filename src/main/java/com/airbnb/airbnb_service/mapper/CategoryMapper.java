@@ -17,7 +17,7 @@ public interface CategoryMapper {
     public List<CategoryBarResponseVO> selectCategoryBar();
     
     public List<CategoryAmenityVO> selectCateAmenityList();
-    public List<CategoryLangVO> selectrCateLangList();
+    public List<CategoryLangVO> selectCateLangList();
     public List<CategorySortVO> selectCateSortList();
     public List<CategorySortDetailVO> selectCateSortDetailList();
     public List<CategoryCountryVO> selectCateCountryList();

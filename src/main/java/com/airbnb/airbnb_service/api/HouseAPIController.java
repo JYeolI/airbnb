@@ -79,7 +79,7 @@ public class HouseAPIController {
     @PutMapping("/house")
     public Map<String, Object> putHostingSave(@RequestBody HouseRequestVO request, HttpSession session) {
         Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
-        System.out.println(request);
+        
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;

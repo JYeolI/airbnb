@@ -17,6 +17,9 @@
         .filter_block {border-bottom: 1px solid #999;}
         .icon {width: 50px; height: 50px; background-position: center; background-size: 50%; background-repeat: no-repeat;}
         .wish_heart {width: 20px; height: 20px;}
+        
+        .house_img_wrap {width: 300px; height: 300px;}
+        .house_img {width: 280px; height: 280px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
 
         .house_content { border: 1px solid #000; }
         .heart {
@@ -59,40 +62,42 @@
                     console.log(r)
                     
                     for(let i = 0; i<r.sortList.length; i++){
-                        let sort_tag =                    
-                        '<button class="filter_sort" onclick="toggle_btn()" cs_seq="'+r.sortList[i].cs_seq+'">'+
+                        let sort_tag =   
+                        '<input type="checkbox" name="sort" id="amenity'+i+'" value="'+r.sortList[i].cs_seq+'">'+
+                        '<label for="amenity'+i+'">'+
                             '<div class="filter_icon">'+
-                                '<div class="icon" style="background-image: url(/img/category/'+r.sortList[i].cs_icon+');"></div>'+
+                                '<div class="icon" style="background-image: url(/img/category/'+r.sortList[i].cs_icon+');">'+
+                                '</div>'+
                             '</div>'+
                             '<div class="filter_content">'+
                                 r.sortList[i].cs_content+
                             '</div>'+
-                        '</button>';
+                        '</label>';
+
                         $(".house_sort").append(sort_tag);
                     }
 
                     for(let i = 0; i<r.amenityList.length; i++){
-                        let amenity_tag = '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenityList[i].ca_seq+'">'+
-                                            '<label for="amenity'+i+'">'+r.amenityList[i].ca_content+'</label>';
+                        let amenity_tag = 
+                            '<input type="checkbox" name="amenity" id="amenity'+i+'" value="'+r.amenityList[i].ca_seq+'">'+
+                            '<label for="amenity'+i+'">'+r.amenityList[i].ca_content+'</label>';
+
                         $(".house_amenity").append(amenity_tag);
                     }
 
                     for(let i = 0; i<r.langList.length; i++){
-                        let lang_tag = '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.langList[i].cl_seq+'">'+
-                                        '<label for="amenity'+i+'">'+r.langList[i].cl_content+'</label>';
+                        let lang_tag = 
+                            '<input type="checkbox" name="lang" id="lang'+i+'" value="'+r.langList[i].cl_seq+'">'+
+                            '<label for="lang'+i+'">'+r.langList[i].cl_content+'</label>';
+
                         $(".host_lang").append(lang_tag);
-                    }                    
+                    }    
+                    
                 }
             })
 
         })
-        
-        //외않되시부룰
-        function toggle_btn(){
-            if($(this).hasClass("sort_on")) { $(this).removeClass("sort_on"); return; }
-            $(this).addClass("sort_on");
-        }
-        
+                
         function minus(i){
             let count = parseInt($(".count").eq(i).html())-1;
             if(count<0) return;
@@ -104,8 +109,9 @@
             $(".count").eq(i).html(count);
         }
 
-        var chk_amenity = new Array();
-        var chk_lang = new Array();
+        let chk_sort = new Array();
+        let chk_amenity = new Array();
+        let chk_lang = new Array();
         //검색버튼(검색바/카테고리바/검색필터)
         function search(table_no,cate_bar_seq){
 
@@ -137,9 +143,13 @@
             let bed = $("select[name=bed_select] option:selected").val();
             let bedroom = $("select[name=bedroom_select] option:selected").val();
             let bathroom = $("select[name=bathroom_select] option:selected").val();
+
             //건물유형
-            let sort
-            //편의시설 seq리스트
+            chk_sort = new Array();
+            for(let i = 0; i<$("input[name=sort]:checked").length; i++){
+                chk_sort.push($("input[name=sort]:checked").eq(i).val());
+            }
+            //편의시설
             chk_amenity = new Array();
             for(let i = 0; i<$("input[name=amenity]:checked").length; i++){
                 chk_amenity.push($("input[name=amenity]:checked").eq(i).val());
@@ -153,25 +163,17 @@
             }
             
             let data = {
-                //검색바   !!keyword 공백일시 검색제외 in_dt out_dt ""일시 검색제외 guest0일시 검색제외
-                keyword: keyword,
-                in_dt: in_dt,
-                out_dt: out_dt,
-                guest: guest,
-                dog: dog,
+                //검색바  !!keyword 공백일시 검색제외 in_dt out_dt ""일시 검색제외 guest0일시 검색제외
+                keyword: keyword,   in_dt: in_dt,           out_dt: out_dt,
+                guest: guest,       dog: dog,
+                
                 //카테고리바
-                cate_place: cate_place,
-                cate_sort_detail: cate_sort_detail,
+                cate_place: cate_place,     cate_sort_detail: cate_sort_detail,
+
                 //검색필터 !!컨트롤러 amenity lang 배열길이 0일시 체크해서 검색제외
-                min:min,
-                max:max,
-                type:type,
-                bed:bed,
-                bedroom:bedroom,
-                bathroom:bathroom,
-                sort:null,
-                amenity: chk_amenity,
-                superhost:superhost,
+                min:min,            max:max,                type:type,  
+                bed:bed,            bedroom:bedroom,        bathroom:bathroom,
+                sort:chk_sort,      amenity: chk_amenity,   superhost:superhost,
                 lang: chk_lang
             };
 
@@ -183,7 +185,7 @@
                 contentType:"application/json",
                 data:JSON.stringify(data),           
                 success:function(r) {
-                    // console.log(r);
+                    console.log(r);
                     showHouseList(r);
                 }
             })
@@ -191,11 +193,11 @@
 
         //숙소조회 후 태크 배치
         function showHouseList(r) {
-            console.log(r);
             $(".house_list").html("");
 
             let wish_tag="";
             let super_host_tag=""; 
+
             for(let i = 0; i<r.houseList.length; i++){   
                 if(r.houseList[i].wish==1){
                     wish_tag = '<div class="heart heart_on" id="heart'+r.houseList[i].hi_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].hi_seq+')"></div>';
@@ -205,6 +207,15 @@
                 }
                 if(r.houseList[i].super_host==1){
                     super_host_tag = '<i class="super_host">슈퍼호스트</i>';
+                }
+                
+                //평점이 널 = 후기없음 평점에 New표기
+                let total_avg="";
+                if(r.houseList[i].total_avg==null){
+                    total_avg = "New";
+                }
+                else{
+                    total_avg = r.houseList[i].total_avg.toFixed(2);
                 }
                 let house_tag=
                     '<div class="house_content">'+
@@ -226,7 +237,7 @@
                         '<div class="house_point_wrap">'+
                             '<p>'+
                                 '<span class="star">★</span>'+
-                                '<span class="point">'+r.houseList[i].total_avg+'</span>'+
+                                '<span class="point">'+total_avg+'</span>'+
                             '</p>'+
                     '</div>';
                 $(".house_list").append(house_tag);
@@ -234,7 +245,7 @@
 
         }
 
-        //하트 클릭
+        //하트 클릭  ##로그인페이지 연결
         function wish(wish_seq,house_seq) {
             if(wish_seq==null) {
                 alert("위시리스트에 추가하시려면 로그인이 필요합니다.");
@@ -246,23 +257,22 @@
                 $("#heart"+house_seq+"").removeClass("heart_on");
 
                 $.ajax({
-                    url:"/api/wish?wish_seq="+wish_seq,
+                    url:"/api/member/wish?wish_seq="+wish_seq,
                     type:"delete",
                     success:function(r){
                         console.log(r);
                         return;
                     }
-                })       
+                })
             }
             //위시리스트 추가
             else{
                 $("#heart"+house_seq+"").addClass("heart_on");
-                alert("fejeifj");
+                
                 $.ajax({
-                    url:"/api/wish?house_seq="+house_seq,
+                    url:"/api/member/wish?house_seq="+house_seq,
                     type:"put",
                     success:function(r){
-                        alert("fejeifj@@");
                         console.log(r);
                         return;
                     }
@@ -297,7 +307,7 @@
                         <button class="plus" onclick="plus(0)">+</button>
                     </div>
                 </div>
-
+                
                 <div class="child_wrap">
                     <h3 class="inner_title">어린이</h3>
                     <p class="inner_desc">만 2~12세</p>

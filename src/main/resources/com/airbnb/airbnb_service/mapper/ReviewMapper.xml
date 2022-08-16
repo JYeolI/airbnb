@@ -2,4 +2,132 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.ReviewMapper">
+    <select id="selectHouseReviewList" resultType="com.airbnb.airbnb_service.data.response.ProfileReviewVO">
+        SELECT 
+            mi_seq AS writer_seq,
+            rev_reg_dt AS write_dt,
+            rev_content AS content,
+            mimg_file AS writer_img,
+            mi_name writer_name,
+            cc_content AS writer_country,
+            mi_reg_dt AS join_dt
+        FROM house_info hi
+        LEFT JOIN review_info rev
+            ON hi.hi_seq = rev.rev_hi_seq
+        LEFT JOIN member_info mi
+            ON mi.mi_seq = rev.rev_mi_seq
+        LEFT JOIN member_img mimg
+            ON mi.mi_seq = mimg.mimg_mi_seq
+        LEFT JOIN member_address_info mai
+            ON mi.mi_seq = mai.mai_mi_seq
+        LEFT JOIN category_country cc
+            ON mai.mai_cc_seq = cc.cc_seq
+        WHERE hi.hi_mi_seq = #{member_seq}
+            AND rev.rev_public =1
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
+    </select>
+    <select id="selectProfileReviewList" resultType="com.airbnb.airbnb_service.data.response.ProfileReviewVO">
+        SELECT 
+            mi_seq AS writer_seq,
+            grev_reg_dt AS write_dt,
+            grev_content AS content,
+            mimg_file AS writer_img,
+            mi_name AS writer_name,
+            cc_content AS writer_country,
+            mi_reg_dt AS join_dt
+        FROM guest_review_info grev 
+        LEFT JOIN member_info mi
+            ON grev.grev_writer_mi_seq = mi.mi_seq 
+        LEFT JOIN member_img mimg
+            ON mi.mi_seq = mimg.mimg_mi_seq
+        LEFT JOIN member_address_info mai
+            ON mi.mi_seq = mai.mai_mi_seq
+        LEFT JOIN category_country cc 
+            ON cc.cc_seq = mai.mai_cc_seq 
+        WHERE grev.grev_profile_mi_seq = #{member_seq}
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
+    </select>
+    <select id="selectHouseReviewTotalCnt" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS house_rev_total_cnt
+        FROM review_info rev
+        LEFT JOIN house_info hi
+            ON rev.rev_hi_seq = hi.hi_seq
+        WHERE hi.hi_mi_seq = #{member_seq}
+    </select>
+    <select id="selectProfileReviewTotalCnt" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS profile_rev_total_cnt
+        FROM guest_review_info grev
+        LEFT JOIN member_info mi
+            ON grev.grev_profile_mi_seq = mi.mi_seq
+        WHERE grev.grev_profile_mi_seq = #{member_seq}
+    </select>
+
+    
+    <select id="selectHouseReviewAndReply" resultType="com.airbnb.airbnb_service.data.response.HouseReviewVO">
+        SELECT 
+            mi.mi_seq AS guest_seq,
+            rev.rev_content AS guest_review,
+            rev.rev_reg_dt AS guest_rev_dt,
+            mi.mi_name AS guest_name,
+            mimg.mimg_file AS guest_img,
+            mi2.mi_seq  AS host_seq,
+            mi2.mi_name AS host_name,
+            mimg2.mimg_file AS host_img,
+            rpl.rpl_content  AS host_reply,
+            rpl.rpl_reg_dt AS host_rpl_dt
+        FROM review_info rev
+        LEFT JOIN member_info mi 
+            ON rev.rev_mi_seq = mi.mi_seq
+        LEFT JOIN member_img mimg 
+            ON mi.mi_seq = mimg.mimg_mi_seq
+        LEFT JOIN review_reply rpl 
+            ON rev.rev_seq = rpl.rpl_rev_seq
+        LEFT JOIN member_info mi2
+            ON rpl.rpl_mi_seq = mi2.mi_seq
+        LEFT JOIN member_img mimg2
+            ON mi2.mi_seq = mimg2.mimg_mi_seq
+        WHERE rev.rev_public = 1
+            AND rev.rev_hi_seq = #{house_seq}
+        <if test="keyword!=null">
+            AND (
+                    mi.mi_name like concat('%',#{keyword},'%')
+                    OR rev.rev_content like concat('%',#{keyword},'%')
+                )
+        </if>
+        <if test="limit!=null">
+        LIMIT #{limit}
+        </if>
+    </select>
+    <select id="selectHouseReviewPoint" resultType="com.airbnb.airbnb_service.data.response.HouseReviewPointVO">
+        SELECT
+            clean_avg,
+            correct_avg,
+            communication_avg,
+            location_avg,
+            chechin_avg,
+            cost_avg,
+            total_avg
+        FROM rev_point_view 
+        WHERE rpv_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseReviewCnt" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS house_review_cnt
+        FROM review_info
+        WHERE rev_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.response.HouseDetailCntVO">
+        SELECT  
+                COUNT(DISTINCT rev_seq) AS total_review_cnt,
+                COUNT(DISTINCT hi_seq) AS hosting_house_cnt
+        FROM review_info rev
+        LEFT OUTER JOIN house_info hi 
+            ON rev.rev_hi_seq = hi.hi_seq 
+        WHERE rev.rev_public = 1
+        GROUP BY hi_mi_seq
+        HAVING hi_mi_seq = #{host_seq}
+    </select>
 </mapper>

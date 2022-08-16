@@ -1,0 +1,32 @@
+
+                        if(amenityList[i].type==1){
+                            
+                        }
+                        else if(amenityList[i].type==2){
+                            <h1 class="innertitle">주방 및 식당</h1>
+                            let tag = 
+                        }
+                        else if(amenityList[i].type==3){
+                            <h1 class="innertitle">침실 및 세탁시설</h1>
+                            let tag = 
+                        }
+                        else if(amenityList[i].type==4){
+                            <h1 class="innertitle">엔터테인먼트</h1>
+                            let tag = 
+                        }
+                        else if(amenityList[i].type==5){
+                            <h1 class="innertitle">가족</h1>
+                            let tag = 
+                        }
+                        else if(amenityList[i].type==6){
+                            <h1 class="innertitle">냉난방</h1>
+                            let tag = 
+                        }
+                        else if(amenityList[i].type==7){
+                            <h1 class="innertitle">안전시설물</h1>
+                            let tag = 
+                        }
+                        else{
+                            <h1 class="innertitle">인터넷 업무공간</h1>
+                            let tag = 
+                        }

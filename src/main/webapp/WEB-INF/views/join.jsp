@@ -37,7 +37,6 @@
                     url:"/api/h/idchk?id="+$(this).val(),
                     type:"get",
                     success:function(r) {
-                        console.log(r);
                         if(r) {
                             $(".duplicate").css("display", "block");
                         }
@@ -144,7 +143,6 @@
                     data:JSON.stringify(data),
                     contentType:"application/json",
                     success:function(r) {
-                        console.log(r);
                         alert(r.message);
                         // location.href = "/account/login"
                     }

@@ -19,6 +19,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,12 @@ public class ImgAPIController {
     @Value("${spring.servlet.multipart.location}") String path;
     @GetMapping("/img/{type}/{filename}")
     public ResponseEntity<Resource> getImage(
-        @PathVariable String type, @PathVariable String filename, HttpServletRequest request) {
+        @PathVariable String type, @PathVariable @Nullable String filename, HttpServletRequest request) {
         Path folderLocation = Paths.get(path+"/"+type);
+        
+        //이미지DB등록 없을시 디폴트 이미지 가져옴
+        if(filename==null||filename==""){filename = "default.png";}
+
         Path filePath = folderLocation.resolve(filename);
         Resource r = null;
         try {
@@ -63,8 +68,8 @@ public class ImgAPIController {
             //실제 리소스를 body에 포함
             .body(r);
     }
-    @PutMapping("/{filetype}/upload/{type}")
-    public Map<String,Object> putImageUpload(@PathVariable String filetype, @PathVariable String type, @RequestPart MultipartFile file) {
+    @PutMapping("/img/upload/{type}")
+    public Map<String,Object> putImageUpload(@PathVariable String type, @RequestPart MultipartFile file) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         //업로드 할 파일 경로 생성
         Path folderLocation = Paths.get(path+"/"+type);
@@ -73,25 +78,12 @@ public class ImgAPIController {
         String[] fileNameSplit = fileName.split("\\.");
         String ext = fileNameSplit[fileNameSplit.length-1];
 
-        if(filetype.equals("images")){
-            if(!ext.equalsIgnoreCase("gif") && !ext.equalsIgnoreCase("jpg") && !ext.equalsIgnoreCase("png")){
-                resultMap.put("status", false);
-                resultMap.put("message","이미지 파일 확장자는 jpg, png, gif만 허용합니다.");
-                return resultMap;
-            }
-        }
-        else if(filetype.equals("movies")){
-            if(!ext.equalsIgnoreCase("mp4")){
-                resultMap.put("status", false);
-                resultMap.put("message","영상 파일 확장자는 mp4 허용합니다.");
-                return resultMap;
-            }
-        }
-        else{
+        if(!ext.equalsIgnoreCase("gif") && !ext.equalsIgnoreCase("jpg") && !ext.equalsIgnoreCase("png")){
             resultMap.put("status", false);
-            resultMap.put("message","Invalid filetype : "+filetype+"\n use: [images,movies]");
+            resultMap.put("message","이미지 파일 확장자는 jpg, png, gif만 허용합니다.");
             return resultMap;
         }
+
         Calendar c = Calendar.getInstance();
 
         String saveFileName = StringUtils.cleanPath(type+"_"+c.getTimeInMillis()+"."+ext);
@@ -115,7 +107,7 @@ public class ImgAPIController {
         resultMap.put("fileSize", fileSize);
         return resultMap;
     }
-    @DeleteMapping("/{filetype}/delete/{type}/{filename}")
+    @DeleteMapping("/img/delete/{type}/{filename}")
     public Map<String,Object> deleteImageFile(@PathVariable String type, @PathVariable String filename) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         String filepath = path+"/"+type+"/"+filename;
@@ -136,7 +128,7 @@ public class ImgAPIController {
         return resultMap;
     }
     
-    @DeleteMapping("/images/delete/{type}/list")
+    @DeleteMapping("/img/delete/{type}/list")
     public Map<String,Object> deleteImageList(@PathVariable String type, @RequestBody List<String> imgList) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         for(String filename : imgList){

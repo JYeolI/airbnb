@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.CategoryMapper">
-
-
     <select id="selectCategoryBar" resultType="com.airbnb.airbnb_service.data.response.CategoryBarResponseVO">
         (
         SELECT 1 AS table_no, 
@@ -21,17 +19,26 @@
         )
     </select>
 
+    <select id="selectCateAmenityList" resultType="com.airbnb.airbnb_service.data.category.CategoryAmenityVO">
+        SELECT ca_seq, ca_type, ca_content, ca_icon
+        FROM category_amenity
+    </select>
+    <select id="selectCateLangList" resultType="com.airbnb.airbnb_service.data.category.CategoryLangVO">
+        SELECT cl_seq, cl_content
+        FROM category_lang
+    </select>
+    <select id="selectCateSortList" resultType="com.airbnb.airbnb_service.data.category.CategorySortVO">
+        SELECT cs_seq, cs_content, cs_icon
+        FROM category_sort
+    </select>
+    <select id="selectCateSortDetailList" resultType="com.airbnb.airbnb_service.data.category.CategorySortDetailVO">
+        SELECT csd_seq, csd_cs_seq, csd_content, csd_description, csd_icon
+        FROM category_sort_detail
+    </select>
+    <select id="selectCateCountryList" resultType="com.airbnb.airbnb_service.data.category.CategoryCountryVO">
+        SELECT cc_seq, cc_content
+        FROM category_country
+    </select>
 
-    <select id="selectFilterCateAmenityList" resultType="com.airbnb.airbnb_service.data.category.CategoryAmenityVO">
-            SELECT ca_seq, ca_type, ca_content
-            FROM category_amenity
-    </select>
-    <select id="selectFilterCateLangList" resultType="com.airbnb.airbnb_service.data.category.CategoryLangVO">
-            SELECT cl_seq, cl_content
-            FROM category_lang
-    </select>
-    <select id="selectFilterCateSortList" resultType="com.airbnb.airbnb_service.data.category.CategorySortVO">
-            SELECT cs_seq, cs_content, cs_icon 
-            FROM category_sort
-    </select>
+
 </mapper>

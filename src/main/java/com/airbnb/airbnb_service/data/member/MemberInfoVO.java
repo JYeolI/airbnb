@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 public class MemberInfoVO {
     private Integer mi_seq;
-    private Integer mi_mai_seq;
-    private Integer mi_mimg_seq;
     private String mi_id;
     private String mi_pwd;
     private String mi_name;

@@ -20,7 +20,11 @@ public class CategoryAPIController {
     @GetMapping("/bar")
     public Map<String, Object> getCateBarData() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("cateBarList", cate_mapper.selectCategoryBar());
+        
+        resultMap.put("status", true);
+        resultMap.put("message", "카테고리바의 항목들이 조회되었습니다.");
+        resultMap.put("cateBarList", cate_mapper.selectCategoryBar());
+
         return resultMap;
     }
 
@@ -31,10 +35,24 @@ public class CategoryAPIController {
     @GetMapping("/filter")
     public Map<String, Object> getCateFilterData() {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("sortList", cate_mapper.selectFilterCateSortList());
-            resultMap.put("amenityList", cate_mapper.selectFilterCateAmenityList());
-            resultMap.put("langList", cate_mapper.selectFilterCateLangList());
-            return resultMap;
+
+        resultMap.put("status", true);
+        resultMap.put("message", "검색필터의 항목들이 조회되었습니다.");
+        resultMap.put("sortList", cate_mapper.selectCateAmenityList());
+        resultMap.put("amenityList", cate_mapper.selectCateLangList());
+        resultMap.put("langList", cate_mapper.selectCateSortList());
+        return resultMap;
+    }
+    
+    //호스팅
+    @GetMapping("/hosting")
+    public Map<String, Object> getCateHostingData() {
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
+        resultMap.put("sortList", cate_mapper.selectCateSortList());
+        resultMap.put("amenityList", cate_mapper.selectCateAmenityList());
+        resultMap.put("countryList", cate_mapper.selectCateCountryList());
+        resultMap.put("sortDetailList", cate_mapper.selectCateSortDetailList());
+        return resultMap;
     }
     
 }

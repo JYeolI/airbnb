@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.MemberMapper">
-
     <select id="selectWishList" resultType="com.airbnb.airbnb_service.data.response.WishViewResponseVO">
         SELECT wish.*,
             hi.hi_name,
@@ -16,53 +15,72 @@
             hgi.hgi_bathroom AS bathroom,
             hgi.hgi_dog AS dog,
             hfi.hfi_base_price AS price,
-            rev.rev_cnt,
+            (SELECT COUNT(*) FROM review_info rev WHERE hi.hi_seq = rev.rev_hi_seq) AS rev_cnt,
             rpv.total_avg 
         FROM wish_info wish
         LEFT JOIN house_info hi 
             ON hi.hi_seq = wish.wish_hi_seq 
         LEFT JOIN house_address_info hai 
-            ON hi.hi_hai_seq = hai.hai_seq 
+            ON hi.hi_seq = hai.hai_hi_seq
         LEFT JOIN category_country cc 
             ON hai.hai_cc_seq = cc.cc_seq 
         LEFT JOIN house_guest_info hgi 
-            ON hgi.hgi_seq = hi.hi_hgi_seq 
+            ON hi.hi_seq = hgi.hgi_hi_seq
         LEFT JOIN house_fee_info hfi 
-            ON hfi.hfi_seq = hi.hi_hfi_seq 
-        LEFT JOIN (
-                SELECT * 
-                FROM house_img 
-                WHERE himg_main = 1
-        )himg 
-            ON himg.himg_hi_seq = hi.hi_seq 
-        LEFT JOIN (
-                SELECT rev_hi_seq, count(*) AS rev_cnt
-                FROM review_info
-                GROUP BY rev_hi_seq
-        )rev
-            ON rev.rev_hi_seq = hi.hi_seq
+            ON hi.hi_seq = hfi.hfi_hi_seq 
+        LEFT JOIN house_img himg 
+            ON hi.hi_seq = himg.himg_hi_seq
         LEFT JOIN rev_point_view rpv 
             ON rpv.rpv_hi_seq = wish.wish_hi_seq 
-        WHERE wish_mi_seq = #{user_seq}
+        WHERE wish.wish_mi_seq = #{user_seq} 
+            AND himg.himg_main = 1
     </select>
-
     <insert id="insertWish">
         INSERT INTO wish_info
         (wish_mi_seq, wish_hi_seq, wish_order)
         VALUES
         (#{user_seq}, #{house_seq}, #{order})
-    </insert>
-    
+    </insert>    
     <select id="selectWishOrderMax" resultType="java.lang.Integer">
-        SELECT max(wish_order)
+        SELECT MAX(wish_order)
         FROM wish_info
         WHERE wish_mi_seq = #{user_seq}
-    </select>
-        
+    </select>        
     <delete id="deleteWish">
         DELETE FROM wish_info
-        WHERE wish_mi_seq = #{user_seq} AND wish_seq= #{wish_seq}
+        WHERE wish_mi_seq = #{user_seq} 
+            AND wish_seq= #{wish_seq}
     </delete>
 
-
+    <select id="selectMemberProfile" resultType="com.airbnb.airbnb_service.data.response.ProfileVO">
+        SELECT
+            mi_name AS memeber_name,
+            mi_description AS member_desc,
+            cc_content AS country,
+            mai_city AS city,
+            mai_detail AS member_address,
+            mimg_file AS profile_img,
+            mi_status AS member_status,
+            mi_host_grade AS host_grade,
+            mi_reg_dt AS reg_dt
+        FROM member_info mi
+        LEFT JOIN member_address_info mai
+            ON mi.mi_seq = mai.mai_mi_seq
+        LEFT JOIN category_country cc
+            ON mai.mai_cc_seq = cc.cc_seq
+        LEFT JOIN member_img mimg
+            on mimg.mimg_mi_seq = mi.mi_seq
+        where mi.mi_seq = #{member_seq}
+    </select>
+    <select id="isDupChkId" resultType="java.lang.Boolean">
+        SELECT COUNT(*) 
+        FROM member_info 
+        WHERE mi_id = #{id}
+    </select>
+    <insert id="insertMember">
+        INSERT INTO member_info
+        (mi_id, mi_pwd, mi_name, mi_gender)
+        VALUSES
+        (#{mi_id}, #{mi_pwd}, #{mi_name}, #{mi_gender})
+    </insert>
 </mapper>

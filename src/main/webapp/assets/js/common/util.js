@@ -22,3 +22,15 @@ function makeDate(date){
 function dateFormatting(dt) {
     return new Date(+new Date(dt) + 3240 * 10000).toISOString().replace("T", " ").replace(/\..*/, '');
 }
+
+
+function minus(i){
+    let count = parseInt($(".count").eq(i).html())-1;
+    if(count<0) return;
+    $(".count").eq(i).html(count);
+}
+function plus(i){
+    let count = parseInt($(".count").eq(i).html())+1;
+    if(count>16) return;
+    $(".count").eq(i).html(count);
+}

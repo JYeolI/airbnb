@@ -12,6 +12,8 @@ public class HouseDetailVO {
     private String house_sort_detail;
     private String house_description;
     private String house_rule;
+    private String house_check_in;
+    private String house_check_out;
     private Integer house_refund_day;
     private Integer house_status;
     private String house_country;
@@ -21,7 +23,6 @@ public class HouseDetailVO {
     private Integer house_bed;
     private Integer house_bedroom;
     private Integer house_bathroom;
-    private Integer house_lastroom;
 
     private Integer host_seq;
     private String host_name;

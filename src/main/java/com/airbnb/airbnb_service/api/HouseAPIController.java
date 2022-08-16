@@ -67,7 +67,7 @@ public class HouseAPIController {
         resultMap.put("langList", house_mapper.selectHostLangList(host_seq));
 
         //편의시설 정보 10개 조회 후 
-        resultMap.put("amenityList", house_mapper.selectHouseAmenityList(house_seq, 10));
+        resultMap.put("amenityList", house_mapper.selectHouseAmenityList(house_seq));
 
         resultMap.put("status", true);
         resultMap.put("message", "숙소 상세 항목들이 조회되었습니다.");

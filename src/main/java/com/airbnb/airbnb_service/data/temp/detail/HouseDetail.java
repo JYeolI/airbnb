@@ -24,7 +24,6 @@ public class HouseDetail {
         private Integer house_bed;
         private Integer house_bedroom;
         private Integer house_bathroom;
-        private Integer house_lastroom;
 
         private Integer host_seq;
         private String host_name;

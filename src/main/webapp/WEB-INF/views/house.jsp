@@ -21,6 +21,11 @@
         .sub_img > div {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .profile_img {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .house_main, .house_desc, .house_room, .house_amenity, .booking_info, .host_info, .house_rule, .review_info {border-bottom: 1px solid #333;}
+        .superhost, .safety_amenity {display: none;}
+        .superhost_on, .amenity_on {display: block;}
+        .guest_popup {display: block;}
+        
+        
     </style>
     <script>
 
@@ -34,7 +39,6 @@
                 type:"get",
                 success:function(r){
                     console.log(r)
-
 
                     //섹션 메인
                     let house_title = r.houseDetail.house_name
@@ -63,7 +67,6 @@
                     //섹션 숙박장소
                     let bed = r.houseDetail.house_bed;
                     let bedroom = r.houseDetail.house_bedroom;
-                    let lastroom = r.houseDetail.house_lastroom;
                     let bathroom = r.houseDetail.house_bathroom;
 
                     //침실 생성
@@ -106,9 +109,18 @@
                         $(".house_room").append(bathroom_tag);
                     }
 
-                    //센션 편의시설
-                    for(let i = 0; i<r.amenityList.length; i++){
-                        let amenity_tag =                             
+                    //섹션 편의시설                    
+                    //모두 가져와서 10개 이상인지 체크하고 10개 이상이면 10개만 우선표시하고 버튼 눌렀을때 전체 태그 생성
+                    let limit = r.amenityList.length;
+                    //편의시설 10개 이상일시 모두보기 팝업 버튼 생성
+                    if(limit>10){
+                        let tag = '<button id="showAmenityAll">편의시설 <span id="amenity_cnt">'+limit+'</span>개 모두 보기</button>';
+                        $(".more_button").append(tag);
+                    }
+                    //편의시설 10개 이상일시 limit 10으로 10개 태그 우선 생성
+                    if(limit>10) limit = 10;
+                    for(let i = 0; i<limit; i++){
+                        let amenity_tag =
                         '<div>'+
                             '<div class="amenity_icon_wrap">'+
                                 '<div class="amenity_icon" style="background-image: url(/img/amenity/'+r.amenityList[i].amenity_icon+');"></div>'+
@@ -116,28 +128,44 @@
                             '<p>'+r.amenityList[i].amenity_content+'</p>'+
                         '</div>';
                         $(".amenity_content").append(amenity_tag);
-                    }
-                    //섹션 편의시설 팝업 버튼 생성
-                    if(r.amenityList.length>10){
-                        let tag = '<button>편의시설 <span id="amenity_cnt"></span>개 모두 보기</button>';
-                        $(".more_amenity").append(tag);
-                    }
 
-                    //섹션 호스트정보 ##서버 연결시 URL변경필요
+                        //하부 건강과안전(59~63) 추가로 태그 표시여부 체크 ##좀더 나은 방법 고민
+                        for(let j = 59; j<64; j++) {
+                            if(r.amenityList[i].amenity_seq == j){
+                                $("#amenity"+j).addClass("amenity_on");
+                            }
+                        }
+                    }
+                    //팝업 섹션 편의시설 태그 모두 생성
+                    $("#showAmenityAll").click( function(){
+                        for(let i = 0; i<r.amenityList.length; i++){
+                            let amenity_tag =
+                            '<div>'+
+                                '<div class="amenity_icon_wrap">'+
+                                    '<div class="amenity_icon" style="background-image: url(/img/amenity/'+r.amenityList[i].amenity_icon+');"></div>'+
+                                '</div>'+
+                                '<p>'+r.amenityList[i].amenity_content+'</p>'+
+                            '</div>';
+                            $(".amenity_popup").append(amenity_tag);
+                        }
+                        $(".amenity_popup").css({"display":"block"});
+                    })
+
+                    //섹션 호스트정보
                     $(".host_name").html(r.houseDetail.host_name);
-                    let hose_profile_tag = 
-                    '<a href="http://localhost:7777/profile?member_seq=+'+r.houseDetail.host_seq+'">'+
+                    let host_profile_tag = 
+                    '<a href="http://localhost:7777/profile?member_seq='+r.houseDetail.host_seq+'">'+
                         '<div class="profile_img" style="background-image: url(/img/member/'+r.houseDetail.host_img+');"></div>'+
                     '</a>';
-                    $(".host_img").append(hose_profile_tag);
-                    $(".reg_dt").html(dateFormatting(r.houseDetail.host_reg_dt));
+                    $(".host_img").append(host_profile_tag);
+                    $(".host_reg_dt").html(dateFormatting(r.houseDetail.host_reg_dt));
                     let rev_cnt = r.houseDetailCnt.house_review_cnt;
                     if(rev_cnt==null) rev_cnt=0;
                     $(".rev_cnt").html(rev_cnt);
                     $(".host_desc").html(r.houseDetail.host_description);
                     $(".hosting_cnt").html(r.houseDetailCnt.hosting_house_cnt);
-                    if(".super_host"==0){
-                        $(".superhost").hide();
+                    if(r.houseDetail.super_host==2){
+                        $(".superhost").addClass("superhost_on");
                     }
                     $(".total_rev_cnt").html(r.houseDetailCnt.total_review_cnt);
                     for(let i = 0; i<r.langList.length; i++){
@@ -145,24 +173,44 @@
                         $(".lang_content").append(tag);
                     }
 
-                    //호스트 다른 숙소 후기
+                    //호스트 다른 숙소 후기 링크 연결
+                    //다른숙소후기 없을시 div(more_review)초기화
                     let more_rev_cnt = r.houseDetailCnt.total_review_cnt-r.houseDetailCnt.house_review_cnt;
-                    $(".more_rev_cnt").html(more_rev_cnt);
+                    if(more_rev_cnt>0){
+                        $(".more_rev_cnt").html(more_rev_cnt);
+                        $(".review_href").attr("href","http://localhost:7777/profile?member_seq="+r.houseDetail.host_seq);
+                    }
+                    else{
+                        $(".more_review").html("");
+                    }
 
-                    //환불정책 ##백에서 계산해서 내주기
-                    $(".refund_dt").html(r.houseDetail.house_refund_day);
+                    //환불정책 ##date 계산
+                    $(".refund_dt").html(r.houseDetail.house_refund_day);                    
+
+                    //섹션 알아두어야 할 사항
+                    $(".check_in").html(r.houseDetail.house_check_in);
+                    $(".check_out").html(r.houseDetail.house_check_out);
+                    $(".additional_rule").html(r.houseDetail.house_rule);
                     
-                    
+                    //예약 어사이드 플러스 버튼 validation
+                    $(".plus").click(function(){
+                        let count = $(this).siblings("p").html();
+                        if(count==r.houseDetail.house_guest){
+                            return;
+                        }
+                        count++;
+                        $(this).siblings("p").html(count);
+                    })
                 }
             })
 
+            //후기 10개 먼저조회
             $.ajax({
-                url:"/api/review/list?house_seq="+house_seq,
+                url:"/api/review/list?house_seq="+house_seq+"&limit="+10,
                 type:"get",
                 success:function(r){
-                    console.log(r)
+                    console.log(r);
 
-                    //섹션 후기정보
                     let total_avg = "";
                     if(r.reviewPoint==null){
                         total_avg = "New";
@@ -172,8 +220,18 @@
                         total_avg = r.reviewPoint.total_avg.toFixed(2);
                     }
                     $(".total_avg").html(total_avg);
+
+                    //섹션 후기정보
+                    let limit = r.reviewList.length;
+                    //후기 10개 이상일시 모두보기 팝업 버튼 생성
+                    if(limit>10){
+                        let tag = '<button onclick="showReviewAll()">모든 후기 <span id="amenity_cnt">'+limit+'</span>개 모두 보기</button>';
+                        $(".more_button").append(tag);
+                    }
                     
-                    for(let i = 0; i<r.reviewList.length; i++){
+                    //후기 10개 먼저 생성
+                    if(limit>10) limit = 10;    
+                    for(let i = 0; i<limit; i++){
                         let review_tag = 
                                 '<div class="review">'+
                                     '<div class="guest_img">'+
@@ -183,7 +241,7 @@
                                     '</div>'+
                                     '<div class="guest_review">'+
                                         '<h5 id="guest_name">'+r.reviewList[i].guest_name+'</h5>'+
-                                        '<p class="reg_dt">'+r.reviewList[i].guest_rev_dt+'</p>'+
+                                        '<p class="reg_dt">'+dateFormatting(r.reviewList[i].guest_rev_dt)+'</p>'+
                                         '<p class="content">'+r.reviewList[i].guest_review+'</p>'+
                                     '</div>'+
                                 '</div>';
@@ -191,200 +249,324 @@
                         if(r.reviewList[i].host_seq != null){
                             let reply_tag =
                                     '<div class="reply">'+
-                                        '<div class="host_img">'+
+                                        '<div class="rpl_host_img">'+
                                             '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
                                                 '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
                                             '</a>'+
                                         '</div>'+
                                         '<div class="host_reply">'+
                                             '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
-                                            '<p class="reg_dt">'+r.reviewList[i].host_rpl_dt+'</p>'+
+                                            '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
                                             '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
                                         '</div>'+
                                     '</div>';
                             $(".review_content").append(reply_tag);
                         }
                     }
+                }
+            })            
+        })
 
+        //버튼 클릭시 후기 전체 조회
+        function showReviewAll(){
+            $.ajax({
+                url:"/api/review/list?house_seq="+house_seq,
+                type:"get",
+                success:function(r){
+                    console.log(r);
+                    
+                    for(let i = 0; i<r.reviewList.length; i++) {
+                        let review_tag = 
+                            '<div class="review">'+
+                                '<div class="guest_img">'+
+                                    '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].guest_seq+'">'+
+                                        '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].guest_img+');"></div>'+
+                                    '</a>'+
+                                '</div>'+
+                                '<div class="guest_review">'+
+                                    '<h5 id="guest_name">'+r.reviewList[i].guest_name+'</h5>'+
+                                    '<p class="reg_dt">'+dateFormatting(r.reviewList[i].guest_rev_dt)+'</p>'+
+                                    '<p class="content">'+r.reviewList[i].guest_review+'</p>'+
+                                '</div>'+
+                            '</div>';
+                        $(".review_popup").append(review_tag);   
+                        if(r.reviewList[i].host_seq != null){
+                            let reply_tag =
+                                    '<div class="reply">'+
+                                        '<div class="rpl_host_img">'+
+                                            '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
+                                                '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
+                                            '</a>'+
+                                        '</div>'+
+                                        '<div class="host_reply">'+
+                                            '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
+                                            '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
+                                            '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
+                                        '</div>'+
+                                    '</div>';
+                            $(".review_popup").append(reply_tag);
+                        }
+                    }
                 }
             })
-        })
-        
+        }
 
+        function openGuestPopup(){
+            $(".guest_popup").css({"display":"block"});
+        }
 
+        function closeGuestPopup(){
+            $(".guest_popup").css({"display":"none"});
+        }
     </script>
 </head>
 <body>
 
+    <section>
+        <div class="house_main">
+            <h1 class = house_title></h1>
+            <h3 class="house_address"></h3>
+            <p>
+                <span>★</span> 
+                <span class="total_avg"></span>
+                <span> · </span>
+                <a onclick="showReviewAll()" href="#">
+                    <span> 후기</span>
+                    <span class="rev_cnt"></span>
+                    <span>개</span>
+                </a>
+            </p>
+            <p class="superhost">
+                <i class="fa-solid fa-medal"></i> 
+                <span>슈퍼호스트</span>
+            </p>
+            <div class="house_img">
+                <div class="main_img">
 
-<section>
-    <div class="house_main">
-        <h1 class = house_title></h1>
-        <h3 class="house_address"></h3>
-        <p>
-            <span>★</span> 
-            <span class="total_avg"></span>
-            <span> · 후기</span>
-            <span class="rev_cnt"></span>
-            <span>개</span>
-        </p>
-        <p class="superhost">
-            <i class="fa-solid fa-medal"></i> 
-            <span>슈퍼호스트</span>
-        </p>
-        <div class="house_img">
-            <div class="main_img">
-
+                </div>
+                <div class="sub_img">
+                    
+                </div>
             </div>
-            <div class="sub_img">
+        </div>
+        <div class="house_desc">
+            <h2 class="desc_title"></h2>
+            <div class="host_img">
                 
             </div>
-        </div>
-    </div>
-    <div class="house_desc">
-        <h2 class="desc_title"></h2>
-        <div class="host_img">
-            
-        </div>
-        <p clasee="house_guest">
-            <span>최대인원</span> 
-            <span class="guest"></span>
-            <span> · 침실</span>
-            <span class="bedroom"></span>
-            <span>개</span>
-            <span> · 침대</span>
-            <span class="bed"></span>
-            <span>개</span>
-            <span> · 욕실</span>
-            <span class="bathroom"></span>
-            <span>개</span>
-        </p>
-        <p class="house_achievement">
-            house_achievement 구현 미정
-        </p>
-        <p class="desc_content"></p>
-    </div>
-    <div class="house_room">
-
-    </div>
-    <div class="house_amenity">
-        <h3 class="inner_title">편의시설</h3>
-        <div class="amenity_content">
-            
-        </div>
-        <div class="more_amenity"></div>
-    </div>
-    <div class="booking_info">
-        #####
-    </div>
-    <div class="review_info">
-        <h3 class="inner_title">후기</h3>
-        <div class="more_review">
-            <div class="icon" style="background-image: url(img/common/star.png);"></div>
-            <p>이 호스트의 다른 숙소에 대한 후기가
-                <span class="more_rev_cnt"></span> 개 있습니다.
-                <a href="#">다른 숙소 후기 보기</a>
+            <p clasee="house_guest">
+                <span>최대인원</span> 
+                <span class="guest"></span>
+                <span> · 침실</span>
+                <span class="bedroom"></span>
+                <span>개</span>
+                <span> · 침대</span>
+                <span class="bed"></span>
+                <span>개</span>
+                <span> · 욕실</span>
+                <span class="bathroom"></span>
+                <span>개</span>
             </p>
+            <p class="house_achievement">
+                ##house_achievement 구현 미정
+            </p>
+            <p class="desc_content"></p>
         </div>
-        <div class="public_msg">
-            <div class="icon" style="background-image: url(img/common/public_msg.png);"></div>
-            <p>여행에 차질이 없도록 최선을 다해 도와드리겠습니다. 모든 예약은 에어비앤비의 게스트 환불 정책에 따라 보호를 받습니다.</p>
+        <div class="house_room">
+
         </div>
-        <div class="review_content">
-            <h3 class="null_msg"></h3>
+        <div class="house_amenity">
+            <h3 class="inner_title">편의시설</h3>
+            <div class="amenity_content">
+                
+            </div>        
+            <div class="more_button"></div>
         </div>
-    </div>
-    <div class="host_info">
-        <div class="host_img">
+        <div class="booking_info">
             
         </div>
-        <h3 class="inner_title">호스트 : <span class="host_name"></span></h3>
-        <p class="reg_dt"></p>
-        <p>
-            <span>★</span> 
-            <span class="total_avg"></span>
-            <span> · 후기</span>
-            <span class="total_rev_cnt"></span>
-            <span>개</span>
-            <span> · 호스팅 중인 숙소</span>
-            <span class="hosting_cnt"></span>
-            <span>개</span>
-        </p>
-        <p class="superhost">
-            <i class="fa-solid fa-medal"></i> 
-            <span>슈퍼호스트</span>
-        </p>
-        <p class="host_desc">
-
-        </p>
-        <div class="superhost_desc">
-
-        </div>
-        <div class="superhost_desc">
-            <h3><span class="host_name"></span>님은 슈퍼호스트입니다.</h3>
-            <p>슈퍼호스트는 풍부한 경험과 높은 평점을 자랑하며 게스트가 숙소에서 편안히 머무를 수 있도록 최선을 다하는 호스트입니다.</p>
-        </div>
-        <div class="host_lang">
-            <p>언어: </p>
-            <p class="lang_content"></p>
-        </div>
-    </div>
-    <div class="house_rule">
-        <h3 class="inner_title">알아두어야 할 사항</h3>
-        <div class="">
-            <h3>숙소 이용규칙</h3>
-            <div>
-                <div class="icon" style="background-image: url(/img/common/timer.png);"></div>
-                <p>체크인 : <span class="check_in"></span></p>
+        <div class="review_info">
+            <h3 class="inner_title">후기</h3>
+            <div class="more_review">
+                <div class="icon" style="background-image: url(img/common/star.png);"></div>
+                <p>이 호스트의 다른 숙소에 대한 후기가
+                    <span class="more_rev_cnt"></span> 개 있습니다.
+                    <a class="review_href" href="">다른 숙소 후기 보기</a>
+                </p>
+                <div class="more_button"></div>
             </div>
-            <div>
-                <div class="icon" style="background-image: url(/img/common/timer.png);"></div>
-                <p>체크아웃 : <span class="check_out"></span></p>
+            <div class="public_msg">
+                <div class="icon" style="background-image: url(img/common/public_msg.png);"></div>
+                <p>여행에 차질이 없도록 최선을 다해 도와드리겠습니다. 모든 예약은 에어비앤비의 게스트 환불 정책에 따라 보호를 받습니다.</p>
+            </div>
+            <div class="review_content">
+                <h3 class="null_msg"></h3>
             </div>
         </div>
-        <div class="">
-            <h3>건강과 안전</h3>
-            <div class="safety_content">
-                <div id="amenity59">
-                    <div class="amenity_icon_wrap">
-                        <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_1.png);"></div>
-                    </div>
-                    <p>화재 경보기</p>
-                </div>            
-                <div id="amenity60">
-                    <div class="amenity_icon_wrap">
-                        <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_2.png);"></div>
-                    </div>
-                    <p>일산화탄소 경보기</p>
-                </div>
-                <div id="amenity61">
-                    <div class="amenity_icon_wrap">
-                        <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_3.png);"></div>
-                    </div>
-                    <p>소화기</p>
-                </div>
-                <div id="amenity62">
-                    <div class="amenity_icon_wrap">
-                        <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_4.png);"></div>
-                    </div>
-                    <p>구급상자</p>
-                </div>
-                <div id="amenity63">
-                    <div class="amenity_icon_wrap">
-                        <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_5.png);"></div>
-                    </div>
-                    <p>숙소 내 보안카메라</p>
-                </div>
+        <div class="host_info">
+            <div class="host_img">
+                
+            </div>
+            <h3 class="inner_title">호스트 : <span class="host_name"></span></h3>
+            <p class="host_reg_dt"></p>
+            <p>
+                <span>★</span> 
+                <span class="total_avg"></span>
+                <span> · 후기</span>
+                <span class="total_rev_cnt"></span>
+                <span>개</span>
+                <span> · 호스팅 중인 숙소</span>
+                <span class="hosting_cnt"></span>
+                <span>개</span>
+            </p>
+            <p class="superhost">
+                <i class="fa-solid fa-medal"></i> 
+                <span>슈퍼호스트</span>
+            </p>
+            <p class="host_desc">
+
+            </p>
+            <div class="superhost">
+                <h3><span class="host_name"></span>님은 슈퍼호스트입니다.</h3>
+                <p>슈퍼호스트는 풍부한 경험과 높은 평점을 자랑하며 게스트가 숙소에서 편안히 머무를 수 있도록 최선을 다하는 호스트입니다.</p>
+            </div>
+            <div class="host_lang">
+                <p>언어: </p>
+                <p class="lang_content"></p>
             </div>
         </div>
-        <div class="">
-            <h3>환불 정책</h3>
-            <p><span class="refund_dt">##컨트롤러에서날짜계산필요##</span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
-            <p class="additional_desc">부분 환불: 전체 숙박 요금의 50%를 환불받으실 수 있습니다. 서비스 수수료는 전액 환불됩니다.</p>
+        <div class="house_rule">
+            <h3 class="inner_title">알아두어야 할 사항</h3>
+            <div class="">
+                <h3>숙소 이용규칙</h3>
+                <div>
+                    <div class="icon" style="background-image: url(/img/common/timer.png);"></div>
+                    <p>체크인 : <span class="check_in"></span></p>
+                </div>
+                <div>
+                    <div class="icon" style="background-image: url(/img/common/timer.png);"></div>
+                    <p>체크아웃 : <span class="check_out"></span></p>
+                </div>
+                <div>
+                    <div class="icon" style="background-image: url(/img/common/public_msg.png);"></div>
+                    <p class="additional_rule"></p>
+                </div>
+            </div>
+            <div class="">
+                <h3>건강과 안전</h3>
+                <div class="safety_content">
+                    <div id="amenity59" class="safety_amenity">
+                        <div class="amenity_icon_wrap">
+                            <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_1.png);"></div>
+                        </div>
+                        <p>화재 경보기</p>
+                    </div>            
+                    <div id="amenity60" class="safety_amenity">
+                        <div class="amenity_icon_wrap">
+                            <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_2.png);"></div>
+                        </div>
+                        <p>일산화탄소 경보기</p>
+                    </div>
+                    <div id="amenity61" class="safety_amenity">
+                        <div class="amenity_icon_wrap">
+                            <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_3.png);"></div>
+                        </div>
+                        <p>소화기</p>
+                    </div>
+                    <div id="amenity62" class="safety_amenity">
+                        <div class="amenity_icon_wrap">
+                            <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_4.png);"></div>
+                        </div>
+                        <p>구급상자</p>
+                    </div>
+                    <div id="amenity63" class="safety_amenity">
+                        <div class="amenity_icon_wrap">
+                            <div class="amenity_icon" id="amenity_icon59" style="background-image: url(/img/amenity/amenity7_5.png);"></div>
+                        </div>
+                        <p>숙소 내 보안카메라</p>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <h3>환불 정책</h3>
+                <p><span class="refund_dt">##컨트롤러에서날짜계산필요</span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
+                <p class="additional_desc">부분 환불: 전체 숙박 요금의 50%를 환불받으실 수 있습니다. 서비스 수수료는 전액 환불됩니다.</p>
+            </div>
+            <div class="report">
+                <a href="#">숙소 신고하기 ##신고기능 추가예정</a>
+            </div>
         </div>
-    </div>
 
-</section>
+    </section>
+    <section>
+        <div class="amenity_popup">
+            //편의시설 팝업
+
+        </div>
+    </section>
+    <section>
+        <div class="review_popup">
+            //후기 모두보기 팝업
+
+        </div>
+    </section>
+    <section>
+        <aside>
+            //예약 어사이드
+            <div class="input_area">
+                <div class="check_in">
+                    <input type="text" name="" id="">
+                </div>
+                <div class="check_out">
+                    <input type="text" name="" id="">
+                </div>
+                <div class="guest">
+                    <p>인원</p>
+                    <p>게스트<span class="guest_cnt"></span></p>          
+                </div>
+            </div>
+            <div class="guest_popup">
+                <div class="adult_wrap">
+                    <h3 class="inner_title">성인</h3>
+                    <p class="inner_desc">만 13세 이상</p>
+                    <div class="adult_counter">
+                        <button class="minus" onclick="minus(0)">-</button>
+                        <p class="count">0</p>
+                        <button class="plus">+</button>
+                    </div>
+                </div>
+                <div class="child_wrap">
+                    <h3 class="inner_title">어린이</h3>
+                    <p class="inner_desc">만 2~12세</p>
+                    <div class="child_counter">
+                        <button class="minus" onclick="minus(1)">-</button>
+                        <p class="count">0</p>
+                        <button class="plus">+</button>
+                    </div>
+                </div>
+                <div class="infant_wrap">
+                    <h3 class="inner_title">유아</h3>
+                    <p class="inner_desc">만 2세 미만</p>
+                    <div class="infant_counter">
+                        <button class="minus" onclick="minus(2)">-</button>
+                        <p class="count">0</p>
+                        <button class="plus">+</button>
+                    </div>
+                </div>    
+                <div class="dog">
+                    <h3 class="inner_title">반려동물</h3>
+                    <p class="inner_desc">보조동물 보조동물은 반려동물이 아니므로 여기에 추가할 필요가 없습니다.</p>                   
+                    <div class="dog_counter">
+                        <button class="minus" onclick="minus(3)">-</button>
+                        <div class="count">0</div>
+                        <button class="plus">+</button>               
+                    </div>
+                </div>
+                <p>이 숙소의 최대 숙박 인원은 <span class="guest"></span>명(유아 포함)입니다. 반려동물 동반은 허용되지 않습니다.</p>
+                <a onclick="closeGuestPopup()">닫기</a>
+            </div>
+        </aside>
+    </section>
 
 
 

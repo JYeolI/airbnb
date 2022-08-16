@@ -97,7 +97,7 @@
             })
 
         })
-                
+
         function minus(i){
             let count = parseInt($(".count").eq(i).html())-1;
             if(count<0) return;

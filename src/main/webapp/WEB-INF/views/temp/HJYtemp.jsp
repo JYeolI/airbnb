@@ -10,7 +10,6 @@
     <title>Document</title>
     <style>
         section {border: 1px solid #000; width: 1200px;}
-        /* .profile_main_area {height: 3000px;} */
         section > div {border: 1px solid #000; width: 1170px; margin: 10px;}
         .hosting_house_info {border: 1px solid #000; width: 400px; margin: 10px;}
         .review_list {border: 1px solid #000; width: 400px; margin: 10px;}
@@ -48,40 +47,39 @@
                     $(".member_address span").html(r.profileList.mai_city+", "+r.profileList.cc_content);
 
                     // second section
+                    console.log(r.houseList);
                     if(r.houseList == undefined) {
                         $(".hosting_house_wrap").remove();
                     }
                     else {
                         $(".hosting_house_wrap h2 span").html(r.profileList.mi_name);
-    
                         for(let i=0; i<r.houseList.length; i++) {
-
+                            let house_type = "";
+                            if(r.houseList[i].hi_type == 1) { house_type = "공간전체"; }
+                            else if(r.houseList[i].hi_type == 2) { house_type = "개인실"; }
+                            else if(r.houseList[i].hi_type == 3) { house_type = "다인실"; }
+                            let hosting_house_tag = 
+                                // url주소 제대로 적을 것
+                                '<a href="#?='+r.houseList[i].hi_seq+'" class="hosting_house_info">'+
+                                    '<img src="/img/house/'+r.houseList[i].himg_file+'">'+
+                                    '<p class="review_point_average">'+
+                                        '<span id="point_star" style="color: #f00">★</span>'+
+                                        '<span id="point_average">'+r.houseList[i].total_avg.toFixed(2)+'</span>'+
+                                        '<span id="point_count">()</span>'+
+                                    '</p>'+
+                                    '<p class="house_info">'+
+                                        '<span id="house_name">'+r.houseList[i].hi_name+'</span>'+
+                                        '<span> · </span>'+
+                                        '<span id="house_name">'+house_type+'</span>'+
+                                        '<span> · </span>'+
+                                        '<span id="house_name">'+r.houseList[i].cs_content+'</span>'+
+                                        '<span> · </span>'+
+                                        '<span id="house_name">'+r.houseList[i].csd_content+'</span>'+
+                                    '</p>'+
+                                    '<p class="house_description">'+r.houseList[i].hi_description+'</p>'+
+                                '</a>';
+                            $(".hosting_house_wrap").append(hosting_house_tag);
                         }
-                        let house_type = "";
-                        if(r.houseList[i].hi_type == 1) { house_type = "공간전체"; }
-                        else if(r.houseList[i].hi_type == 2) { house_type = "개인실"; }
-                        else if(r.houseList[i].hi_type == 3) { house_type = "다인실"; }
-                        let hosting_house_tag = 
-                            // a 태그로 바꿀 것
-                            '<div class="hosting_house_info" data-seq="'+r.houseList[i].hi_seq+'">'+
-                                '<img src="/img/house/'+r.houseList[i].himg_file+'">'+
-                                '<p class="review_point_average">'+
-                                    '<span id="point_star" style="color: #f00">★</span>'+
-                                    '<span id="point_average">'+r.houseList[i].total_avg.toFixed(2)+'</span>'+
-                                    '<span id="point_count">()</span>'+
-                                '</p>'+
-                                '<p class="house_info">'+
-                                    '<span id="house_name">'+r.houseList[i].hi_name+'</span>'+
-                                    '<span> · </span>'+
-                                    '<span id="house_name">'+house_type+'</span>'+
-                                    '<span> · </span>'+
-                                    '<span id="house_name">'+r.houseList[i].cs_content+'</span>'+
-                                    '<span> · </span>'+
-                                    '<span id="house_name">'+r.houseList[i].csd_content+'</span>'+
-                                '</p>'+
-                                '<p class="house_description">'+r.houseList[i].hi_description+'</p>'+
-                            '</div>';
-                        $(".hosting_house_wrap").append(hosting_house_tag);
                     }
 
                     // third section
@@ -92,35 +90,58 @@
                         $(".review_button").remove();
                     }
                     // 게스트가 남긴 후기
-                    for(let i=0; i<r.reviewListToHost.length; i++) {
-                        let review_tag = 
-                            '<div class="review_list">'+
-                                '<p class="review_reg_dt">'+dateFormatting(r.reviewListToHost[i].rev_reg_dt)+'</p>'+
-                                '<p class="review_content">'+r.reviewListToHost[i].rev_content+'</p>'+
-                                '<img src="/img/member/'+r.reviewListToHost[i].mimg_file+'">'+
-                                '<p class="review_writer_info">'+
-                                    '<span id="writer_name">'+r.reviewListToHost[i].mi_name+'님, </span>'+
-                                    '<span id="writer_country">'+r.reviewListToHost[i].cc_content+'</span>'+
-                                '</p>'+
-                                '<p id="writer_reg_dt">'+dateFormatting(r.reviewListToHost[i].mi_reg_dt)+'</p>'+
-                            '</div>';
-                        $(".review_info").append(review_tag);
+                    function reviewListToHost() {
+                        for(let i=0; i<r.reviewListToHost.length; i++) {
+                            let review_tag = 
+                                '<div class="review_list">'+
+                                    '<p class="review_reg_dt">'+dateFormatting(r.reviewListToHost[i].rev_reg_dt)+'</p>'+
+                                    '<p class="review_content">'+r.reviewListToHost[i].rev_content+'</p>'+
+                                    '<a href="#?='+r.reviewListToHost[i].mi_seq+'"><img src="/img/member/'+r.reviewListToHost[i].mimg_file+'"></a>'+
+                                    '<p class="review_writer_info">'+
+                                        '<span id="writer_name">'+r.reviewListToHost[i].mi_name+'님, </span>'+
+                                        '<span id="writer_country">'+r.reviewListToHost[i].cc_content+'</span>'+
+                                    '</p>'+
+                                    '<p id="writer_reg_dt">'+dateFormatting(r.reviewListToHost[i].mi_reg_dt)+'</p>'+
+                                '</div>';
+                            $(".review_info").append(review_tag);
+                        }
                     }
                     // 호스트가 남긴 후기
-                    if(r.reviewListToHost[0] != null) return;
-                    for(let i=0; i<r.reviewListToGuest.length; i++) {
-                        let review_tag = 
-                            '<div class="review_list">'+
-                                '<p class="review_reg_dt">'+dateFormatting(r.reviewListToGuest[i].grev_reg_dt)+'</p>'+
-                                '<p class="review_content">'+r.reviewListToGuest[i].grev_content+'</p>'+
-                                '<img src="/img/member/'+r.reviewListToGuest[i].writer_img+'">'+
-                                '<p class="review_writer_info">'+
-                                    '<span id="writer_name">'+r.reviewListToGuest[i].writer_name+'님, </span>'+
-                                    '<span id="writer_country">'+r.reviewListToGuest[i].writer_country+'</span>'+
-                                '</p>'+
-                                '<p id="writer_reg_dt">'+dateFormatting(r.reviewListToGuest[i].writer_reg_dt)+'</p>'+
-                            '</div>';
-                        $(".review_info").append(review_tag);
+                    function reviewListToGuest() {
+                        for(let i=0; i<r.reviewListToGuest.length; i++) {
+                            let review_tag = 
+                                '<div class="review_list">'+
+                                    '<p class="review_reg_dt">'+dateFormatting(r.reviewListToGuest[i].grev_reg_dt)+'</p>'+
+                                    '<p class="review_content">'+r.reviewListToGuest[i].grev_content+'</p>'+
+                                    '<a href="#?='+r.reviewListToGuest[i].writer_seq+'"><img src="/img/member/'+r.reviewListToGuest[i].writer_img+'"></a>'+
+                                    '<p class="review_writer_info">'+
+                                        '<span id="writer_name">'+r.reviewListToGuest[i].writer_name+'님, </span>'+
+                                        '<span id="writer_country">'+r.reviewListToGuest[i].writer_country+'</span>'+
+                                    '</p>'+
+                                    '<p id="writer_reg_dt">'+dateFormatting(r.reviewListToGuest[i].writer_reg_dt)+'</p>'+
+                                '</div>';
+                            $(".review_info").append(review_tag);
+                        }
+                    }
+                    $(".review_to_host").click(function() {
+                        $(".review_to_guest").css({"font-weight":"normal", "text-decoration":"none"});
+                        $(this).css({"font-weight":"bold", "text-decoration":"underline"});
+                        $(".review_info").html("");
+                        reviewListToHost();
+                    })
+                    $(".review_to_guest").click(function() {
+                        $(".review_to_host").css({"font-weight":"normal", "text-decoration":"none"});
+                        $(this).css({"font-weight":"bold", "text-decoration":"underline"});
+                        $(".review_info").html("");
+                        reviewListToGuest();
+                    })
+                    
+                    if(r.reviewListToHost[0] != null) {
+                        $(".review_to_host").css({"font-weight":"bold", "text-decoration":"underline"});
+                        reviewListToHost();
+                    }
+                    else {
+                        reviewListToGuest();
                     }
                 }
             })

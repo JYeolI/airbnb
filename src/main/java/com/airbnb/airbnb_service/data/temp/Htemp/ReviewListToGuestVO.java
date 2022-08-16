@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ReviewListToGuestVO {
+    private Integer writer_seq;
     private Date grev_reg_dt;
     private String grev_content;
     private String writer_img;

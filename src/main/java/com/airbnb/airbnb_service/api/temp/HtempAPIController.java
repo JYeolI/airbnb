@@ -6,10 +6,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.airbnb.airbnb_service.data.member.MemberInfoVO;
 import com.airbnb.airbnb_service.data.temp.Htemp.HostingHouseListVO;
 import com.airbnb.airbnb_service.data.temp.Htemp.ProfileVO;
 import com.airbnb.airbnb_service.data.temp.Htemp.ReviewListToGuestVO;
@@ -32,6 +35,10 @@ public class HtempAPIController {
         // 호스트 숙소 리스트
         List<HostingHouseListVO> houseList = H_mapper.selectHouseList(member_seq);
 
+        if(member.getMi_host_grade() == 1 || member.getMi_host_grade() == 2) {
+            resultMap.put("houseList", houseList);
+        }
+
         // 후기 리스트
         List<ReviewListToHostVO> reviewListToHosts = H_mapper.selectReviewListGuestToHost(member_seq);
         List<ReviewListToGuestVO> reviewListToGuests = H_mapper.selectReviewListHostToGuest(member_seq);
@@ -41,9 +48,6 @@ public class HtempAPIController {
         for(int i=0; i<reviewListToGuests.size(); i++) {
             if(reviewListToGuests.get(i).getWriter_img() == null) { reviewListToGuests.get(i).setWriter_img("default.png"); }
         }
-        if(member.getMi_host_grade() == 1 && member.getMi_host_grade() == 2) {
-            resultMap.put("houseList", houseList);
-        }
         resultMap.put("profileList", member);
         
         resultMap.put("reviewCountToHost", H_mapper.selectReviewCountGuestToHost(member_seq));
@@ -52,4 +56,20 @@ public class HtempAPIController {
         resultMap.put("reviewListToGuest", reviewListToGuests);
         return resultMap;
     }
+    @GetMapping("/idchk")
+    public Boolean getAccountIDChk(@RequestParam String id) {
+        return H_mapper.isDupChkId(id);
+    }
+    @PutMapping("/join")
+    public Map<String, Object> putAccountInfo(@RequestBody MemberInfoVO data) throws Exception {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        // data.setAi_pwd(AESAlgorithm.Encrypt(data.getAi_pwd()));
+        
+        H_mapper.insertMemberJoin(data);
+        resultMap.put("status", true);
+        resultMap.put("message", "회원가입이 정상적으로 완료되었습니다.");
+        return resultMap;
+    }
+
 }

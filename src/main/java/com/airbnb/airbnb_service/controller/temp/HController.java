@@ -11,4 +11,8 @@ public class HController {
     public String getHProfile() {
         return "/temp/HJYtemp";
     }
+    @GetMapping("/join")
+    public String getHJoin() {
+        return "/temp/HtempMemberJoin";
+    }
 }

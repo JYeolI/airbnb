@@ -63,6 +63,7 @@
     </select>
     <select id="selectReviewListGuestToHost" resultType="com.airbnb.airbnb_service.data.temp.Htemp.ReviewListToHostVO">
         select 
+            mi_seq,
             hi_name,
             rev_reg_dt,
             rev_content,
@@ -85,6 +86,7 @@
     </select>
     <select id="selectReviewListHostToGuest" resultType="com.airbnb.airbnb_service.data.temp.Htemp.ReviewListToGuestVO">
         select 
+            mi_seq as writer_seq,
             grev_reg_dt,
             grev_content,
             mimg_file as writer_img,
@@ -101,5 +103,14 @@
         left join category_country cc 
         on cc.cc_seq = mai.mai_cc_seq 
         where grev.grev_profile_mi_seq = #{member_seq}
-</select>
+    </select>
+    <select id="isDupChkId" resultType="java.lang.Boolean">
+        select count(*) from member_info where mi_id = #{id}
+    </select>
+    <insert id="insertMemberJoin">
+        insert into member_info
+            (mi_id, mi_pwd, mi_name, mi_gender, mi_status, mi_host_grade)
+        values
+            (#{mi_id}, #{mi_pwd}, #{mi_name}, #{mi_gender}, 0, 0)
+    </insert>
 </mapper>

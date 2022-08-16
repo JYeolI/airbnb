@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ReviewListToHostVO {
+    private Integer mi_seq;
     private String hi_name;
     private Date rev_reg_dt;
     private String rev_content;

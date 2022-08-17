@@ -1,0 +1,40 @@
+
+        //str >> date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        // Date startDate = dateFormat.parse(in_dt);
+        // Date endDate = dateFormat.parse(out_dt);
+
+
+        
+        Calendar c1 = Calendar.getInstance();
+        String[] splitInDt = in_dt.split("-");
+        String[] splitOutDt = out_dt.split("-");
+        c1.set(Calendar.YEAR, Integer.parseInt(splitInDt[0]));
+        c1.set(Calendar.MONTH, Integer.parseInt(splitInDt[1])-1);
+        c1.set(Calendar.DATE, Integer.parseInt(splitInDt[2]));
+        c1.set(Calendar.HOUR, 0);
+        c1.set(Calendar.MINUTE, 0);
+        c1.set(Calendar.SECOND, 0);
+        c1.set(Calendar.MILLISECOND, 0);
+
+        Calendar c2 = Calendar.getInstance();
+        System.out.println(Integer.parseInt(splitInDt[0]));
+        System.out.println(Integer.parseInt(splitInDt[1])-1);
+        System.out.println(Integer.parseInt(splitInDt[2]));
+
+        c2.set(Calendar.YEAR, Integer.parseInt(splitOutDt[0]));
+        c2.set(Calendar.MONTH, Integer.parseInt(splitOutDt[1])-1);
+        c2.set(Calendar.DATE, Integer.parseInt(splitOutDt[2]));
+        c2.set(Calendar.HOUR, 0);
+        c2.set(Calendar.MINUTE, 0);
+        c2.set(Calendar.SECOND, 0);
+        c2.set(Calendar.MILLISECOND, 0);
+
+        
+        List<Date> dateList = new ArrayList<>();
+        dateList.add(c1.getTime());
+        while(c1.getTimeInMillis() < c2.getTimeInMillis()) {
+            c1.add(Calendar.DATE, 1);
+            // System.out.println(c1.getTimeInMillis()+","+c2.getTimeInMillis());
+            dateList.add(c1.getTime());
+        }

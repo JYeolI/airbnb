@@ -26,6 +26,7 @@ public interface HouseMapper {
     public List<HouseAmenityVO> selectHouseAmenityList(Integer house_seq);
     public List<String> selectHouseImageList(Integer house_seq);
     public List<String> selectHostLangList(Integer host_seq);
+    public Integer selectHostingHouseCnt(Integer host_seq);
     //호스팅
     public void insertHouseInfo(HouseInfoVO data);
     public void insertHouseImg(Integer house_seq, List<HouseImgVO> img_list);

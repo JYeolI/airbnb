@@ -3,9 +3,10 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.HouseMapper">
     <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.response.MainViewResponseVO">
-        SELECT main.hi_seq,
-            main.hi_mi_seq,
-            main.hi_name,
+        SELECT 
+            main.hi_seq AS house_seq,
+            main.hi_mi_seq  AS host_seq,
+            main.hi_name  AS house_name,
             main.main_img,
             main.country,
             main.city,
@@ -164,7 +165,8 @@
             hai.hai_city AS house_city,
             hai.hai_detail AS house_address,
             hgi.hgi_guest AS house_guest,
-            hgi.hgi_bed  AS house_bed,
+            hgi.hgi_dog AS house_dog,
+            hgi.hgi_bed AS house_bed,
             hgi.hgi_bedroom AS house_bedroom,
             hgi.hgi_bathroom AS house_bathroom,
             mi.mi_seq AS host_seq,
@@ -175,7 +177,7 @@
             mi.mi_status AS host_status,
             mimg.mimg_file AS host_img
         FROM house_info hi
-        LEFT JOIN house_address_info hai 
+        LEFT JOIN house_address_info hai
             ON hi.hi_seq = hai.hai_hi_seq 
         LEFT JOIN category_country cc
             ON cc.cc_seq = hai.hai_cc_seq
@@ -216,6 +218,11 @@
         LEFT JOIN category_lang cl 
             ON mli.mli_cl_seq = cl.cl_seq
         WHERE mli.mli_mi_seq = #{host_seq}
+    </select>
+    <select id="selectHostingHouseCnt" resultType="java.lang.Integer">
+        SELECT IFNULL(COUNT(hi_seq),0) AS hosting_house_cnt
+        FROM house_info
+        WHERE hi_mi_seq = #{host_seq}
     </select>
 
     <insert id="insertHouseInfo"

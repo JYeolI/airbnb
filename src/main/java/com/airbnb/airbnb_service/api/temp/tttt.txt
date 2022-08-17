@@ -1,0 +1,31 @@
+
+    
+    public Calendar makeCalendar(String date){
+
+        Calendar calendar = Calendar.getInstance();
+        String[] splitInDt = date.split("-");
+        calendar.set(Calendar.YEAR, Integer.parseInt(splitInDt[0]));
+        calendar.set(Calendar.MONTH, Integer.parseInt(splitInDt[1])-1);
+        calendar.set(Calendar.DATE, Integer.parseInt(splitInDt[2]));
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        
+        return calendar;
+    }
+    
+    public List<Date> makeDateList(Calendar in, Calendar out){
+        List<Date> dateList = new ArrayList<>();
+        Calendar
+        while(in < out) {
+            in.add(Calendar.DATE, 1);
+            dateList.add(in.getTime());
+        }
+        for(Date dt : dateList) {
+            // System.out.println(dt);
+        }
+        
+        
+        return dateList;
+    }

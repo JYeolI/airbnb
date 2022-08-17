@@ -34,3 +34,4 @@ function plus(i){
     if(count>16) return;
     $(".count").eq(i).html(count);
 }
+

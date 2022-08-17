@@ -19,26 +19,34 @@
         .icon {width: 50px; height: 50px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .main_img > div {width: 400px; height: 400px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .sub_img > div {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
-        .profile_img {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
+        .profile_img {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat; border-radius: 50%;}
+        .profile_img_small {width: 50px; height: 50px; background-position: center; background-size: 100%; background-repeat: no-repeat; border-radius: 50%;}
         .house_main, .house_desc, .house_room, .house_amenity, .booking_info, .host_info, .house_rule, .review_info {border-bottom: 1px solid #333;}
         .superhost, .safety_amenity {display: none;}
         .superhost_on, .amenity_on {display: block;}
-        .guest_popup {display: block;}
-        
-        
+        .review_popup {display: none;}
+        .guest_popup {display: none;}
+        .input_area_wrap {width: 400px; border: 1px solid #333;}
+        .like_input_box {width: 400px; border: 1px solid #333;}
+        .review, .reply {width: 800px; border: 1px solid #333;}
+        .dog_valid_msg {display: none;}
+        .msg_popup {display: none;}
+        .call_tooltip {text-decoration: underline; cursor: pointer;}
+        .count {display: inline-block;}
     </style>
     <script>
-
         let query = window.location.search;
         let param = new URLSearchParams(query);
         let house_seq = param.get('house_seq');
-
+        let host_seq = "";
         $(function(){
+            
             $.ajax({
                 url:"/api/house/?house_seq="+house_seq,
                 type:"get",
                 success:function(r){
                     console.log(r)
+                    host_seq = r.houseDetail.host_seq;
 
                     //섹션 메인
                     let house_title = r.houseDetail.house_name
@@ -113,9 +121,9 @@
                     //모두 가져와서 10개 이상인지 체크하고 10개 이상이면 10개만 우선표시하고 버튼 눌렀을때 전체 태그 생성
                     let limit = r.amenityList.length;
                     //편의시설 10개 이상일시 모두보기 팝업 버튼 생성
-                    if(limit>10){
-                        let tag = '<button id="showAmenityAll">편의시설 <span id="amenity_cnt">'+limit+'</span>개 모두 보기</button>';
-                        $(".more_button").append(tag);
+                    if(limit>1){
+                        let tag = '<button id="show_amenity_all">편의시설 <span id="amenity_cnt">'+limit+'</span>개 모두 보기</button>';
+                        $(".more_amenity").append(tag);
                     }
                     //편의시설 10개 이상일시 limit 10으로 10개 태그 우선 생성
                     if(limit>10) limit = 10;
@@ -137,15 +145,16 @@
                         }
                     }
                     //팝업 섹션 편의시설 태그 모두 생성
-                    $("#showAmenityAll").click( function(){
+                    $("#show_amenity_all").click( function(){
                         for(let i = 0; i<r.amenityList.length; i++){
                             let amenity_tag =
-                            '<div>'+
-                                '<div class="amenity_icon_wrap">'+
-                                    '<div class="amenity_icon" style="background-image: url(/img/amenity/'+r.amenityList[i].amenity_icon+');"></div>'+
-                                '</div>'+
-                                '<p>'+r.amenityList[i].amenity_content+'</p>'+
-                            '</div>';
+                                '<div>'+
+                                    '<div class="amenity_icon_wrap">'+
+                                        '<div class="amenity_icon" style="background-image: url(/img/amenity/'+r.amenityList[i].amenity_icon+');"></div>'+
+                                    '</div>'+
+                                    '<p>'+r.amenityList[i].amenity_content+'</p>'+
+                                    '<div onclick="closeAmenityPopup()">&#88;</div>'
+                                '</div>';
                             $(".amenity_popup").append(amenity_tag);
                         }
                         $(".amenity_popup").css({"display":"block"});
@@ -153,14 +162,18 @@
 
                     //섹션 호스트정보
                     $(".host_name").html(r.houseDetail.host_name);
-                    let host_profile_tag = 
-                    '<a href="http://localhost:7777/profile?member_seq='+r.houseDetail.host_seq+'">'+
+                    let host_img_tag = 
+                    '<a href="http://localhost:7777/profile?member_seq='+host_seq+'">'+
                         '<div class="profile_img" style="background-image: url(/img/member/'+r.houseDetail.host_img+');"></div>'+
                     '</a>';
-                    $(".host_img").append(host_profile_tag);
+                    let host_img_small = 
+                    '<div class="profile_img_small" style="background-image: url(/img/member/'+r.houseDetail.host_img+');"></div>';
+                    $(".host_img").append(host_img_tag);
+                    $(".host_img_small").append(host_img_small);
                     $(".host_reg_dt").html(dateFormatting(r.houseDetail.host_reg_dt));
-                    let rev_cnt = r.houseDetailCnt.house_review_cnt;
-                    if(rev_cnt==null) rev_cnt=0;
+                    
+                    //후기 count 처리
+                    let rev_cnt = r.houseDetailCnt.house_review_cnt;           
                     $(".rev_cnt").html(rev_cnt);
                     $(".host_desc").html(r.houseDetail.host_description);
                     $(".hosting_cnt").html(r.houseDetailCnt.hosting_house_cnt);
@@ -178,7 +191,7 @@
                     let more_rev_cnt = r.houseDetailCnt.total_review_cnt-r.houseDetailCnt.house_review_cnt;
                     if(more_rev_cnt>0){
                         $(".more_rev_cnt").html(more_rev_cnt);
-                        $(".review_href").attr("href","http://localhost:7777/profile?member_seq="+r.houseDetail.host_seq);
+                        $(".review_href").attr("href","http://localhost:7777/profile?member_seq="+host_seq);
                     }
                     else{
                         $(".more_review").html("");
@@ -193,14 +206,34 @@
                     $(".additional_rule").html(r.houseDetail.house_rule);
                     
                     //예약 어사이드 플러스 버튼 validation
-                    $(".plus").click(function(){
-                        let count = $(this).siblings("p").html();
-                        if(count==r.houseDetail.house_guest){
-                            return;
-                        }
-                        count++;
-                        $(this).siblings("p").html(count);
+                    //플러스 버튼 누르면 1추가 숙소제한인원까지만 but 3개 다 합친값을 계산해야함
+                    //마이너스 버튼 누르면 1감소 음수X
+                    //guest_cnt 3개 합친값 집어넣어야함. 시작은 1 
+                    // ##메인페이지에 입력한 값 받아오는 문제
+                    $(".plus").click(function(){                        
+                        let guest_cnt = $(".guest_cnt").html();
+                        if(guest_cnt==r.houseDetail.house_guest){return;}
+                        let each_count = $(this).siblings("p").html();
+                        $(this).siblings("p").html(Number(each_count)+1);
+                        $(".guest_cnt").html(Number(guest_cnt)+1);
+
                     })
+                    $(".minus").click(function(){
+                        let each_count = $(this).siblings("p").html();
+                        if(each_count==0){return;}
+                        $(this).siblings("p").html(Number(each_count)-1);
+                        let guest_cnt = $(".guest_cnt").html();
+                        $(".guest_cnt").html(Number(guest_cnt)-1);
+                    })
+                    //숙소가 애완동물 허용 안할시 추가적인 정보 표시
+                    if(r.houseDetail.house_dog==0){
+                        $(".dog_counter button").attr("disabled",true);
+                        $(".dog_wrap").hover(function(){
+                            $(this).attr("title","이 숙소는 애완동물을 허용하지 않는 숙소입니다.");
+                            $(this).tooltip();
+                        })
+                        $(".dog_valid_msg").css({"display":"block"});
+                    }
                 }
             })
 
@@ -211,55 +244,54 @@
                 success:function(r){
                     console.log(r);
 
-                    let total_avg = "";
-                    if(r.reviewPoint==null){
-                        total_avg = "New";
+                    //후기 없으면 reviewNullMsg반환 체크 후 return;
+                    if(r.reviewNullMsg!=null){
+                        $(".total_avg").html("New");
                         $(".null_msg").html(r.reviewNullMsg);
+                        return;
                     }
-                    else{
-                        total_avg = r.reviewPoint.total_avg.toFixed(2);
-                    }
-                    $(".total_avg").html(total_avg);
+
+                    $(".total_avg").html(r.reviewPoint.total_avg.toFixed(2));
 
                     //섹션 후기정보
                     let limit = r.reviewList.length;
                     //후기 10개 이상일시 모두보기 팝업 버튼 생성
-                    if(limit>10){
+                    if(limit>1){
                         let tag = '<button onclick="showReviewAll()">모든 후기 <span id="amenity_cnt">'+limit+'</span>개 모두 보기</button>';
                         $(".more_button").append(tag);
                     }
                     
-                    //후기 10개 먼저 생성
-                    if(limit>10) limit = 10;    
+                    //후기 10개 태그 생성
+                    if(limit>10) limit = 10;
                     for(let i = 0; i<limit; i++){
                         let review_tag = 
-                                '<div class="review">'+
-                                    '<div class="guest_img">'+
-                                        '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].guest_seq+'">'+
-                                            '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].guest_img+');"></div>'+
-                                        '</a>'+
-                                    '</div>'+
-                                    '<div class="guest_review">'+
-                                        '<h5 id="guest_name">'+r.reviewList[i].guest_name+'</h5>'+
-                                        '<p class="reg_dt">'+dateFormatting(r.reviewList[i].guest_rev_dt)+'</p>'+
-                                        '<p class="content">'+r.reviewList[i].guest_review+'</p>'+
-                                    '</div>'+
-                                '</div>';
-                        $(".review_content").append(review_tag);   
+                            '<div class="review">'+
+                                '<div class="guest_img">'+
+                                    '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].guest_seq+'">'+
+                                        '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].guest_img+');"></div>'+
+                                    '</a>'+
+                                '</div>'+
+                                '<div class="guest_review">'+
+                                    '<h5 id="guest_name">'+r.reviewList[i].guest_name+'</h5>'+
+                                    '<p class="reg_dt">'+dateFormatting(r.reviewList[i].guest_rev_dt)+'</p>'+
+                                    '<p class="content">'+r.reviewList[i].guest_review+'</p>'+
+                                '</div>'+
+                            '</div>';
+                        $(".review_content").append(review_tag);
                         if(r.reviewList[i].host_seq != null){
                             let reply_tag =
-                                    '<div class="reply">'+
-                                        '<div class="rpl_host_img">'+
-                                            '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
-                                                '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
-                                            '</a>'+
-                                        '</div>'+
-                                        '<div class="host_reply">'+
-                                            '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
-                                            '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
-                                            '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
-                                        '</div>'+
-                                    '</div>';
+                                '<div class="reply">'+
+                                    '<div class="rpl_host_img">'+
+                                        '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
+                                            '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
+                                        '</a>'+
+                                    '</div>'+
+                                    '<div class="host_reply">'+
+                                        '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
+                                        '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
+                                        '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
+                                    '</div>'+
+                                '</div>';
                             $(".review_content").append(reply_tag);
                         }
                     }
@@ -267,10 +299,14 @@
             })            
         })
 
-        //버튼 클릭시 후기 전체 조회
+        //버튼 클릭시 후기 전체 조회 ##검색조건 호스트후기는 검색안됨
         function showReviewAll(){
+            $(".review_popup_content").html("");
+            $(".review_popup").css({"display":"block"})
+            let keyword = $("input[name=keyword]").val();
+            if(keyword!=null){keyword = "&keyword="+keyword;}
             $.ajax({
-                url:"/api/review/list?house_seq="+house_seq,
+                url:"/api/review/list?house_seq="+house_seq+keyword,
                 type:"get",
                 success:function(r){
                     console.log(r);
@@ -289,39 +325,83 @@
                                     '<p class="content">'+r.reviewList[i].guest_review+'</p>'+
                                 '</div>'+
                             '</div>';
-                        $(".review_popup").append(review_tag);   
+                        $(".review_popup_content").append(review_tag);
                         if(r.reviewList[i].host_seq != null){
                             let reply_tag =
-                                    '<div class="reply">'+
-                                        '<div class="rpl_host_img">'+
-                                            '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
-                                                '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
-                                            '</a>'+
-                                        '</div>'+
-                                        '<div class="host_reply">'+
-                                            '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
-                                            '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
-                                            '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
-                                        '</div>'+
-                                    '</div>';
-                            $(".review_popup").append(reply_tag);
+                                '<div class="reply">'+
+                                    '<div class="rpl_host_img">'+
+                                        '<a href="http://localhost:7777/profile?member_seq='+r.reviewList[i].host_seq+'">'+
+                                            '<div class="profile_img" style="background-image: url(/img/member/'+r.reviewList[i].host_img+');"></div>'+
+                                        '</a>'+
+                                    '</div>'+
+                                    '<div class="host_reply">'+
+                                        '<h5 id="host_name">'+r.reviewList[i].host_name+'</h5>'+
+                                        '<p class="reg_dt">'+dateFormatting(r.reviewList[i].host_rpl_dt)+'</p>'+
+                                        '<p class="content">'+r.reviewList[i].host_reply+'</p>'+
+                                    '</div>'+
+                                '</div>';
+                            $(".review_popup_content").append(reply_tag);
                         }
                     }
                 }
             })
         }
 
+        //예약 요청 어사이드
         function openGuestPopup(){
             $(".guest_popup").css({"display":"block"});
         }
-
         function closeGuestPopup(){
             $(".guest_popup").css({"display":"none"});
         }
+        //## Validation/Null/WhiteSpace체크
+        function requestBooking(){
+            let in_dt = $("#in_dt").val();
+            let out_dt = $("#out_dt").val();
+            let adult = $(".adult_counter .count").html();
+            let child = $(".child_counter .count").html();
+            let infant = $(".infant_counter .count").html();
+            let dog = $(".dog_counter .count").html();
+            let bookingRequest = {
+                "list":[
+                    {"house_seq":house_seq},
+                    {"in_dt":in_dt,"out_dt":out_dt},
+                    {"adult":adult,"child":child,"infant":infant,"dog":dog}
+                ]
+            }
+
+            // 기본가격
+            // 옵션가격 할증
+            // 
+            // 날짜에 관한 가격계산
+            localStorage.setItem("bookingRequestItem",JSON.stringify(bookingRequest));
+        }
+
+
+        //메세지 팝업
+        function openMsgPopup(){
+            $(".msg_popup").css({"display":"block"});
+        }
+        function closeMsgPopup(){
+            $(".msg_popup").css({"display":"none"});
+        }
+        function closeAmenityPopup(){
+            $(".amenity_popup").css({"display":"none"});
+        }
+        function postMsg(){
+            // ##api작성후 연결
+            alert("To Be Continued");
+        }
+
+        //숙소신고
+        function report_house(){
+            // ##api작성후 팝업 연결
+            alert("To Be Continued");
+        }
+
     </script>
 </head>
 <body>
-
     <section>
         <div class="house_main">
             <h1 class = house_title></h1>
@@ -368,7 +448,7 @@
                 <span>개</span>
             </p>
             <p class="house_achievement">
-                ##house_achievement 구현 미정
+                ##house_achievement 구현 미정##
             </p>
             <p class="desc_content"></p>
         </div>
@@ -380,7 +460,7 @@
             <div class="amenity_content">
                 
             </div>        
-            <div class="more_button"></div>
+            <div class="more_amenity"></div>
         </div>
         <div class="booking_info">
             
@@ -410,7 +490,7 @@
             <h3 class="inner_title">호스트 : <span class="host_name"></span></h3>
             <p class="host_reg_dt"></p>
             <p>
-                <span>★</span> 
+                <span>★</span>
                 <span class="total_avg"></span>
                 <span> · 후기</span>
                 <span class="total_rev_cnt"></span>
@@ -431,8 +511,14 @@
                 <p>슈퍼호스트는 풍부한 경험과 높은 평점을 자랑하며 게스트가 숙소에서 편안히 머무를 수 있도록 최선을 다하는 호스트입니다.</p>
             </div>
             <div class="host_lang">
-                <p>언어: </p>
-                <p class="lang_content"></p>
+                <p>언어: <span class="lang_content"></span></p>                
+            </div>
+            <div class="reply_calculate">
+                <p>응답률: <span class="reply_rate">##응답률계산##</span></p>
+                <p>응답 시간: <span class="reply_time">##응답시간계산##</span></p>
+            </div>
+            <div class="msg_to_host">
+                <button onclick="openMsgPopup()">호스트에게 연락하기</button>
             </div>
         </div>
         <div class="house_rule">
@@ -452,7 +538,7 @@
                     <p class="additional_rule"></p>
                 </div>
             </div>
-            <div class="">
+            <div>
                 <h3>건강과 안전</h3>
                 <div class="safety_content">
                     <div id="amenity59" class="safety_amenity">
@@ -487,13 +573,17 @@
                     </div>
                 </div>
             </div>
-            <div class="">
+            <div>
                 <h3>환불 정책</h3>
-                <p><span class="refund_dt">##컨트롤러에서날짜계산필요</span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
-                <p class="additional_desc">부분 환불: 전체 숙박 요금의 50%를 환불받으실 수 있습니다. 서비스 수수료는 전액 환불됩니다.</p>
+                <p><span class="refund_dt">##컨트롤러에서날짜계산필요##</span> 오후 12시전에 취소하면 전액 환불을 받으실 수 있습니다.</p>
+                <p><span class="in_dt">##입력한 체크인 날짜 validation##</span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
+                <div class="additional_desc">
+                    <p>전액 환불: 결제하신 금액이 100% 환불됩니다.</p>
+                    <p>부분 환불: 전체 숙박 요금의 50%를 환불받으실 수 있습니다. 서비스 수수료는 전액 환불됩니다.</p>
+                </div>
             </div>
             <div class="report">
-                <a href="#">숙소 신고하기 ##신고기능 추가예정</a>
+                <a onclick="report_house()">숙소 신고하기 ##신고기능 추가예정##</a>
             </div>
         </div>
 
@@ -501,45 +591,69 @@
     <section>
         <div class="amenity_popup">
             //편의시설 팝업
-
         </div>
     </section>
     <section>
         <div class="review_popup">
             //후기 모두보기 팝업
-
+            <div class="search_box">
+                <input type="text" name="keyword">
+                <button onclick="showReviewAll()">검색</button>
+            </div>
+            <div class="review_popup_content"></div>
         </div>
     </section>
+
     <section>
         <aside>
             //예약 어사이드
-            <div class="input_area">
-                <div class="check_in">
-                    <input type="text" name="" id="">
+            <div class="input_area_wrap">
+                <div class="like_input_box" style="width: 50%; display: inline-block; border: 0; border-right: 1px solid #000;">
+                    <p>체크인<input style="border: 0; display: block;" type="text" name="" id="in_dt"></p>
                 </div>
-                <div class="check_out">
-                    <input type="text" name="" id="">
+                <div class="like_input_box" style="width: 47%; display: inline-block; border: 0;">
+                    <p>체크아웃<input style="display: block; border: 0;" type="text" name="" id="out_dt"></p>
                 </div>
-                <div class="guest">
-                    <p>인원</p>
-                    <p>게스트<span class="guest_cnt"></span></p>          
+                <div class="like_input_box" onclick="openGuestPopup()">
+                    <p style="display: inline-block;">인원</p>
+                    <p style="display: inline-block;">게스트<span class="guest_cnt">1</span></p>
+                </div>
+                <div class="request_booking">
+                    <button onclick="requestBooking()">예약하기</button>
+                    <p>예약 확정 전에는 요금이 청구되지 않습니다.</p>
+                </div>
+                <div class="price_area">
+                    <div>
+                        <span class="call_tooltip">
+                            <div>&#8361<span> ##기본요금## </span>x<span> ##체크인아웃날짜계산## </span>박</div>
+                        </span>
+                        <span>&#8361 ##기본요금+할증체크## </span>
+                    </div>
+                    <div>
+                        <span class="call_tooltip">청소비</span>
+                        <span>&#8361 ##청소비## </span>
+                    </div>
+                    <div>
+                        <span class="call_tooltip">서비스 수수료</span>
+                        <span>&#8361 0</span>
+                    </div>
                 </div>
             </div>
             <div class="guest_popup">
                 <div class="adult_wrap">
                     <h3 class="inner_title">성인</h3>
                     <p class="inner_desc">만 13세 이상</p>
-                    <div class="adult_counter">
-                        <button class="minus" onclick="minus(0)">-</button>
-                        <p class="count">0</p>
+                    <div class="adult_counter counter">
+                        <button class="minus">-</button>
+                        <p class="count">1</p>
                         <button class="plus">+</button>
                     </div>
                 </div>
                 <div class="child_wrap">
                     <h3 class="inner_title">어린이</h3>
                     <p class="inner_desc">만 2~12세</p>
-                    <div class="child_counter">
-                        <button class="minus" onclick="minus(1)">-</button>
+                    <div class="child_counter counter">
+                        <button class="minus">-</button>
                         <p class="count">0</p>
                         <button class="plus">+</button>
                     </div>
@@ -547,28 +661,51 @@
                 <div class="infant_wrap">
                     <h3 class="inner_title">유아</h3>
                     <p class="inner_desc">만 2세 미만</p>
-                    <div class="infant_counter">
-                        <button class="minus" onclick="minus(2)">-</button>
+                    <div class="infant_counter counter">
+                        <button class="minus">-</button>
                         <p class="count">0</p>
                         <button class="plus">+</button>
                     </div>
                 </div>    
-                <div class="dog">
+                <div class="dog_wrap">
                     <h3 class="inner_title">반려동물</h3>
                     <p class="inner_desc">보조동물 보조동물은 반려동물이 아니므로 여기에 추가할 필요가 없습니다.</p>                   
                     <div class="dog_counter">
-                        <button class="minus" onclick="minus(3)">-</button>
+                        <button onclick="minus(3)">-</button>
                         <div class="count">0</div>
-                        <button class="plus">+</button>               
+                        <button onclick="plus(3)">+</button>
                     </div>
                 </div>
-                <p>이 숙소의 최대 숙박 인원은 <span class="guest"></span>명(유아 포함)입니다. 반려동물 동반은 허용되지 않습니다.</p>
+                <p>이 숙소의 최대 숙박 인원은 <span class="guest"></span>명(유아 포함)입니다. </p>
+                <p class="dog_valid_msg">반려동물 동반은 허용되지 않습니다.</p>
                 <a onclick="closeGuestPopup()">닫기</a>
             </div>
         </aside>
     </section>
 
-
-
+    <section>
+        <div class="msg_popup">
+            //메세지 팝업
+            <div class="msg_title">
+                <div class="host_img_small"></div>
+                <h3 class="inner_title"><span class="host_name"></span>님에게 연락하기</h3>
+                <p>보통 <span class="reply_time"> ##응답시간계산## </span>시간 이내에 응답</p>
+            </div>
+            <div class="msg_desc">
+                <h3 class="inner_title">게스트가 많이하는 질문</h3>
+                <h5>찾아가기</h5>
+                <p>체크인 : <span class="check_in"></span></p>
+                <p>체크아웃 : <span class="check_out"></span></p>
+                <h5>숙소 세부 정보 및 이용 규칙</h5>
+                <p class="additional_rule"></p>
+            </div>
+            <div class="msg_content">
+                <h3 class="inner_title">질문이 더 있으신가요? 호스트에게 메시지를 보내 문의하세요.</h3>
+                <textarea cols="30" rows="10"></textarea>
+                <button onclick="postMsg()">메세지 전송하기</button>
+            </div>
+            <button onclick="closeMsgPopup()">&#88;</button>
+        </div>
+    </section>
 </body>
 </html>

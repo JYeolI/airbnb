@@ -20,6 +20,7 @@ public class HouseDetailVO {
     private String house_city;
     private String house_address;
     private Integer house_guest;
+    private Integer house_dog;
     private Integer house_bed;
     private Integer house_bedroom;
     private Integer house_bathroom;

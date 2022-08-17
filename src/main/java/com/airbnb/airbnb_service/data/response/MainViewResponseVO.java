@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class MainViewResponseVO {
-    private Integer hi_seq;
-    private Integer hi_mi_seq;
-    private String hi_name;
+    private Integer house_seq;
+    private Integer host_seq;
+    private String house_name;
     private String country;
     private String city;
     private String address;

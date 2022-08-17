@@ -23,7 +23,7 @@
         LEFT JOIN category_country cc
             ON mai.mai_cc_seq = cc.cc_seq
         WHERE hi.hi_mi_seq = #{member_seq}
-            AND rev.rev_public =1
+            AND rev.rev_public = 1
         <if test="limit!=null">
         LIMIT #{limit}
         </if>
@@ -98,6 +98,7 @@
                     OR rev.rev_content like concat('%',#{keyword},'%')
                 )
         </if>
+        ORDER By guest_rev_dt DESC
         <if test="limit!=null">
         LIMIT #{limit}
         </if>
@@ -115,17 +116,16 @@
         WHERE rpv_hi_seq = #{house_seq}
     </select>
     <select id="selectHouseReviewCnt" resultType="java.lang.Integer">
-        SELECT COUNT(*) AS house_review_cnt
-        FROM review_info
-        WHERE rev_hi_seq = #{house_seq}
-    </select>
-    <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.response.HouseDetailCntVO">
-        SELECT  
-                COUNT(DISTINCT rev_seq) AS total_review_cnt,
-                COUNT(DISTINCT hi_seq) AS hosting_house_cnt
+        SELECT IFNULL(COUNT(rev_seq),0) AS house_review_cnt
         FROM review_info rev
-        LEFT OUTER JOIN house_info hi 
-            ON rev.rev_hi_seq = hi.hi_seq 
+        WHERE rev.rev_public = 1
+            AND rev_hi_seq = #{house_seq}
+    </select>
+    <select id="selectTotalReviewCnt" resultType="java.lang.Integer">
+        SELECT COUNT(rev_seq) AS total_review_cnt
+        FROM review_info rev
+        LEFT JOIN house_info hi 
+            ON rev.rev_hi_seq = hi.hi_seq
         WHERE rev.rev_public = 1
         GROUP BY hi_mi_seq
         HAVING hi_mi_seq = #{host_seq}

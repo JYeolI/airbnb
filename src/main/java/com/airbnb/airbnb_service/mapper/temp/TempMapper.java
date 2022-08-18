@@ -8,7 +8,7 @@ import com.airbnb.airbnb_service.data.response.HouseFeeVO;
 import com.airbnb.airbnb_service.data.response.HouseOptionVO;
 
 @Mapper
-public interface temp0817 {
+public interface TempMapper {
     public List<HouseOptionVO> selectHouseOption(Integer house_seq);
     public HouseFeeVO selectHouseFee(Integer house_seq);
 }

@@ -24,6 +24,7 @@ public class BookingAPIController {
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
+
         resultMap.put("booking_list", booking_mapper.selectBookingList(user_seq));
         return resultMap;
     }

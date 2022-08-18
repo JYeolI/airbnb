@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class HouseFeeVO {
-    private Integer basePrice;
-    private Integer cleaningFee;
-    private Integer serviceFee;
+    private Integer base_price;
+    private Integer cleaning_fee;
+    private Integer service_fee;
 }

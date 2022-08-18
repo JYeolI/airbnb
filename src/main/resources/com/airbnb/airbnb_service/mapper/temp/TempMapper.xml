@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.airbnb.airbnb_service.mapper.temp.temp0817">
+<mapper namespace="com.airbnb.airbnb_service.mapper.temp.TempMapper">
     <select id="selectHouseOption" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
         SELECT
-            hfo.hfo_name AS optionName,
-            hfo.hfo_dt AS optionDate,
-            hfo.hfo_rate AS optionRate,
-            hfo.hfo_cycle AS optionCycle
+            hfo.hfo_seq AS option_seq,
+            hfo.hfo_name AS option_name,
+            hfo.hfo_dt AS option_date,
+            hfo.hfo_rate AS option_rate,
+            hfo.hfo_cycle AS option_cycle
         FROM house_fee_option hfo 
-        WHERE hfo.hfo_dt <![CDATA[>=]]> now() 
+        WHERE hfo.hfo_cycle != 0
+            AND hfo.hfo_dt <![CDATA[<=]]> now() 
             AND hfo.hfo_hi_seq = #{house_seq}
     </select>
 
     <select id="selectHouseFee" resultType="com.airbnb.airbnb_service.data.response.HouseFeeVO">
         SELECT
-            hfi_base_price AS basePrice,
-            hfi_cleaning_fee AS cleaningFee,
-            hfi_service_fee AS serviceFee
+            hfi_base_price AS base_price,
+            hfi_cleaning_fee AS cleaning_Fee,
+            hfi_service_fee AS service_Fee
         FROM house_fee_info hfi 
         WHERE hfi.hfi_hi_seq = #{house_seq}
     </select>

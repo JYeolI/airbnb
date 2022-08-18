@@ -6,8 +6,9 @@ import lombok.Data;
 
 @Data
 public class HouseOptionVO {
-    private String optionName;
-    private Date optionDate;
-    private Integer optionRate;
-    private Integer optionCycle;
+    private Integer option_seq;
+    private String option_name;
+    private Date option_date;
+    private Integer option_rate;
+    private Integer option_cycle;
 }

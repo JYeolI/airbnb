@@ -1,8 +1,5 @@
 package com.airbnb.airbnb_service.data.response;
 
-import java.util.Date;
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Data;
 

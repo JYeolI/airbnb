@@ -2,25 +2,91 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.temp.TempMapper">
-    <select id="selectHouseOption" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
-        SELECT
-            hfo.hfo_seq AS option_seq,
-            hfo.hfo_name AS option_name,
-            hfo.hfo_dt AS option_date,
-            hfo.hfo_rate AS option_rate,
-            hfo.hfo_cycle AS option_cycle
-        FROM house_fee_option hfo 
-        WHERE hfo.hfo_cycle != 0
-            AND hfo.hfo_dt <![CDATA[<=]]> now() 
-            AND hfo.hfo_hi_seq = #{house_seq}
-    </select>
-
     <select id="selectHouseFee" resultType="com.airbnb.airbnb_service.data.response.HouseFeeVO">
-        SELECT
-            hfi_base_price AS base_price,
-            hfi_cleaning_fee AS cleaning_Fee,
-            hfi_service_fee AS service_Fee
+        SELECT hfi.hfi_base_price AS base_price,
+                hfi.hfi_cleaning_fee AS cleaning_fee,
+                hfi.hfi_service_fee AS service_fee
         FROM house_fee_info hfi 
         WHERE hfi.hfi_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseDailyOption" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
+        SELECT 1 AS cycle_no,
+            hdo.hdo_seq AS option_seq,
+            hdo.hdo_hi_seq AS house_seq, 
+            hdo.hdo_name AS option_name,
+            hdo.hdo_rate AS option_rate,
+            0 AS option_day,
+            hdo.hdo_enable_dt AS option_end_dt,
+            hdo.hdo_enable AS enable
+        FROM house_daily_option hdo 
+        WHERE house_seq = #{house_seq}
+            AND enable !=0 
+            AND option_end_dt <![CDATA[>=]]> date(now())
+    </select>
+    <select id="selectHouseWeeklyOption" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
+        SELECT 2 AS cycle_no,
+            hwo.hwo_seq AS option_seq,
+            hwo.hwo_hi_seq AS house_seq,
+            hwo.hwo_name AS option_name,
+            hwo.hwo_rate AS option_rate,
+            hwo.hwo_weekly AS option_day,
+            hwo.hwo_enable_dt AS option_end_dt,
+            hwo.hwo_enable AS enable
+        FROM house_weekly_option hwo 
+        WHERE house_seq = #{house_seq}
+            AND enable !=0 
+            AND option_end_dt <![CDATA[>=]]> date(now())
+    </select>
+    <select id="selectHouseMonthlyOption" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
+        SELECT 3 AS cycle_no,
+            hmo.hmo_seq AS option_seq,
+            hmo.hmo_hi_seq AS house_seq,
+            hmo.hmo_name AS option_name,
+            hmo.hmo_rate AS option_rate,
+            hmo.hmo_monthly AS option_day,
+            hmo.hmo_enable_dt AS option_end_dt,
+            hmo.hmo_enable AS enable
+        FROM house_monthly_option hmo
+        WHERE house_seq = #{house_seq}
+            AND enable !=0 
+            AND option_end_dt <![CDATA[>=]]> date(now())
+    </select>
+    <select id="selectHouseOptionView" resultType="com.airbnb.airbnb_service.data.response.HouseOptionVO">
+        SELECT * FROM (
+            (
+                SELECT 1 AS cycle_no,
+                        hdo.hdo_seq AS option_seq,
+                        hdo.hdo_hi_seq AS house_seq, 
+                        hdo.hdo_name AS option_name,
+                        hdo.hdo_rate AS option_rate,
+                        0 AS option_day,
+                        hdo.hdo_enable_dt AS option_end_dt,
+                        hdo.hdo_enable AS enable
+                FROM house_daily_option hdo 
+            ) UNION ALL(
+                SELECT 2 AS cycle_no,
+                        hwo.hwo_seq AS option_seq,
+                        hwo.hwo_hi_seq AS house_seq,
+                        hwo.hwo_name AS option_name,
+                        hwo.hwo_rate AS option_rate,
+                        hwo.hwo_weekly AS option_day,
+                        hwo.hwo_enable_dt AS option_end_dt,
+                        hwo.hwo_enable AS enable
+                FROM house_weekly_option hwo 
+            ) UNION ALL ( 
+                SELECT 3 AS cycle_no,
+                        hmo.hmo_seq AS option_seq,
+                        hmo.hmo_hi_seq AS house_seq,
+                        hmo.hmo_name AS option_name,
+                        hmo.hmo_rate AS option_rate,
+                        hmo.hmo_monthly AS option_day,
+                        hmo.hmo_enable_dt AS option_end_dt,
+                        hmo.hmo_enable AS enable
+                FROM house_monthly_option hmo
+            )
+        )opt
+        WHERE house_seq = #{house_seq}
+            AND enable !=0 
+            AND option_end_dt <![CDATA[>=]]> date(now())
     </select>
 </mapper>

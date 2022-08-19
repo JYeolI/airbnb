@@ -3,6 +3,8 @@ package com.airbnb.airbnb_service.api.temp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,7 +43,7 @@ public class calculTest2 {
         //TEST입력값
         Integer house_seq = 1;
         String in_dt = "2022-08-20";
-        String out_dt = "2022-08-27";
+        String out_dt = "2022-01-27";
         
         //사용자 입력 날짜간의 날짜들을 배열로 담을 리스트 생성
         List<Date> duration = new ArrayList<>();
@@ -65,9 +67,9 @@ public class calculTest2 {
         HouseFeeVO houseFeeInfo = temp_mapper.selectHouseFee(house_seq);
         Integer originPrice = houseFeeInfo.getBase_price();
         //DB에서 옵션 날짜 리스트 가져오고 Null체크
-        List<HouseOptionVO> optionList = new ArrayList<>();
-        optionList = temp_mapper.selectHouseOption(house_seq);
-        if(optionList.size()==0){
+        List<HouseOptionVO> Seq = new ArrayList<>();
+        Seq = temp_mapper.selectHouseOption(house_seq);
+        if(Seq.size()==0){
             resultMap.put("status", true);
             resultMap.put("message", "해당 숙소에 조회된 할인할증정보가 없습니다.");
             resultMap.put("warn", "NOT_FIND_VALID_OPTION_DATA");
@@ -84,14 +86,16 @@ public class calculTest2 {
         List<String> dateListA = new ArrayList<String>();
         List<String> dateListB = new ArrayList<String>();
         List<String> dateListC = new ArrayList<String>();
-
         List<Integer> rateListA = new ArrayList<Integer>();
         List<Integer> rateListB = new ArrayList<Integer>();
         List<Integer> rateListC = new ArrayList<Integer>();
+        List<Integer> optionSeqListA = new ArrayList<Integer>();
+        List<Integer> optionSeqListB = new ArrayList<Integer>();
+        List<Integer> optionSeqListC = new ArrayList<Integer>();
 
         
         //DB 옵션정보 가져와서 for문으로 하나씩 체크
-        for(HouseOptionVO option : optionList){
+        for(HouseOptionVO option : Seq){
             Integer optionSeq = option.getOption_seq();
             String optionName = option.getOption_name();
             //switch문으로 cycle별 분기
@@ -110,7 +114,7 @@ public class calculTest2 {
                         //(int)calculatedPrice 할인할증률을 계산한 가격
                         String optionDate = makeFormatDate(dayOfDuration);
                         // System.out.println(cycle+","+optionDate+","+calculatedPrice+","+rate);
-                        dateListA.add(optionDate); rateListA.add(rate);
+                        dateListA.add(optionDate); rateListA.add(rate); optionSeqListA.add(optionSeq);
                         HouseOption2VO vo = HouseOption2VO.builder()
                             .option_seq(optionSeq)  .option_name(optionName)    .option_date(optionDate)
                             .option_rate(rate)      .option_cycle(cycle)        .option_cycle_desc("매일")
@@ -135,7 +139,7 @@ public class calculTest2 {
                             String weekOfDay = makeToStringWeekOfDay(weekOfOption);
                             String optionDate = makeFormatDate(dayOfDuration);
                             // System.out.println(cycle+","+optionDate+","+calculatedPrice+","+rate+","+weekOfOption+","+weekOfDay);
-                            dateListB.add(optionDate); rateListB.add(rate);
+                            dateListB.add(optionDate); rateListB.add(rate); optionSeqListB.add(optionSeq);
                             HouseOption2VO vo = HouseOption2VO.builder()
                                 .option_seq(optionSeq)  .option_name(optionName)    .option_date(optionDate)
                                 .option_rate(rate)      .option_cycle(cycle)        .option_cycle_desc("매주")
@@ -156,7 +160,7 @@ public class calculTest2 {
                             //(int)calculatedPrice 할인할증률을 계산한 가격
                             String optionDate = makeFormatDate(dayOfDuration);
                             // System.out.println(cycle+","+optionDate+","+calculatedPrice+","+rate);
-                            dateListC.add(optionDate); rateListC.add(rate);
+                            dateListC.add(optionDate); rateListC.add(rate); optionSeqListC.add(optionSeq);
                             HouseOption2VO vo = HouseOption2VO.builder()
                                 .option_seq(optionSeq)  .option_name(optionName)    .option_date(optionDate)
                                 .option_rate(rate)      .option_cycle(cycle)        .option_cycle_desc("매월")
@@ -173,7 +177,6 @@ public class calculTest2 {
             }
         }
 
-
         List<String> dateListDupABC = new ArrayList<>();  // listABC  | [1] 
         List<String> dateListDupAB = new ArrayList<>();   // listAB   | [2] 
         List<String> dateListDupAC = new ArrayList<>();   // listAC   | [3] 
@@ -182,24 +185,26 @@ public class calculTest2 {
         List<Integer> rateListDupAB = new ArrayList<>();
         List<Integer> rateListDupAC = new ArrayList<>();
         List<Integer> rateListDupBC = new ArrayList<>();
+        List<Integer> optListDupABC = new ArrayList<>();
+        List<Integer> optListDupAB = new ArrayList<>();
+        List<Integer> optListDupAC = new ArrayList<>();
+        List<Integer> optListDupBC = new ArrayList<>();
 
+        // str사용자입력기간날짜,합산할인할증률,계산된가격,적용된day옵션정보seq,적용된week옵션정보seq,적용된month옵션정보seq
+        // dayOfDuration/calculatedRate/(originPrice*(100+rate)/100)/case1_option_seq/case2_option_seq/case3_option_seq
         for(int i=0; i<dateListA.size(); i++){
             String str = dateListA.get(i);
-            // int a = dateListA.indexOf(str);
-            // int b = dateListB.indexOf(str);
-            // int c = dateListC.indexOf(str);
-            // int rateA = rateListA.get(a);
-            // int rateB = rateListB.get(b);
-            // int rateC = rateListC.get(c);
             
             //A와 B에는 있고 C에는 없는 값 >> listDupAB
             if( dateListB.contains(str) && !dateListC.contains(str) ){;
                 int a = dateListA.indexOf(str);
-                int b = dateListB.indexOf(str);                
+                int b = dateListB.indexOf(str);
                 int rateA = rateListA.get(a);
                 int rateB = rateListB.get(b);
+                int optA = optionSeqListA.get(a);
                 dateListDupAB.add(str); // listAB  | [2] 
-                rateListDupAB.add(rateA+rateB); 
+                rateListDupAB.add(rateA+rateB);
+                optListDupAB.add(optA);
             }
             // A와 C에는 있고 B에는 없는 값 >> listDupAC
             else if( dateListC.contains(str) && !dateListB.contains(str) ){
@@ -207,9 +212,10 @@ public class calculTest2 {
                 int c = dateListC.indexOf(str);
                 int rateA = rateListA.get(a);
                 int rateC = rateListC.get(c);
+                int optA = optionSeqListA.get(a);
                 dateListDupAC.add(str); // listAC  | [3] 
-                rateListDupAC.add(rateA+rateC); 
-                
+                rateListDupAC.add(rateA+rateC);
+                optListDupAC.add(optA);
             }
             //A와 B와 C에 모두 있는 값 >> listDupABC
             else if( dateListB.contains(str) && dateListC.contains(str) ){
@@ -219,8 +225,10 @@ public class calculTest2 {
                 int rateA = rateListA.get(a);
                 int rateB = rateListB.get(b);
                 int rateC = rateListC.get(c);
+                int optA = optionSeqListA.get(a);
                 dateListDupABC.add(str); // listABC  | [1] 
                 rateListDupABC.add(rateA+rateB+rateC); 
+                optListDupAC.add(optA);
             }
         }        
         for(int i=0; i<dateListB.size(); i++){       
@@ -231,15 +239,18 @@ public class calculTest2 {
                 int c = dateListC.indexOf(str);
                 int rateB = rateListB.get(b);
                 int rateC = rateListC.get(c);
+                int optB = optionSeqListB.get(b);
                 dateListDupBC.add(str); // listBC  | [4] 
                 rateListDupBC.add(rateB+rateC);
+                optListDupAC.add(optB);
             }
         }
+        // calculator str사용자입력기간날짜,합산할인할증률,계산된가격,적용된day옵션정보seq,적용된week옵션정보seq,적용된month옵션정보seq
+        System.out.println("listAB  | "+dateListDupAB+" | "+rateListDupAB+" | "+0000+" | "+optListDupAB+" | "+optListDupAB+" | "+null);
+        System.out.println("listAC  | "+dateListDupAC+" | "+rateListDupAC+" | "+0000+" | "+optListDupAC+" | "+null+" | "+optListDupAC);
+        System.out.println("listBC  | "+dateListDupBC+" | "+rateListDupBC+" | "+0000+" | "+null+" | "+optListDupBC+" | "+optListDupBC);
+        System.out.println("listABC | "+dateListDupABC+" | "+rateListDupABC+" | "+0000+" | "+optListDupABC+" | "+optListDupABC+" | "+optListDupABC);
 
-        System.out.println("listAB  | "+dateListDupAB+" | "+rateListDupAB+" | "+"calculatedPrice");
-        System.out.println("listAC  | "+dateListDupAC+" | "+rateListDupAC+" | "+"calculatedPrice");
-        System.out.println("listBC  | "+dateListDupBC+" | "+rateListDupBC+" | "+"calculatedPrice");
-        System.out.println("listABC | "+dateListDupABC+" | "+rateListDupABC+" | "+"calculatedPrice");
 
         resultMap.put("houseFeeInfo", houseFeeInfo);
         resultMap.put("houseOptionList", houseOptionList);
@@ -247,6 +258,9 @@ public class calculTest2 {
         resultMap.put("status", true);
         resultMap.put("message", "해당 기간에 계산된 할인할증정보입니다..");
         return resultMap;
+
+
+
     }
 
 
@@ -300,5 +314,5 @@ public class calculTest2 {
         String strDate = simpleDateFormat.format(date);
         return strDate;
     }
-
+  
 }

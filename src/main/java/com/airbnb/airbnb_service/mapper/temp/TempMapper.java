@@ -9,6 +9,9 @@ import com.airbnb.airbnb_service.data.response.HouseOptionVO;
 
 @Mapper
 public interface TempMapper {
-    public List<HouseOptionVO> selectHouseOption(Integer house_seq);
     public HouseFeeVO selectHouseFee(Integer house_seq);
+    public List<HouseOptionVO> selectHouseWeeklyOption(Integer house_seq);
+    public List<HouseOptionVO> selectHouseDailyOption(Integer house_seq);
+    public List<HouseOptionVO> selectHouseMonthlyOption(Integer house_seq);
+    public List<HouseOptionVO> selectHouseOptionView(Integer house_seq);
 }

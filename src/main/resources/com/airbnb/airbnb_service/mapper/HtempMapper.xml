@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.HtempMapper">
+    <select id="selectLogin" resultType="com.airbnb.airbnb_service.data.member.MemberInfoVO">
+        select mi_seq, mi_id, mi_name, mi_gender, mi_description, mi_company, mi_phone, mi_status, mi_host_grade, mi_reg_dt
+        from member_info where mi_id = #{id} and mi_pwd = #{pwd}
+    </select>
+    <select id="selectMemberProfileLanguageList" resultType="java.lang.String">
+        select cl_content AS lang
+        from member_info mi
+        LEFT JOIN member_lang_info mli
+            ON mi.mi_seq = mli.mli_mi_seq
+        LEFT JOIN category_lang cl
+            ON mli.mli_cl_seq = cl.cl_seq
+        where mi.mi_seq = #{seq}
+    </select>
+    <update id="updateMemberProfile">
+        UPDATE airbnb_db.member_info
+        SET mi_description = #{mi_description}, mi_company = #{mi_company}
+        WHERE mi_seq = #{mi_seq}
+    </update>
+    <select id="isDupChkMemberProfileAddress" resultType="java.lang.Boolean">
+        select count(*) from member_address_info where mai_mi_seq = #{mi_seq}
+    </select>
+    <select id="isDupChkMemberProfileLanguage" resultType="java.lang.Integer">
+        select mli_cl_seq from member_lang_info where mli_mi_seq = #{mi_seq}
+    </select>
+    <insert id="insertMemberProfileAddress">
+        INSERT INTO airbnb_db.member_address_info
+            (mai_mi_seq, mai_cc_seq, mai_city, mai_detail)
+        VALUES
+            (#{mi_seq}, #{cc_seq}, #{mai_city}, #{mai_detail})
+    </insert>
+    <update id="updateMemberProfileAddress">
+        UPDATE airbnb_db.member_address_info
+        SET mai_cc_seq = #{cc_seq}, mai_city = #{mai_city}, mai_detail = #{mai_detail}
+        WHERE mai_mi_seq = #{mi_seq}
+    </update>
+    <insert id="insertMemberProfileLanguage">
+        INSERT INTO airbnb_db.member_lang_info
+        (mli_mi_seq, mli_cl_seq)
+        VALUES(#{mi_seq}, #{cl_seq})
+    </insert>
+    <delete id="deleteMemberProfileLanguage">
+        DELETE FROM airbnb_db.member_lang_info
+        WHERE mli_mi_seq = #{mi_seq}
+        and mli_cl_seq = #{cl_seq}
+    </delete>
+    <select id="isDupChkMemberReport" resultType="java.lang.Integer">
+        select count(*) from member_report where mrpt_from_mi_seq = #{mrpt_from_mi_seq} and mrpt_to_mi_seq = #{mrpt_to_mi_seq}
+    </select>
+    <insert id="insertMemberReport">
+        INSERT INTO airbnb_db.member_report
+            (mrpt_from_mi_seq, mrpt_to_mi_seq, mrpt_type, mrpt_reason)
+        VALUES
+            (#{mrpt_from_mi_seq}, #{mrpt_to_mi_seq}, #{mrpt_type}, #{mrpt_reason})
+    </insert>
+</mapper>

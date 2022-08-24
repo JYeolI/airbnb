@@ -195,6 +195,7 @@
                 </div>
             </div>
             <a href="#" class="profile_report">이 프로필 신고하기</a>
+            <a href=""></a>
         </section>
     </main>
 </body>

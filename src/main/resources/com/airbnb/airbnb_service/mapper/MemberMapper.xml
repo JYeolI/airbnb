@@ -54,9 +54,17 @@
 
     <select id="selectMemberProfile" resultType="com.airbnb.airbnb_service.data.response.ProfileVO">
         SELECT
+<<<<<<< HEAD
             mi_name AS memeber_name,
             mi_description AS member_desc,
             cc_content AS country,
+=======
+            mi_seq,
+            mi_name AS memeber_name,
+            mi_description AS member_desc,
+            cc_content AS country,
+            mi_company AS company,
+>>>>>>> h_test1
             mai_city AS city,
             mai_detail AS member_address,
             mimg_file AS profile_img,

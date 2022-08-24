@@ -116,18 +116,7 @@
         WHERE rpv_hi_seq = #{house_seq}
     </select>
     <select id="selectHouseReviewCnt" resultType="java.lang.Integer">
-<<<<<<< HEAD
         SELECT IFNULL(COUNT(rev_seq),0) AS house_review_cnt
-=======
-        SELECT COUNT(*) AS house_review_cnt
-        FROM review_info
-        WHERE rev_hi_seq = #{house_seq}
-    </select>
-    <select id="selectHouseAndReviewCnt" resultType="com.airbnb.airbnb_service.data.response.HouseDetailCntVO">
-        SELECT  
-                COUNT(DISTINCT rev_seq) AS total_review_cnt,
-                COUNT(DISTINCT hi_seq) AS hosting_house_cnt
->>>>>>> h_test1
         FROM review_info rev
         WHERE rev.rev_public = 1
             AND rev_hi_seq = #{house_seq}

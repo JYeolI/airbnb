@@ -39,7 +39,8 @@
         let param = new URLSearchParams(query);
         let house_seq = param.get('house_seq');
         let host_seq = "";
-        $(function(){
+
+        $("document").ready(function(){
             
             $.ajax({
                 url:"/api/house/?house_seq="+house_seq,
@@ -198,7 +199,7 @@
                     }
 
                     //환불정책 ##date 계산
-                    $(".refund_dt").html(r.houseDetail.house_refund_day);                    
+                    $(".refund_dt").html(r.houseDetail.house_refund_day);
 
                     //섹션 알아두어야 할 사항
                     $(".check_in").html(r.houseDetail.house_check_in);
@@ -297,6 +298,29 @@
                     }
                 }
             })            
+            
+            
+            let today = new Date();
+            let data = {
+                house_seq:house_seq,
+                in_dt:makeFirstDay(today),
+                out_dt:makeLastDay(today)
+            };
+            console.log(data);
+            //예약 현재달 1달치 조회
+            $.ajax({
+                url:"/api/booking/calendar",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),           
+                success:function(r) {
+                    console.log(r);
+                    //조회 캘린더
+                    $(".check_in_dt").html(in_dt);
+                }
+            })
+            
+
         })
 
         //버튼 클릭시 후기 전체 조회 ##검색조건 호스트후기는 검색안됨
@@ -362,21 +386,99 @@
             let child = $(".child_counter .count").html();
             let infant = $(".infant_counter .count").html();
             let dog = $(".dog_counter .count").html();
-            let bookingRequest = {
-                "list":[
-                    {"house_seq":house_seq},
-                    {"in_dt":in_dt,"out_dt":out_dt},
-                    {"adult":adult,"child":child,"infant":infant,"dog":dog}
-                ]
-            }
+            let data = {
+                house_seq:house_seq,
+                in_dt:in_dt,
+                out_dt:out_dt
+            };
+            console.log(data);
+            //입력한 예약날짜 가격 조회
+            $.ajax({
+                url:"/api/booking/calendar",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),           
+                success:function(r) {
+                    console.log(r);
+                    $(".base_price").html(r.houseFee.base_price);
+                    $(".duration").html(r.calculatedPrice.length);
+                    $(".check_in_dt").html(in_dt);
 
-            // 기본가격
-            // 옵션가격 할증
-            // 
-            // 날짜에 관한 가격계산
-            localStorage.setItem("bookingRequestItem",JSON.stringify(bookingRequest));
+                    //예약기간 하루하루 가격
+                    for(let i = 0; i<r.calculatedPrice.length; i++){
+                        let one_day_price_tag = 
+                            '<div class="one_day_price">'+
+                                '<span>'+r.calculatedPrice[i].day_of_duration+'</span> '+
+                                '<span>&#8361</span>'+
+                                '<span>'+r.calculatedPrice[i].calculated_price+'</span>'+
+                            '</div>';
+                        $(".one_day").append(one_day_price_tag);
+                        //예약기간 하루하루 옵션정보
+                        for(let j = 0; j<r.optionList.length; j++){
+                            if(r.optionList[j].cycle_no==1&&r.calculatedPrice[i].day_option_seq==r.optionList[j].option_seq){
+                                let option_tag = 
+                                    '<div class="option_price">'+
+                                        '<span>'+r.optionList[j].option_name+'</span>'+
+                                        '<span>'+r.optionList[j].option_rate+'</span>'+
+                                        '<span>%</span>'+
+                                        '<span>&#8361</span>'+
+                                        '<span>'+(r.optionList[j].option_rate/100*r.houseFee.base_price)+'</span>'+
+                                    '</div>';
+                                    $(".one_day").append(option_tag);
+                            }
+                            if(r.optionList[j].cycle_no==2&&r.calculatedPrice[i].week_option_seq==r.optionList[j].option_seq){
+                                let option_tag = 
+                                    '<div class="option_price">'+
+                                        '<span>'+r.optionList[j].option_name+'</span>'+
+                                        '<span>'+r.optionList[j].option_rate+'</span>'+
+                                        '<span>%</span>'+
+                                        '<span>&#8361</span>'+
+                                        '<span>'+(r.optionList[j].option_rate/100*r.houseFee.base_price)+'</span>'+
+                                    '</div>';
+                                    $(".one_day").append(option_tag);
+                            }
+                            if(r.optionList[j].cycle_no==3&&r.calculatedPrice[i].month_option_seq==r.optionList[j].option_seq){
+                                let option_tag = 
+                                    '<div class="option_price">'+
+                                        '<span>'+r.optionList[j].option_name+'</span>'+
+                                        '<span>'+r.optionList[j].option_rate+'</span>'+
+                                        '<span>%</span>'+
+                                        '<span>&#8361</span>'+
+                                        '<span>'+(r.optionList[j].option_rate/100*r.houseFee.base_price)+'</span>'+
+                                    '</div>';
+                                    $(".one_day").append(option_tag);
+                            }
+                        }
+                    }
+                    
+                    let cleaning_fee = r.houseFee.cleaning_fee;
+                    let service_fee = r.houseFee.base_price*r.houseFee.service_fee/100;
+                    let sum_price = (r.houseFee.sum_price*(100+r.houseFee.service_fee)/100)+r.houseFee.cleaning_fee
+                    let full_price_tag=
+                            '<div class="full_price">'+
+                                '<span>청소비</span>'+
+                                '<span>&#8361</span>'+
+                                '<span>'+cleaning_fee+'</span>'+
+                                '<span>서비스료</span>'+
+                                '<span>&#8361</span>'+
+                                '<span>'+service_fee+'</span>'+'<span>('+r.houseFee.service_fee+'%)</span>'+
+                                '<span>총가격</span>'+
+                                '<span>&#8361</span>'+
+                                '<span>'+sum_price+'</span>'+
+                            '</div>';
+                    $(".full_price").append(full_price_tag);
+
+                    if(confirm("결제를 진행하시겠습니까?")){
+                        let bookingRequest = {
+                            request:[house_seq,in_dt,out_dt,adult,child,infant,dog],
+                            r:r
+                        }
+                        sessionStorage.setItem("bookingRequestItem",JSON.stringify(bookingRequest));
+                        location.href="/booking";
+                    }
+                }
+            })
         }
-
 
         //메세지 팝업
         function openMsgPopup(){
@@ -576,7 +678,7 @@
             <div>
                 <h3>환불 정책</h3>
                 <p><span class="refund_dt">##컨트롤러에서날짜계산필요##</span> 오후 12시전에 취소하면 전액 환불을 받으실 수 있습니다.</p>
-                <p><span class="in_dt">##입력한 체크인 날짜 validation##</span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
+                <p><span class="check_in_dt"></span> 오후 12시전에 취소하면 부분 환불을 받으실 수 있습니다.</p>
                 <div class="additional_desc">
                     <p>전액 환불: 결제하신 금액이 100% 환불됩니다.</p>
                     <p>부분 환불: 전체 숙박 요금의 50%를 환불받으실 수 있습니다. 서비스 수수료는 전액 환불됩니다.</p>
@@ -609,10 +711,10 @@
             //예약 어사이드
             <div class="input_area_wrap">
                 <div class="like_input_box" style="width: 50%; display: inline-block; border: 0; border-right: 1px solid #000;">
-                    <p>체크인<input style="border: 0; display: block;" type="text" name="" id="in_dt"></p>
+                    <p>체크인<input style="border: 0; display: block;" type="text" id="in_dt"></p>
                 </div>
                 <div class="like_input_box" style="width: 47%; display: inline-block; border: 0;">
-                    <p>체크아웃<input style="display: block; border: 0;" type="text" name="" id="out_dt"></p>
+                    <p>체크아웃<input style="display: block; border: 0;" type="text" id="out_dt"></p>
                 </div>
                 <div class="like_input_box" onclick="openGuestPopup()">
                     <p style="display: inline-block;">인원</p>
@@ -624,18 +726,11 @@
                 </div>
                 <div class="price_area">
                     <div>
-                        <span class="call_tooltip">
-                            <div>&#8361<span> ##기본요금## </span>x<span> ##체크인아웃날짜계산## </span>박</div>
-                        </span>
-                        <span>&#8361 ##기본요금+할증체크## </span>
+                        <div>&#8361<span class="base_price"></span>x<span class="duration"></span>박</div>
+                        <div class="one_day"></div>  
                     </div>
-                    <div>
-                        <span class="call_tooltip">청소비</span>
-                        <span>&#8361 ##청소비## </span>
-                    </div>
-                    <div>
-                        <span class="call_tooltip">서비스 수수료</span>
-                        <span>&#8361 0</span>
+                    <div class="full_price">
+
                     </div>
                 </div>
             </div>
@@ -705,6 +800,12 @@
                 <button onclick="postMsg()">메세지 전송하기</button>
             </div>
             <button onclick="closeMsgPopup()">&#88;</button>
+        </div>
+    </section>
+
+    <section>
+        <div class="booking_calendar">
+
         </div>
     </section>
 </body>

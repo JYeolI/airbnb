@@ -102,7 +102,7 @@
             //숙소 등록
             $(".save").click(function(){
 
-                let img_list = new Array();                
+                let img_list = new Array();       
                 for(let i = 0; i<$(".image_list label").length; i++){
                     let img = {
                         himg_file: $(".image_list label").eq(i).attr("data"),

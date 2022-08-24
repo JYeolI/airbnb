@@ -11,7 +11,6 @@
     <style>
         section {border: 1px solid #000; width: 1200px; }
         .trip_content {border: 1px solid #000; width: 800px; height: 400px;}
-        img {width: 50px;}
         .house_img {width: 200px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
     </style>
     <script>

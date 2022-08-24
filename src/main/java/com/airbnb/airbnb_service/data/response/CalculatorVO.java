@@ -12,4 +12,5 @@ public class CalculatorVO {
     private Integer day_option_seq; //적용된day옵션정보seq
     private Integer week_option_seq; //적용된week옵션정보seq
     private Integer month_option_seq; //적용된month옵션정보seq
+    private Integer booking_cnt;  //현재 일에 예약 중인 수
 }

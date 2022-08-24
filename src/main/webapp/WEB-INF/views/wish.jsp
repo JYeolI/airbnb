@@ -17,6 +17,7 @@
         .wish_list > div {width: 800px; border: 1px solid #000;}
         .star {color: red;}
         .wish_heart {width: 20px; height: 20px;}
+        .img {width: 400px; height: 400px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .heart {
             background-size: 100%; width: 20px; height: 20px; color: #000; background-repeat: no-repeat;
             background-image: url(img/common/heart.png);

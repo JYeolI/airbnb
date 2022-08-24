@@ -14,4 +14,5 @@ public interface TempMapper {
     public List<HouseOptionVO> selectHouseDailyOption(Integer house_seq);
     public List<HouseOptionVO> selectHouseMonthlyOption(Integer house_seq);
     public List<HouseOptionVO> selectHouseOptionView(Integer house_seq);
+    public Integer selectBookingCnt(Integer house_seq, String dt);
 }

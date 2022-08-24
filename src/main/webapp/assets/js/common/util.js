@@ -4,18 +4,39 @@ function makeDateFormat(dt){
     let month = ('0' + (date.getMonth() + 1)).slice(-2);
     let day = ('0' + date.getDate()).slice(-2);
     let dateString = year + '-' + month  + '-' + day;
+    return dateString;
 }
 
+function makeDateFormat(date,lastDay){
+    let dt =  new Date(date);
+    let format;
+    if(lastDay){
+        dt = new Date(date.getFullYear(),date.getMonth()+1,0);
+        format = dt.getFullYear() +
+                '-' + ( (dt.getMonth()+1) < 9 ? "0" + (dt.getMonth()+1) : (dt.getMonth()+1) )+
+                '-' + ( (dt.getDate()) < 9 ? "0" + (dt.getDate()) : (dt.getDate()) );
+    }
+    else{
+        format = dt.getFullYear() +
+                '-' + ( (dt.getMonth()+1) < 9 ? "0" + (dt.getMonth()+1) : (dt.getMonth()+1) )+
+                '-' + ( (dt.getDate()) < 9 ? "0" + (dt.getDate()) : (dt.getDate()) );
+    }
+    return format;
+}
 
-function makeDate(date){
-    let dt = new Date(date);
-    let year = dt.getFullYear();
-    let month = dt.getMonth();
-    let day = dt.getDay();
-    if(month > 0){ month = "0"+month}
-    if(day > 0){ day = "0"+day}
-    date = year+"-"+month+"-"+day;
-    return date;
+function makeFirstDay(date){
+    let dt = new Date(date.getFullYear(),date.getMonth(),1);
+    let format = dt.getFullYear() +
+            '-' + ( (dt.getMonth()+1) < 9 ? "0" + (dt.getMonth()+1) : (dt.getMonth()+1) )+
+            '-' + ( (dt.getDate()) < 9 ? "0" + (dt.getDate()) : (dt.getDate()) );
+    return format;
+}
+function makeLastDay(date){
+    let dt = new Date(date.getFullYear(),date.getMonth()+1,0);
+    let format = dt.getFullYear() +
+            '-' + ( (dt.getMonth()+1) < 9 ? "0" + (dt.getMonth()+1) : (dt.getMonth()+1) )+
+            '-' + ( (dt.getDate()) < 9 ? "0" + (dt.getDate()) : (dt.getDate()) );
+    return format;
 }
 
 

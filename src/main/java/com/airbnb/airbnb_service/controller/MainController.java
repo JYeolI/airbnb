@@ -13,7 +13,7 @@ public class MainController {
     }
     //숙소상세
     @GetMapping("/house")
-    public String getHouse() {
+    public String getHouse(@RequestParam Integer house_seq) {
         return "/house";
     }
     //위시리스트 ##세션체크
@@ -41,6 +41,4 @@ public class MainController {
     public String getTrip() {
         return "/trip";
     }
-    
-    
 }

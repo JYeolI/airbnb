@@ -89,4 +89,9 @@
             AND enable !=0 
             AND option_end_dt <![CDATA[>=]]> date(now())
     </select>
+    <select id="selectBookingCnt" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS booking FROM booking_info
+        WHERE bi_hi_seq = #{house_seq} AND bi_status = 1 
+            AND ( #{dt} BETWEEN date(bi_start_dt) AND date(bi_end_dt) )
+    </select>
 </mapper>

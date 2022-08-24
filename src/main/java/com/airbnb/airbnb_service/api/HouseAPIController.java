@@ -53,7 +53,7 @@ public class HouseAPIController {
 
 
         // 날짜 침대 침실 정보 변화 환불날짜 계산
-        resultMap.put("houseDeatil", houseDetail);        
+        resultMap.put("houseDetail", houseDetail);        
         
         Integer houseReviewCnt = review_mapper.selectHouseReviewCnt(house_seq);
         if(houseReviewCnt!=null){
@@ -75,10 +75,11 @@ public class HouseAPIController {
         return resultMap;
     }
 
+    //호스팅 숙소 추가
     @PutMapping("/house")
     public Map<String, Object> putHostingSave(@RequestBody HouseRequestVO request, HttpSession session) {
         Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
-        System.out.println(request);
+        
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
@@ -96,6 +97,9 @@ public class HouseAPIController {
         house_mapper.insertHouseAmenity(house_seq, request.getAmenity_list());
         house_mapper.insertHouseFee(request.getFee_info());
         house_mapper.insertHouseAddress(request.getAddress_info());
+
+        resultMap.put("status", true);
+        resultMap.put("message", "숙소가 추가되였습니다.");
 
         return resultMap;
     }

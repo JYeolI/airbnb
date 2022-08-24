@@ -23,4 +23,8 @@ public class TripResponseVO {
     private String detail;
     private String main_img;
     private Integer wish_seq;
+    private Integer basic_fee;
+    private Integer clean_fee;
+    private Integer service_fee;
+    private Integer total_fee;
 }

@@ -48,7 +48,6 @@
                         isSuperHost+
                         '<p class="review_count">후기 '+(r.profileReviewCnt+r.houseReviewCnt)+'개</p>';
                     $(".profile_side_area").append(side_profile_tag);
-                    
 
                     // first section
                     $(".main_profile_wrap h1 span").html(r.memberInfo.memeber_name);
@@ -130,50 +129,39 @@
                     })
 
                     //후기리스트 조회 태그생성
-                    for(let i=0; i<r.reviewListToHost.length; i++) {
-                        let write_dt = dateFormatting(r.reviewListToHost[i].write_dt);
-                        let writer_seq = r.reviewListToHost[i].writer_seq;
-                        let content = r.reviewListToHost[i].rev_content;
-                        let writer_img = r.reviewListToHost[i].writer_img;
-                        let writer_name = r.reviewListToHost[i].writer_name;
-                        let writer_country = r.reviewListToHost[i].writer_country;
-                        let join_dt = dateFormatting(r.reviewListToHost[i].join_dt);
-                        appendReview(write_dt,writer_seq,content,writer_img,writer_name,writer_country,join_dt,".host_review");
-                    }
-                    for(let i=0; i<r.reviewListToGuest.length; i++) {
-                        let write_dt = dateFormatting(r.reviewListToGuest[i].write_dt);
-                        let writer_seq = r.reviewListToGuest[i].writer_seq;
-                        let content = r.reviewListToGuest[i].rev_content;
-                        let writer_img = r.reviewListToGuest[i].writer_img;
-                        let writer_name = r.reviewListToGuest[i].writer_name;
-                        let writer_country = r.reviewListToGuest[i].writer_country;
-                        let join_dt = dateFormatting(r.reviewListToGuest[i].join_dt);
-                        appendReview(write_dt,writer_seq,content,writer_img,writer_name,writer_country,join_dt,".guest_review");
-                    }
+                    appendReview(r.reviewListToHost,".host_review");
+                    appendReview(r.reviewListToGuest,".guest_review");
 
                     //후기 태그 생성 및 append
-                    function appendReview(write_dt,writer_seq,content,writer_img,writer_name,writer_country,join_dt,where){
-                        let review_tag = 
-                            '<div class="review">'+
-                                '<p class="review_reg_dt">'+write_dt+'</p>'+
-                                '<p class="review_content">'+content+'</p>'+
-                                '<a href="http://localhost:7777/profile?member_seq='+writer_seq+'">'+
-                                    '<div class="member_img" style="background-image: url(/img/member/'+writer_img+');"></div>'+
-                                '</a>'+
-                                '<p class="review_writer_info">'+
-                                    '<span id="writer_name">'+writer_name+'님, </span>'+
-                                    '<span id="writer_country">'+writer_country+'</span>'+
-                                '</p>'+
-                                '<p id="writer_reg_dt">'+join_dt+'</p>'+
-                            '</div>';
-                        $(where).append(review_tag);
+                    function appendReview(list,where){
+                        for(let i=0; i< list.length; i++) {
+                            let write_dt = dateFormatting(list[i].write_dt);
+                            let writer_seq = list[i].writer_seq;
+                            let content = list[i].content;
+                            let writer_img = list[i].writer_img;
+                            let writer_name = list[i].writer_name;
+                            let writer_country = list[i].writer_country;
+                            let join_dt = dateFormatting(list[i].join_dt);
+                            let review_tag = 
+                                '<div class="review">'+
+                                    '<p class="review_reg_dt">'+write_dt+'</p>'+
+                                    '<p class="review_content">'+content+'</p>'+
+                                    '<a href="http://localhost:7777/profile?member_seq='+writer_seq+'">'+
+                                        '<div class="member_img" style="background-image: url(/img/member/'+writer_img+');"></div>'+
+                                    '</a>'+
+                                    '<p class="review_writer_info">'+
+                                        '<span id="writer_name">'+writer_name+'님, </span>'+
+                                        '<span id="writer_country">'+writer_country+'</span>'+
+                                    '</p>'+
+                                    '<p id="writer_reg_dt">'+join_dt+'</p>'+
+                                '</div>';
+                            $(where).append(review_tag);
+                        }
                     }
-                    
-
                 }
-
             })
         })
+        
         function dateFormatting(dt) {
             return new Date(+new Date(dt) + 3240 * 10000).toISOString().replace("T", " ").replace(/\..*/, '');
         }
@@ -197,7 +185,7 @@
             <div class="review_wrap">
                 <h2 class="review_count">★ 후기 <span></span>개</h2>
                 <div class="review_button">
-                    <p class="swap_btn review_from_guest">게스트가 남긴 후기(<span></span>)</p>
+                    <p class="swap_btn review_from_guest review_on">게스트가 남긴 후기(<span></span>)</p>
                     <p class="swap_btn review_from_host">호스트가 남긴 후기(<span></span>)</p>
                 </div>
                 <div class="review_info">

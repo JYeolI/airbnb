@@ -69,12 +69,12 @@
             //파일 업로드
             $("#image_file").change(function(){
                 let form = $("#img_form");
-                let fromData = new FormData(form[0]);
+                let formData = new FormData(form[0]);
                 if ($(this).val() == '' || $(this).val() == null) return;
                 $.ajax({
                     url:"/img/upload/house",
                     type:"put",
-                    data:fromData,
+                    data:formData,
                     contentType:false,
                     processData:false,
                     success:function(r){

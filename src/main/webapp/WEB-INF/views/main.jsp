@@ -109,9 +109,9 @@
             $(".count").eq(i).html(count);
         }
 
-        var chk_sort = new Array();
-        var chk_amenity = new Array();
-        var chk_lang = new Array();
+        let chk_sort = new Array();
+        let chk_amenity = new Array();
+        let chk_lang = new Array();
         //검색버튼(검색바/카테고리바/검색필터)
         function search(table_no,cate_bar_seq){
 

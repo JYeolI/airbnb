@@ -39,7 +39,7 @@ public class CategoryAPIController {
         resultMap.put("status", true);
         resultMap.put("message", "검색필터의 항목들이 조회되었습니다.");
         resultMap.put("sortList", cate_mapper.selectCateAmenityList());
-        resultMap.put("amenityList", cate_mapper.selectrCateLangList());
+        resultMap.put("amenityList", cate_mapper.selectCateLangList());
         resultMap.put("langList", cate_mapper.selectCateSortList());
         return resultMap;
     }

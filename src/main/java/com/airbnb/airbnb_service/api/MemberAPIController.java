@@ -19,7 +19,9 @@ import com.airbnb.airbnb_service.data.member.MemberInfoVO;
 import com.airbnb.airbnb_service.data.response.ProfileHostingHouseVO;
 import com.airbnb.airbnb_service.data.response.ProfileReviewVO;
 import com.airbnb.airbnb_service.data.response.ProfileVO;
+import com.airbnb.airbnb_service.mapper.CategoryMapper;
 import com.airbnb.airbnb_service.mapper.HouseMapper;
+import com.airbnb.airbnb_service.mapper.HtempMapper;
 import com.airbnb.airbnb_service.mapper.MemberMapper;
 import com.airbnb.airbnb_service.mapper.ReviewMapper;
 
@@ -29,11 +31,12 @@ public class MemberAPIController {
     @Autowired MemberMapper member_mapper;
     @Autowired ReviewMapper review_mapper;
     @Autowired HouseMapper house_mapper;
+    @Autowired CategoryMapper cate_mapper;
 
     //위시리스트 위시리스트 숙소 조회
     @GetMapping("/wish")
     public Map<String, Object> getWishViewData(HttpSession session) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -49,7 +52,7 @@ public class MemberAPIController {
     //위시리스트 추가(하트클릭)
     @PutMapping("/wish")
     public Map<String, Object> putWish(HttpSession session, @RequestParam Integer house_seq) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -70,7 +73,7 @@ public class MemberAPIController {
     //위시리스트 삭제(하트클릭)
     @DeleteMapping("/wish")
     public Map<String, Object> deleteWish(HttpSession session, @RequestParam Integer wish_seq) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
 
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -84,12 +87,14 @@ public class MemberAPIController {
     }
 
     //프로필(회원정보)
+    @Autowired HtempMapper Htemp_mapper;
     @GetMapping("/profile")
     public Map<String, Object> getProfileData(@RequestParam Integer member_seq) {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
         // 조회할 회원 ##mi_status확인하고 내보내줘야함
         ProfileVO memberInfo = member_mapper.selectMemberProfile(member_seq);
+        memberInfo.setLang(Htemp_mapper.selectMemberProfileLanguageList(memberInfo.getMi_seq()));
 
         Integer status = memberInfo.getMember_status();
         if(status == 0){
@@ -119,14 +124,17 @@ public class MemberAPIController {
         resultMap.put("reviewListToGuest", profileReviewList);        
         resultMap.put("houseReviewCnt", houseReviewCnt);
         resultMap.put("profileReviewCnt", profileReviewCnt);
+
+        resultMap.put("cateCountryList", cate_mapper.selectCateCountryList());
+        resultMap.put("cateLangList", cate_mapper.selectCateLangList());
         
         // ##처리 이미지파일api쪽에서 겟할떄
-        // if(member.getMimg_file() == null) { member.setMimg_file("default.png"); }
-        // for(int i=0; i<reviewListToHosts.size(); i++) {
-        //     if(reviewListToHosts.get(i).getWriter_img() == null) { reviewListToHosts.get(i).setMimg_file("default.png"); }
+        // if(memberInfo.getProfile_img() == null) { memberInfo.setProfile_img("default.png"); }
+        // for(int i=0; i<houseReviewList.size(); i++) {
+        //     if(houseReviewList.get(i).getWriter_img() == null) { houseReviewList.get(i).setWriter_img("default.png"); }
         // }
-        // for(int i=0; i<reviewListToGuests.size(); i++) {
-        //     if(reviewListToGuests.get(i).getWriter_img() == null) { reviewListToGuests.get(i).setWriter_img("default.png"); }
+        // for(int i=0; i<profileReviewList.size(); i++) {
+        //     if(profileReviewList.get(i).getWriter_img() == null) { profileReviewList.get(i).setWriter_img("default.png"); }
         // }
         
         resultMap.put("status", true);

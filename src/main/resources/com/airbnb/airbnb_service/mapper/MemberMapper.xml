@@ -42,7 +42,7 @@
         (#{user_seq}, #{house_seq}, #{order})
     </insert>    
     <select id="selectWishOrderMax" resultType="java.lang.Integer">
-        SELECT max(wish_order)
+        SELECT MAX(wish_order)
         FROM wish_info
         WHERE wish_mi_seq = #{user_seq}
     </select>        
@@ -54,15 +54,17 @@
 
     <select id="selectMemberProfile" resultType="com.airbnb.airbnb_service.data.response.ProfileVO">
         SELECT
-            mi_name as memeber_name,
-            mi_description as member_desc,
-            cc_content as country,
-            mai_city as city,
-            mai_detail as member_address,
-            mimg_file as profile_img,
-            mi_status as member_status,
-            mi_host_grade as host_grade,
-            mi_reg_dt as reg_dt
+            mi_seq,
+            mi_name AS memeber_name,
+            mi_description AS member_desc,
+            cc_content AS country,
+            mi_company AS company,
+            mai_city AS city,
+            mai_detail AS member_address,
+            mimg_file AS profile_img,
+            mi_status AS member_status,
+            mi_host_grade AS host_grade,
+            mi_reg_dt AS reg_dt
         FROM member_info mi
         LEFT JOIN member_address_info mai
             ON mi.mi_seq = mai.mai_mi_seq
@@ -73,7 +75,7 @@
         where mi.mi_seq = #{member_seq}
     </select>
     <select id="isDupChkId" resultType="java.lang.Boolean">
-        SELECT count(*) 
+        SELECT COUNT(*) 
         FROM member_info 
         WHERE mi_id = #{id}
     </select>

@@ -1,0 +1,8 @@
+INSERT INTO house_weekly_option
+(hwo_hi_seq, hwo_name, hwo_rate, hwo_weekly)
+VALUES
+(1, '숙소1 일요일 할증', 10, 0),
+(1, '숙소1 토요일 할증', 10, 6),
+(2, '숙소2 일요일 할인', -5, 0),
+(2, '숙소2 토요일 할인', -5, 6),
+(3, '숙소3 disable', 0, 0);

@@ -1,0 +1,57 @@
+##사용자로부터
+<requestVO>
+in_dt    2022-08-14
+out_dt   2022-08-20
+##DB로부터
+<house_feeVO>
+base_price     1000
+cleaning_Fee    500
+service_Fee       5
+<List<house_optionVO>>
+option_seq  15          16          17         18          19
+option_name 매일할증    토요일      일요일      매달특정일 매달특정일
+option_date 2022-02-12  16일토요일  17일요일    매달18일   매달17일
+option_rate -10         +20         +20         -50         -50
+option_cycle  1         2           2           3           3
+
+- Daily_Price_Options
+seq house_seq rate enabled
+- 요일별
+seq house_seq rate 요일
+- 특정일
+seq house_seq rate date
+
+
+##프론트로 보내야하는 정보
+<List<CalculatorVO>>
+                날짜    할인할증  최종가  매일  매주  매월
+CalculatorVO   2022-08-14   0     null   null  null  null
+CalculatorVO   2022-08-15  -10    900   15    null  null
+CalculatorVO   2022-08-16  -40    600   15     16   null
+CalculatorVO   2022-08-17  -40    600   15     17   18
+CalculatorVO   2022-08-18  -60    400    15    null  18
+CalculatorVO   2022-08-19  -10    900    15    null  null
+CalculatorVO   2022-08-20   10    1100   15    null  null
+
+최종출력형태         
+#1
+2022-01-01 80000 -20
+2022-01-02 80000 -20
+2022-01-03 60000 -40
+2022-01-04 80000 -20
+2022-01-05 80000 -20
+기간 2022-01-01 ~ 2022-01-05 합산 380000
+#2 날짜별 가격정보 및 할인할증옵션정보      
+2022-01-01 90000 -10
+2022-01-01 -10 할증옵션1 주기 매일
+2022-01-02 90000 -10
+2022-01-02 -10 할증옵션1 주기 매일
+2022-01-03 90000 -10
+2022-01-03 -10 할증옵션1 주기 매일
+2022-01-03 -20 할증옵션2 주기 매주
+2022-01-03 +20 할증옵션3 주기 매월
+2022-01-04 70000 -30
+2022-01-04 -10 할증옵션1 주기 매일
+2022-01-03 -20 할증옵션2 주기 매주
+2022-01-05 90000 -10
+2022-01-05 -10 할증옵션1 주기 매일

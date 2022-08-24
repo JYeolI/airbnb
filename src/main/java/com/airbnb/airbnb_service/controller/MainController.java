@@ -13,10 +13,10 @@ public class MainController {
     }
     //숙소상세
     @GetMapping("/house")
-    public String getHouse() {
+    public String getHouse(@RequestParam Integer house_seq) {
         return "/house";
     }
-    //위시리스트
+    //위시리스트 ##세션체크
     @GetMapping("/wish")
     public String getWish() {
         return "/wish";
@@ -26,7 +26,7 @@ public class MainController {
     public String getProfile(@RequestParam Integer member_seq) {
         return "/profile";
     }
-    //회원가입
+    //회원가입 ##세션체크
     @GetMapping("/join")
     public String getJoin() {
         return "/join";
@@ -36,11 +36,9 @@ public class MainController {
     public String getHosting() {
         return "/hosting";
     }
-    //여행(예약정보 확인)
+    //여행(예약정보 확인) ##세션체크
     @GetMapping("/trip")
     public String getTrip() {
         return "/trip";
     }
-    
-    
 }

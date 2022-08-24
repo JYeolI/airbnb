@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class HouseAmenityVO {
+    private Integer amenity_seq;
     private Integer amenity_type;
     private String amenity_content;
     private String amenity_description;

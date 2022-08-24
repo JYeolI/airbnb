@@ -11,6 +11,9 @@ public class HouseReviewVO {
     private String guest_rev_dt;
     private String guest_name;
     private String guest_img;
+    private Integer host_seq;
     private String host_reply;
+    private String host_name;
+    private String host_img;
     private Date host_rpl_dt;
 }

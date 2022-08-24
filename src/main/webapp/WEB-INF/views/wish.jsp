@@ -17,6 +17,7 @@
         .wish_list > div {width: 800px; border: 1px solid #000;}
         .star {color: red;}
         .wish_heart {width: 20px; height: 20px;}
+        .img {width: 400px; height: 400px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
         .heart {
             background-size: 100%; width: 20px; height: 20px; color: #000; background-repeat: no-repeat;
             background-image: url(img/common/heart.png);
@@ -88,7 +89,7 @@
             })
         }
 
-        //하트 클릭시 위시리스트 제거 및 재조회
+        //하트 클릭시 위시리스트 제거 및 아이디로 숨기기
         function clickHeart(wish_seq) {
             //위시리스트 삭제 
             $.ajax({

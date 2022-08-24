@@ -69,12 +69,12 @@
             //파일 업로드
             $("#image_file").change(function(){
                 let form = $("#img_form");
-                let fromData = new FormData(form[0]);
+                let formData = new FormData(form[0]);
                 if ($(this).val() == '' || $(this).val() == null) return;
                 $.ajax({
                     url:"/img/upload/house",
                     type:"put",
-                    data:fromData,
+                    data:formData,
                     contentType:false,
                     processData:false,
                     success:function(r){
@@ -102,7 +102,7 @@
             //숙소 등록
             $(".save").click(function(){
 
-                let img_list = new Array();                
+                let img_list = new Array();       
                 for(let i = 0; i<$(".image_list label").length; i++){
                     let img = {
                         himg_file: $(".image_list label").eq(i).attr("data"),

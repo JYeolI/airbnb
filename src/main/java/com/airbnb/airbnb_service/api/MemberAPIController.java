@@ -33,7 +33,7 @@ public class MemberAPIController {
     //위시리스트 위시리스트 숙소 조회
     @GetMapping("/wish")
     public Map<String, Object> getWishViewData(HttpSession session) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -49,7 +49,7 @@ public class MemberAPIController {
     //위시리스트 추가(하트클릭)
     @PutMapping("/wish")
     public Map<String, Object> putWish(HttpSession session, @RequestParam Integer house_seq) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -70,7 +70,7 @@ public class MemberAPIController {
     //위시리스트 삭제(하트클릭)
     @DeleteMapping("/wish")
     public Map<String, Object> deleteWish(HttpSession session, @RequestParam Integer wish_seq) {
-        Map<String,Object> resultMap=new LinkedHashMap<String, Object>();
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
 
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
@@ -96,7 +96,9 @@ public class MemberAPIController {
             resultMap.put("memberInfo", memberInfo);
         }
         else if(status == 1){
+            resultMap.put("status", true);
             resultMap.put("memberInfo", "블라인드 된 회원입니다.");
+            return resultMap;
         }
 
         // 호스트 등급 확인후 숙소조회 (0 호스트 아님)

@@ -3,9 +3,10 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.HouseMapper">
     <select id="selectSearchHouseList" resultType="com.airbnb.airbnb_service.data.response.MainViewResponseVO">
-        SELECT main.hi_seq,
-            main.hi_mi_seq,
-            main.hi_name,
+        SELECT 
+            main.hi_seq AS house_seq,
+            main.hi_mi_seq  AS host_seq,
+            main.hi_name  AS house_name,
             main.main_img,
             main.country,
             main.city,
@@ -125,14 +126,14 @@
     
     <select id="selectHouseList" resultType="com.airbnb.airbnb_service.data.response.ProfileHostingHouseVO">
         SELECT
-            hi_seq as house_seq,
-            hi_name as house_name,
-            himg_file as house_img,
+            hi_seq AS house_seq,
+            hi_name AS house_name,
+            himg_file AS house_img,
             total_avg,
-            hi_type as type,
-            cs_content as sort,
-            csd_content as sort_detail,
-            hi_description as house_desc
+            hi_type AS type,
+            cs_content AS sort,
+            csd_content AS sort_detail,
+            hi_description AS house_desc
         FROM member_info mi
         LEFT JOIN house_info hi
             ON mi.mi_seq = hi.hi_mi_seq
@@ -156,13 +157,16 @@
             csd.csd_content AS house_sort_detail,
             hi.hi_description AS house_description,
             hi.hi_rule AS house_rule,
+            hi.hi_check_in AS house_check_in,
+            hi.hi_check_out AS house_check_out,
             hi.hi_refund_day AS house_refund_day,
             hi.hi_status AS house_status,
             cc.cc_content AS house_country,
             hai.hai_city AS house_city,
             hai.hai_detail AS house_address,
             hgi.hgi_guest AS house_guest,
-            hgi.hgi_bed  AS house_bed,
+            hgi.hgi_dog AS house_dog,
+            hgi.hgi_bed AS house_bed,
             hgi.hgi_bedroom AS house_bedroom,
             hgi.hgi_bathroom AS house_bathroom,
             mi.mi_seq AS host_seq,
@@ -173,7 +177,7 @@
             mi.mi_status AS host_status,
             mimg.mimg_file AS host_img
         FROM house_info hi
-        LEFT JOIN house_address_info hai 
+        LEFT JOIN house_address_info hai
             ON hi.hi_seq = hai.hai_hi_seq 
         LEFT JOIN category_country cc
             ON cc.cc_seq = hai.hai_cc_seq
@@ -191,6 +195,7 @@
     </select>    
     <select id="selectHouseAmenityList" resultType="com.airbnb.airbnb_service.data.response.HouseAmenityVO">
         SELECT
+            ca.ca_seq AS amenity_seq,
             ca.ca_type AS amenity_type,
             ca.ca_content AS amenity_content,
             ca.ca_description AS amenity_description,
@@ -200,9 +205,6 @@
             ON ham.ham_ca_seq = ca.ca_seq
         WHERE ham_hi_seq = #{house_seq}
         ORDER BY ca.ca_type asc
-        <if test="limit!=null">
-        LIMIT #{limit}
-        </if>
     </select>
     <select id="selectHouseImageList" resultType="java.lang.String">
         SELECT himg_file AS house_image
@@ -216,6 +218,11 @@
         LEFT JOIN category_lang cl 
             ON mli.mli_cl_seq = cl.cl_seq
         WHERE mli.mli_mi_seq = #{host_seq}
+    </select>
+    <select id="selectHostingHouseCnt" resultType="java.lang.Integer">
+        SELECT IFNULL(COUNT(hi_seq),0) AS hosting_house_cnt
+        FROM house_info
+        WHERE hi_mi_seq = #{host_seq}
     </select>
 
     <insert id="insertHouseInfo"

@@ -22,6 +22,7 @@
         .house_img {width: 280px; height: 280px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
 
         .house_content { border: 1px solid #000; }
+        .house_content > * { text-decoration: none; color: #000;}
         .heart {
             background-size: 100%; width: 20px; height: 20px; color: #000; background-repeat: no-repeat;
             background-image: url(img/common/heart.png);
@@ -29,6 +30,7 @@
         .heart_on {
             background-image: url(img/common/red_heart.png);
         }
+        .count {display: inline-block;}
     </style>
     <script>
         $(function(){
@@ -97,7 +99,7 @@
             })
 
         })
-                
+
         function minus(i){
             let count = parseInt($(".count").eq(i).html())-1;
             if(count<0) return;
@@ -109,9 +111,9 @@
             $(".count").eq(i).html(count);
         }
 
-        var chk_sort = new Array();
-        var chk_amenity = new Array();
-        var chk_lang = new Array();
+        let chk_sort = new Array();
+        let chk_amenity = new Array();
+        let chk_lang = new Array();
         //검색버튼(검색바/카테고리바/검색필터)
         function search(table_no,cate_bar_seq){
 
@@ -200,10 +202,10 @@
 
             for(let i = 0; i<r.houseList.length; i++){   
                 if(r.houseList[i].wish==1){
-                    wish_tag = '<div class="heart heart_on" id="heart'+r.houseList[i].hi_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].hi_seq+')"></div>';
+                    wish_tag = '<div class="heart heart_on" id="heart'+r.houseList[i].house_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].house_seq+')"></div>';
                 }
                 else{
-                    wish_tag = '<div class="heart" id="heart'+r.houseList[i].hi_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].hi_seq+')"></div>';
+                    wish_tag = '<div class="heart" id="heart'+r.houseList[i].house_seq+'" onclick="wish('+r.houseList[i].wish_seq+','+r.houseList[i].house_seq+')"></div>';
                 }
                 if(r.houseList[i].super_host==1){
                     super_host_tag = '<i class="super_host">슈퍼호스트</i>';
@@ -219,30 +221,31 @@
                 }
                 let house_tag=
                     '<div class="house_content">'+
-                        '<div class="house_img_wrap">'+
-                            '<div class="house_img" style="background-image: url(img/house/'+r.houseList[i].main_img+');"></div>'+
-                        '</div>'+
-                        '<div>'+
-                            wish_tag+
-                        '</div>'+
-                        '<div class="super_host_mark">'+
-                            super_host_tag+
-                        '</div>'+
-                        '<div class="house_text_wrap">'+
-                            '<h1 class="address">'+r.houseList[i].country+','+r.houseList[i].city+','+r.houseList[i].address+'</h1>'+
-                            '<p class="house_name">'+r.houseList[i].hi_name+'</p>'+
-                            '<p></p>'+
-                            '<h3 class="price">'+r.houseList[i].price+'</h3>'+
-                        '</div>'+
-                        '<div class="house_point_wrap">'+
-                            '<p>'+
-                                '<span class="star">★</span>'+
-                                '<span class="point">'+total_avg+'</span>'+
-                            '</p>'+
+                        '<a href="/house?house_seq='+r.houseList[i].house_seq+'">'+
+                            '<div class="house_img_wrap">'+
+                                '<div class="house_img" style="background-image: url(img/house/'+r.houseList[i].main_img+');"></div>'+
+                            '</div>'+
+                            '<div>'+
+                                wish_tag+
+                            '</div>'+
+                            '<div class="super_host_mark">'+
+                                super_host_tag+
+                            '</div>'+
+                            '<div class="house_text_wrap">'+
+                                '<h1 class="address">'+r.houseList[i].country+','+r.houseList[i].city+','+r.houseList[i].address+'</h1>'+
+                                '<p class="house_name">'+r.houseList[i].house_name+'</p>'+
+                                '<h3 class="price">'+r.houseList[i].price+'</h3>'+
+                            '</div>'+
+                            '<div class="house_point_wrap">'+
+                                '<p>'+
+                                    '<span class="star">★</span>'+
+                                    '<span class="point">'+total_avg+'</span>'+
+                                '</p>'+
+                            '</div>'+
+                        '</a>'+
                     '</div>';
                 $(".house_list").append(house_tag);
             }
-
         }
 
         //하트 클릭  ##로그인페이지 연결

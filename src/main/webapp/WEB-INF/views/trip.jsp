@@ -11,7 +11,6 @@
     <style>
         section {border: 1px solid #000; width: 1200px; }
         .trip_content {border: 1px solid #000; width: 800px; height: 400px;}
-        img {width: 50px;}
         .house_img {width: 200px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
     </style>
     <script>
@@ -30,8 +29,8 @@
                         let start_year = start_date.getFullYear();
                         let start_month = start_date.getMonth();
                         let start_day = start_date.getDay();
-                        if(start_month > 0){ start_month = "0"+start_month}
-                        if(start_day > 0){ start_day = "0"+start_day}
+                        if(start_month > 0){ start_month = "0"+start_month;}
+                        if(start_day > 0){ start_day = "0"+start_day;}
                         let start_date_tag = start_year+"-"+start_month+"-"+start_day;
 
                         // 예약 끝날자 ##10-12월 체크
@@ -39,18 +38,18 @@
                         let end_year = end_date.getFullYear();
                         let end_month = end_date.getMonth();
                         let end_day = end_date.getDay();
-                        if(end_month > 0){ end_month = "0"+end_month}
-                        if(end_day > 0){ end_day = "0"+end_day}
+                        if(end_month > 0){ end_month = "0"+end_month;}
+                        if(end_day > 0){ end_day = "0"+end_day;}
                         let end_date_tag = end_year+"-"+end_month+"-"+end_day;
 
                         // 예약현황
                         let status = r.booking_list[i].bi_status
                         let status_tag = "";
                         if(status == 0) {
-                            status_tag = '<span>승인대기</span>'
+                            status_tag = '<span>승인대기</span>';
                         }
                         else if(status == 1) {
-                            status_tag = '<span>승인</span>'
+                            status_tag = '<span>승인</span>';
                         }
 
                         // 게스트 인원
@@ -110,7 +109,7 @@
                                     '<p class="cleaning_fee">서비스 요금</p>'+
                                 '</div>'+
                             '</div>';
-                        $(".trip_list").append(tag)
+                        $(".trip_list").append(tag);
                     }
                 }
             })
@@ -119,31 +118,31 @@
 <body>
     <main>
         <section class="trip_area">
-                <div class="trip_list">
-                    <div class="trip_content">
-                        <p class="bi_seq">예약번호</p>
-                        <h1 class="hi_name">숙소이름</h1>
-                        <p class="img_file">이미지파일</p>
-                        <p class="location">
-                            국가,도시,상세
-                        </p>
-                        <p class="booking_dt">
-                            <span>예약일자 : </span>
-                            <span class="start_dt">시작일</span>
-                            <span>~</span>
-                            <span class="end_dt">끝일</span>
-                        </p>
-                        <p class="guest">
-                        </p>
-                        <p class="status">예약상황</p>
-                        <div class="fee">
-                            <p class="basic_fee">기본 요금</p>
-                            <p class="service_fee">청소비</p>
-                            <p class="cleaning_fee">서비스 요금</p>
-                            <p class="trip_total_fee">총요금</p>
-                        </div>
+            <div class="trip_list">
+                <div class="trip_content">
+                    <p class="bi_seq">예약번호</p>
+                    <h1 class="hi_name">숙소이름</h1>
+                    <p class="img_file">이미지파일</p>
+                    <p class="location">
+                        국가,도시,상세
+                    </p>
+                    <p class="booking_dt">
+                        <span>예약일자 : </span>
+                        <span class="start_dt">시작일</span>
+                        <span>~</span>
+                        <span class="end_dt">끝일</span>
+                    </p>
+                    <p class="guest">
+                    </p>
+                    <p class="status">예약상황</p>
+                    <div class="fee">
+                        <p class="basic_fee">기본 요금</p>
+                        <p class="service_fee">청소비</p>
+                        <p class="cleaning_fee">서비스 요금</p>
+                        <p class="trip_total_fee">총요금</p>
                     </div>
                 </div>
+            </div>
         </section>
     </main>
 </body>

@@ -33,7 +33,8 @@
                     console.log(r);
                     //정지회원 프로필 블라인드
                     if(r.memberInfo.member_status==1){
-                        location.href("/api/member/profile")
+                        alert(r.memberInfo);
+                        location.back();
                     }
 
                     // 슈퍼호스트 마크 ##메달 등 다른 페이지랑 공통으로 표시

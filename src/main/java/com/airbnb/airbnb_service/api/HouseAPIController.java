@@ -51,23 +51,22 @@ public class HouseAPIController {
         HouseDetailVO houseDetail = house_mapper.selectHouseDetail(house_seq);
         Integer host_seq = houseDetail.getHost_seq();
 
-
-        // 날짜 침대 침실 정보 변화 환불날짜 계산
         resultMap.put("houseDetail", houseDetail);        
         
+        //null체크는 sql에서 IFNULL 0으로 totalReviewCnt는 group by??? 때문인지 IFNULL안됨
+        Integer hostingHouseCnt = house_mapper.selectHostingHouseCnt(host_seq);
         Integer houseReviewCnt = review_mapper.selectHouseReviewCnt(house_seq);
-        if(houseReviewCnt!=null){
-            HouseDetailCntVO houseDetailCnt =  review_mapper.selectHouseAndReviewCnt(host_seq);
-            houseDetailCnt.setHouse_review_cnt(houseReviewCnt);
-            resultMap.put("houseDetailCnt", houseDetailCnt);
-        }
-        
-
+        Integer totalReviewCnt = review_mapper.selectTotalReviewCnt(host_seq);
+        if(totalReviewCnt==null) totalReviewCnt=0;
+        HouseDetailCntVO houseDetailCnt = HouseDetailCntVO.builder()
+                                        .hosting_house_cnt(hostingHouseCnt)
+                                        .house_review_cnt(houseReviewCnt)
+                                        .total_review_cnt(totalReviewCnt)
+                                        .build();
+        resultMap.put("houseDetailCnt", houseDetailCnt);
         resultMap.put("imgList", house_mapper.selectHouseImageList(house_seq));
         resultMap.put("langList", house_mapper.selectHostLangList(host_seq));
-
-        //편의시설 정보 10개 조회 후 
-        resultMap.put("amenityList", house_mapper.selectHouseAmenityList(house_seq, 10));
+        resultMap.put("amenityList", house_mapper.selectHouseAmenityList(house_seq));
 
         resultMap.put("status", true);
         resultMap.put("message", "숙소 상세 항목들이 조회되었습니다.");

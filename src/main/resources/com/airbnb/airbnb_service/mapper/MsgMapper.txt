@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.MemberMapper">
+
+    <select id="selectSenderList" resultType="java.lang.Integer">
+        SELECT * 
+        FROM msg_info mi
+        WHERE msg_sender_mi_seq = 1
+            AND msg_receiver_mi_seq = #{user_seq}
+    </select>
+    <select id="selectServiceMsgList" resultType="com.airbnb.airbnb_service.data.response.MsgReponseVO">
+        SELECT * 
+        FROM msg_info mi
+        WHERE msg_sender_mi_seq = 1
+            AND msg_receiver_mi_seq = #{user_seq}
+    </select>
+    <select id="selectMsgList" resultType="">
+        SELECT  msg.msg_seq,
+                msg.msg_sender_mi_seq AS sender_seq,
+                msg.msg_receiver_mi_seq AS receiver_seq,
+                msg.msg_status AS status,
+                msg.msg_reg_dt AS send_dt
+        FROM msg_info msg
+        LEFT JOIN member_info mi
+            ON mi.mi_seq = msg.msg_sender_mi_seq 
+        LEFT JOIN member_info mi2
+            ON mi2.mi_seq = msg.msg_receiver_mi_seq
+        LEFT JOIN member_img mimg
+            ON mimg.mimg_mi_seq = msg.msg_sender_mi_seq 
+        WHERE msg_receiver_mi_seq = #{user_seq} AND msg_sender_mi_seq = #{opponent_seq}
+            OR (msg_sender_mi_seq = #{opponent_seq} AND msg_receiver_mi_seq = #{user_seq})
+        ORDER BY msg_reg_dt desc
+    </select>
+    
+    <select id="selectHostMsgList" resultType="com.airbnb.airbnb_service.data.response.MsgReponseVO">
+    </select>
+    
+    <select id="insertMsg" resultType="com.airbnb.airbnb_service.data.request.MsgRequestVO">
+        INSERT INTO msg_info
+        (msg_sender_mi_seq, msg_receiver_mi_seq, msg_status, msg_content)
+        VALUES
+        (#{sender_seq}, #{receiver_seq}, 0, #{msg_content})
+    </select>
+</mapper>

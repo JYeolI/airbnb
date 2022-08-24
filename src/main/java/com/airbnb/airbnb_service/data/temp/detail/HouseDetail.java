@@ -2,9 +2,11 @@ package com.airbnb.airbnb_service.data.temp.detail;
 
 import java.util.Date;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class HouseDetail {
     
     @Data
@@ -24,7 +26,6 @@ public class HouseDetail {
         private Integer house_bed;
         private Integer house_bedroom;
         private Integer house_bathroom;
-        private Integer house_lastroom;
 
         private Integer host_seq;
         private String host_name;

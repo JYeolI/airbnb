@@ -11,7 +11,6 @@
     <script src="/assets/js/common/util.js"></script>
     <style>
         section {border: 1px solid #000; width: 1200px; }
-        img {width: 50px;}
         .house_img {width: 200px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
     </style>
     <script>

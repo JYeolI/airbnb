@@ -96,7 +96,9 @@ public class MemberAPIController {
             resultMap.put("memberInfo", memberInfo);
         }
         else if(status == 1){
+            resultMap.put("status", true);
             resultMap.put("memberInfo", "블라인드 된 회원입니다.");
+            return resultMap;
         }
 
         // 호스트 등급 확인후 숙소조회 (0 호스트 아님)

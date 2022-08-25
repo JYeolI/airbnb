@@ -419,6 +419,28 @@
             }
 
             console.log(report_data);
+
+            $.ajax({
+                url:"/api/h/member/report",
+                type:"put",
+                contentType:"application/json",
+                data:JSON.stringify(report_data),
+                success:function(r) {
+                    if(r.status==-1) {
+                        alert(r.message);
+                        location.href = "/h/login";
+                    }
+                    else if(r.status) {
+                        alert(r.message);
+                        location.reload();
+                    }
+                    else {
+                        if(!alert(r.message)) return;
+                        // alert(r.message);
+                        // console.log("message");
+                    }
+                }
+            })
         }
     </script>
 </head>

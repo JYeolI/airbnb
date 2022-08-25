@@ -91,9 +91,25 @@ public class Htemp0816APIController {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
         MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        if(user == null) {
+            resultMap.put("status", -1);
+            resultMap.put("message", "먼저 로그인 해주세요.");
+            return resultMap;
+        }
+        
         Integer user_seq = user.getMi_seq();
 
-        // temp_mapper.isDupChkMemberReport(mrpt_from_mi_seq, mrpt_to_mi_seq)
+        int dupChk = temp_mapper.isDupChkMemberReport(user_seq, data.getMrpt_to_mi_seq());
+        if(dupChk == 0) {
+            data.setMrpt_from_mi_seq(user_seq);
+            temp_mapper.insertMemberReport(data);
+            resultMap.put("status", true);
+            resultMap.put("message", "신고되었습니다.");
+        }
+        else {
+            resultMap.put("status", false);
+            resultMap.put("message", "이미 신고한 회원입니다.");
+        }
 
         return resultMap;
     }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.MsgMapper">
+
+    <select id="selectMsgRoomList" resultType="com.airbnb.airbnb_service.data.response.MsgRoomResponseVO">
+            SELECT 
+                msg.msg_seq,
+                msg.user_seq,
+                msg.opponent_seq,
+                mi.mi_id opponent_id,
+                mi.mi_name AS opponent_name,
+                mimg.mimg_file AS opponent_img,
+                max(msg.msg_reg_dt) AS msg_reg_dt
+            FROM ((
+                    SELECT msg_seq,
+                        msg_sender_mi_seq AS user_seq,
+                        msg_receiver_mi_seq AS opponent_seq,
+                        msg_reg_dt
+                    FROM msg_info
+                    WHERE msg_sender_mi_seq = #{user_seq}
+                        AND msg_sender_delete = 0
+                )UNION ALL(
+                    SELECT msg_seq,
+                        msg_receiver_mi_seq AS user_seq,
+                        msg_sender_mi_seq AS opponent_seq,
+                        msg_reg_dt
+                    FROM msg_info msg
+                    WHERE msg_receiver_mi_seq = #{user_seq}
+                        AND msg_receiver_delete = 0
+            ))msg
+            LEFT JOIN member_info mi 
+                ON msg.opponent_seq = mi.mi_seq 
+            LEFT JOIN member_img mimg
+                ON msg.opponent_seq = mimg.mimg_mi_seq 
+            GROUP BY msg.opponent_seq
+            ORDER BY msg.msg_reg_dt desc
+    </select>
+    <select id="selectNewMsgCnt" resultType="com.airbnb.airbnb_service.data.response.MsgRoomResponseVO">
+        SELECT msg_sender_mi_seq AS sender_seq,
+                count(msg_seq) AS new_msg_cnt
+        FROM msg_info msg
+        WHERE msg_receiver_mi_seq = #{user_seq}
+            AND msg_receiver_read = 0
+		GROUP BY msg.msg_sender_mi_seq
+    </select>
+    <select id="selectMsgContentList" resultType="com.airbnb.airbnb_service.data.response.MsgContentResponseVO">        		
+		SELECT  
+			IF(msg_sender_mi_seq = #{user_seq},0,1) AS opponent,
+			msg.msg_content AS content,
+			msg.msg_receiver_read AS is_read
+        FROM msg_info msg
+        WHERE (msg_sender_mi_seq = #{user_seq} AND msg_receiver_mi_seq = #{opponent_seq})
+            OR (msg_sender_mi_seq = #{opponent_seq} AND msg_receiver_mi_seq = #{user_seq})
+        ORDER BY msg_reg_dt
+    </select>    
+    <select id="insertMsg" resultType="com.airbnb.airbnb_service.data.request.MsgRequestVO">
+        INSERT INTO msg_info
+        (msg_sender_mi_seq, msg_receiver_mi_seq, msg_content)
+        VALUES
+        (#{user_seq}, #{receiver_seq}, #{msg_content})
+    </select>
+</mapper>

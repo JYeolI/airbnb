@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MsgRequestVO {
-    private Integer sender_seq;
+    private Integer user_seq;
     private Integer receiver_seq;
     private String msg_content;
 }

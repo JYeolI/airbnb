@@ -112,7 +112,7 @@
                                 total_avg = r.houseList[i].total_avg.toFixed(2)
                             }
                             let hosting_house_tag = 
-                                '<a href="http://localhost:7777/house/house_seq='+r.houseList[i].house_seq+'" class="hosting_house_info">'+
+                                '<a href="http://localhost:7777/house?house_seq='+r.houseList[i].house_seq+'" class="hosting_house_info">'+
                                     '<img src="/img/house/'+r.houseList[i].house_img+'">'+
                                     '<p class="review_point_average">'+
                                         '<span id="point_star" style="color: #f00">★</span>'+

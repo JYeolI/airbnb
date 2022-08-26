@@ -15,4 +15,13 @@ public class Htemp0816Controller {
     public String getHLogin() {
         return "/temp/HtempLogin";
     }
+    @GetMapping("/host")
+    public String getHHost() {
+        return "/temp/HtempHost0825";
+    }
+
+    @GetMapping("/calendar")
+    public String getHCalendar() {
+        return "/temp/HtempCalendar";
+    }
 }

@@ -22,11 +22,13 @@
         .main_page_button {background-image: url('/img/etc/airbnb_main.png'); background-position: center; display: inline-block; background-repeat: no-repeat; width: 100px; height: 100%; background-size: contain; padding: 10px; margin: 10px;}
         .member_info_button img {width: 30px;}
         .member_information_area {float: right; overflow: hidden; margin: 10px;}
-        .member_information_area > p {display: inline-block; padding: 15px;}
+        .member_information_area p {display: inline-block; padding: 15px;}
         .host_page_button:hover, .lang_choice_button:hover {cursor: pointer; background-color: #80808022; border-radius: 30px;}
-        .member_info_button {cursor: pointer; border-radius: 30px; border: 1px solid #ccc; margin: 10px;}
-        .member_info_button:hover {cursor: pointer; box-shadow: 1px 1px 5px #ccc; background-color: #fff; border-radius: 30px;}
+        .member_info_button {cursor: pointer; border-radius: 50px; border: 1px solid #ccc; margin: 10px; padding: 5px !important; padding-left: 12px !important;}
+        .member_info_button:hover {cursor: pointer; box-shadow: 1px 1px 5px #ccc; background-color: #fff;}
         .member_info_button * {vertical-align: middle;}
+        .member_info_button img {border-radius: 100%; margin-left: 10px; width: 30px;}
+        .member_info_popup {width: 100px;}
         .member_info_popup > div {border-bottom: 1px solid #ccc;}
         .member_info_popup a {display: block; color: #000; text-decoration: none;}
         .member_info_popup a:hover {text-decoration: underline;}
@@ -47,10 +49,16 @@
                             '<a href="/h/login">로그인</a>'+
                             '<a href="#">회원가입</a>'+
                         '</div>';
-                    let user_host_tag = 
+                    let user_guest_tag = 
                         '<div class="popup_host_wrap">'+
                             '<a href="#">숙소 호스트 되기</a>'+
                             '<a href="#">체험 호스팅 하기</a>'+
+                        '</div>';
+                    let user_host_tag = 
+                        '<div class="popup_host_wrap">'+
+                            '<a href="/h/host">숙소 관리</a>'+
+                            '<a href="#">체험 관리</a>'+
+                            '<a href="#">계정</a>'+
                         '</div>';
                     let user_info_tag = 
                         '<div class="popup_user_wrap">'+
@@ -68,9 +76,8 @@
                         user_info_full_tag = 
                             '<div class="member_info_popup">'+
                                 user_login_tag+
-                                user_host_tag+
+                                user_guest_tag+
                             '</div>';
-                        $(".member_information_area").append(user_info_full_tag);
                     }
                     else {
                         user_info_full_tag = 
@@ -79,8 +86,8 @@
                                 user_host_tag+
                                 user_logout_tag+
                             '</div>';
-                        $(".member_information_area").append(user_info_full_tag);
-                    }
+                        }
+                    $(".member_information_area").append(user_info_full_tag);
                     $(".popup_logout_wrap a").click(function() {
                         $.ajax({
                             url:"/api/h/logout",

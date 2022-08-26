@@ -113,4 +113,11 @@ public class Htemp0816APIController {
 
         return resultMap;
     }
+
+    @PostMapping("/calendar")
+    public Map<String, Object> postHostCalendar() {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        return resultMap;
+    }
 }

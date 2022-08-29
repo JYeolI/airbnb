@@ -41,4 +41,9 @@ public class MainController {
     public String getTrip() {
         return "/trip";
     }
+    //메세지함
+    @GetMapping("/msg")
+    public String getMsg() {
+        return "/msg";
+    }
 }

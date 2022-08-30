@@ -49,7 +49,7 @@
             })
         }
         function getContent(opponent_seq,page){
-            if(page=1) $(".content_list").html("");
+            if(page==1) $(".content_list").html("");
             $.ajax({
                 url:"/api/msg/content?opponent_seq="+opponent_seq+"&page="+page,
                 type:"get",
@@ -80,7 +80,7 @@
                     $(".post_area").html("");
                     let post_tag = 
                         '<input id="msg" type="textarea" style="width: 600px; height: 100px;">'+
-                        '<button onclick="post_msg('+opponent_seq+')">전송</button>';
+                        '<button onclick="postMsg('+opponent_seq+')">전송</button>';
                     $(".post_area").append(post_tag);
 
                 }
@@ -98,7 +98,7 @@
                 }
             })
         }
-        function post_msg(opponent_seq){
+        function postMsg(opponent_seq){
             let data = {
                 receiver_seq: opponent_seq,
                 msg_content: $("#msg").val()
@@ -108,8 +108,9 @@
                 type:"post",
                 contentType:"application/json",
                 data:JSON.stringify(data),
-                success:function(r) {
-                    
+                success:function(r) {                    
+                    console.log(r);
+                    $("#msg").val("");
                 }
             })
             

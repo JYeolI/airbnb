@@ -33,6 +33,7 @@
         .msg_popup {display: none;}
         .call_tooltip {text-decoration: underline; cursor: pointer;}
         .count {display: inline-block;}
+        .report_popup {display: none;}
     </style>
     <script>
         let query = window.location.search;
@@ -46,9 +47,12 @@
                 url:"/api/house/?house_seq="+house_seq,
                 type:"get",
                 success:function(r){
+                    sessionStorage.setItem("houseInfoItem",JSON.stringify(r.houseDetail));
+                    sessionStorage.setItem("totalReviewCnt",JSON.stringify(r.houseDetailCnt.total_review_cnt));
+                    sessionStorage.setItem("houseImg",JSON.stringify(r.imgList[0]));
+
                     console.log(r)
                     host_seq = r.houseDetail.host_seq;
-
                     //섹션 메인
                     let house_title = r.houseDetail.house_name
                     $(".house_title").html(house_title);
@@ -242,7 +246,8 @@
             $.ajax({
                 url:"/api/review/list?house_seq="+house_seq+"&limit="+10,
                 type:"get",
-                success:function(r){
+                success:function(r){                    
+                    sessionStorage.setItem("reviewPointItem",JSON.stringify(r.reviewPoint));
                     console.log(r);
 
                     //후기 없으면 reviewNullMsg반환 체크 후 return;
@@ -471,7 +476,14 @@
 
                     if(confirm("결제를 진행하시겠습니까?")){
                         let bookingRequest = {
-                            request:[house_seq,in_dt,out_dt,adult,child,infant,dog],
+                            host_seq:host_seq,
+                            house_seq:house_seq,
+                            in_dt:in_dt,
+                            out_dt:out_dt,
+                            adult:adult,
+                            child:child,
+                            infant:infant,
+                            dog:dog,
                             r:r
                         }
                         sessionStorage.setItem("bookingRequestItem",JSON.stringify(bookingRequest));
@@ -492,14 +504,48 @@
             $(".amenity_popup").css({"display":"none"});
         }
         function postMsg(){
-            // ##api작성후 연결
-            alert("To Be Continued");
+            let data = {
+                receiver_seq: host_seq,
+                msg_content: $("#msg").val()
+            };
+            $.ajax({
+                url:"/api/msg/normal",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),
+                success:function(r) {
+                    console.log(r);
+                    $("#msg").val("");
+                }
+            })
         }
 
-        //숙소신고
-        function report_house(){
-            // ##api작성후 팝업 연결
-            alert("To Be Continued");
+        //숙소신고 팝업
+        function openReportPopup(){
+            $(".report_popup").css({"display":"block"});
+        }
+        function closeReportPopup(){
+            $(".report_popup").css({"display":"none"});
+        }
+        function reportHouse(){
+            let data = {
+                house_seq:house_seq,
+                type: $("select[name=report_type] option:selected").val(),
+                reason:$("#report_reason").val()
+            }            
+            $.ajax({
+                url:"/api/house/report",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),           
+                success:function(r) {
+                    console.log(r);
+                    if(!r.status){
+                        alert(r.message);
+                    }
+                }
+            })
+
         }
 
     </script>
@@ -686,7 +732,7 @@
                 </div>
             </div>
             <div class="report">
-                <a onclick="report_house()">숙소 신고하기 ##신고기능 추가예정##</a>
+                <button onclick="openReportPopup()">숙소 신고하기</button>
             </div>
         </div>
 
@@ -797,7 +843,7 @@
             </div>
             <div class="msg_content">
                 <h3 class="inner_title">질문이 더 있으신가요? 호스트에게 메시지를 보내 문의하세요.</h3>
-                <textarea cols="30" rows="10"></textarea>
+                <input id="msg" type="textarea" style="width: 600px; height: 100px;">
                 <button onclick="postMsg()">메세지 전송하기</button>
             </div>
             <button onclick="closeMsgPopup()">&#88;</button>
@@ -807,6 +853,27 @@
     <section>
         <div class="booking_calendar">
 
+        </div>
+    </section>
+
+    <section>
+        <div class="report_popup">
+            <h3 class="inner_title">사유</h3>
+            <select name="report_type">                
+                <option value="1">부정확하거나 틀린 정보입니다</option>
+                <option value="2">실제 숙소가 아닙니다</option>
+                <option value="3">사기입니다</option>
+                <option value="4">불쾌합니다</option>
+                <option value="5">이 페이지 일부가 잘 보이지 않아요</option>
+                <option value="6">호스트가 추가 금액을 요구해요</option>
+                <option value="7">청결하거나 안전해 보이지 않아요</option>
+                <option value="8">똑같은 다른 숙소가 있어요</option>
+                <option value="9">이 지역에는 숙소 운영이 허용되지 않습니다.</option>
+                <option value="0">기타</option>
+            </select>
+            <input id="report_reason" type="textarea" style="width: 600px; height: 100px;">
+            <button onclick="reportHouse()">신고하기</button>
+            <button onclick="closeReportPopup()">닫기</button>
         </div>
     </section>
 </body>

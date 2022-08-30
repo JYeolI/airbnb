@@ -14,21 +14,54 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.theme.min.css" integrity="sha512-9h7XRlUeUwcHUf9bNiWSTO9ovOWFELxTlViP801e5BbwNJ5ir9ua6L20tEroWZdm+HFBAWBLx2qH4l4QHHlRyg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <style>
+    section {width: 1200px; border: 1px solid #000;}
+    .house_img {width: 100px; height: 100px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
     .like_link {text-decoration: underline; font-weight: 700;}
     .img_wrap div {width: 50px; height: 50px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
+    .star_icon  {width: 50px; height: 50px; background-position: center; background-size: 100%; background-repeat: no-repeat;}
 </style>
 <script>
-    let sessionItem = JSON.parse(sessionStorage.getItem("bookingRequestItem"));
-    let request = sessionItem.request;
-    let r = sessionItem.r;      
+    let bookingSession = JSON.parse(sessionStorage.getItem("bookingRequestItem"));
+    let host_seq = bookingSession.host_seq;
+    let house_seq = bookingSession.house_seq;
+    let in_dt = bookingSession.in_dt;
+    let out_dt = bookingSession.out_dt;
+    let adult = bookingSession.adult;
+    let child = bookingSession.child;
+    let infant = bookingSession.infant;
+    let dog = bookingSession.dog;
+    
+    let houseSession = JSON.parse(sessionStorage.getItem("houseInfoItem"));
+    let house_name = houseSession.house_name;
+    let house_sort_detail = houseSession.house_sort_detail;
+    let super_host = houseSession.super_host;
+    let house_img =  JSON.parse(sessionStorage.getItem("houseImg"));
+    let pointSession = JSON.parse(sessionStorage.getItem("reviewPointItem"));
+    let total_point = pointSession.total_avg
+    let review_cnt = JSON.parse(sessionStorage.getItem("totalReviewCnt"));
+
+    let r = bookingSession.r;
+    let base_price = r.houseFee.base_price;
+    let cleaning_fee = r.houseFee.cleaning_fee;
+    let service_fee = r.houseFee.base_price*r.houseFee.service_fee/100;
+    let sum_price = (r.houseFee.sum_price*(100+r.houseFee.service_fee)/100)+r.houseFee.cleaning_fee;
+
     $(function() {        
-        $(".in_dt").html(request[1]);
-        $(".out_dt").html(request[2]);
-        $(".adult").html(request[3]);
-        $(".child").html(request[4]);
-        $(".infant").html(request[5]);
-        $(".dog").html(request[6]);
+        $(".in_dt").html(in_dt);
+        $(".out_dt").html(out_dt);
+        $(".adult").html(adult);
+        $(".child").html(child);
+        $(".infant").html(infant);
+        $(".dog").html(dog);
         $(".stay").html(r.calculatedPrice.length);
+
+        $(".house_name").html(house_name);
+        $(".house_sort").html(house_sort_detail);
+        let house_img_tag = '<div class="house_img" style="background-image: url(/img/house/'+house_img+');"></div>'
+        $(".left_img").append(house_img_tag);
+        if(super_host!=2)  $(".super_host").hide();
+        $(".total_point").html(total_point);
+        $(".review_cnt").html(review_cnt);        
 
         for(let i = 0; i<r.calculatedPrice.length; i++){
             let one_day_price_tag = 
@@ -75,10 +108,6 @@
                 }
             }
         }
-        
-        let cleaning_fee = r.houseFee.cleaning_fee;
-        let service_fee = r.houseFee.base_price*r.houseFee.service_fee/100;
-        let sum_price = (r.houseFee.sum_price*(100+r.houseFee.service_fee)/100)+r.houseFee.cleaning_fee
         let full_price_tag=
                 '<div class="full_price">'+
                     '<span>청소비</span>'+
@@ -92,8 +121,58 @@
                     '<span>'+sum_price+'</span>'+
                 '</div>';
         $(".full_price").append(full_price_tag);
+        
 
     })
+    function postMsg(){
+        let data = {
+            receiver_seq: host_seq,
+            msg_content: $("#msg").val()
+        };
+        $.ajax({
+            url:"/api/msg/normal",
+            type:"post",
+            contentType:"application/json",
+            data:JSON.stringify(data),
+            success:function(r) {
+                console.log(r);
+                $("#msg").val("");
+            }
+        })
+    }
+    function bookingRequest(){
+        let guest_phone = $('select[name=phone_prefix] option:selected').val()+$("#phone_middle").val()+$("#phone_last").val();
+        let data = {
+            infoVO:{
+                house_seq: house_seq,
+                in_dt: in_dt,
+                out_dt: out_dt,
+                guest_phone: guest_phone
+            },
+            guestVO:{
+                adult: adult,
+                child: child,
+                infant: infant,
+                dog: dog
+            },
+            feeVO:{
+                basic_fee: base_price,
+                cleaning_fee: cleaning_fee,
+                service_fee: service_fee,
+                total_fee: sum_price
+            }
+        }
+        console.log(data);
+        $.ajax({
+                url:"/api/booking",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),           
+                success:function(r) {
+                    console.log(r);
+                }
+        })
+    }
 
 </script>
 <body>
@@ -150,19 +229,20 @@
             <div class="">
                 <h5>호스트에게 메세지 보내기</h5>
                 <p>호스트에게 여행 목적과 도착 예정 시간을 알려주세요.</p>
-                <button>추가</button>
+                <input id="msg" type="textarea" style="width: 600px; height: 100px;">
+                <button onclick="postMsg()">메세지 전송하기</button>
             </div>
             <div class="">
                 <h5>전화번호</h5>
                 <p>여행 업데이트를 받으려면 전화번호를 입력하고 인증해주세요.</p>
                 <p>
                     <select name="phone_prefix">
-                        <option value="010">010</option>
-                        <option value="010">011</option>
-                        <option value="010">016</option>
-                        <option value="010">018</option>
+                        <option value="010" selected>010</option>
+                        <option value="011">011</option>
+                        <option value="016">016</option>
+                        <option value="018">018</option>
                     </select>
-                    - <input type="text" style="width: 50px;"> - <input type="text" style="width: 50px;">
+                    - <input id="phone_middle" type="text" style="width: 50px;"> - <input id="phone_last" type="text" style="width: 50px;">
                 </p>
             </div>
         </div>
@@ -183,24 +263,22 @@
                 예약 확정 전까지는 요금이 청구되지 않습니다.</h5>
             <p>예약 확정 전까지는 요금이 청구되지 않습니다.</p>
         </div>
-        <button>예약요청</button>
+        <button onclick=bookingRequest()>예약요청</button>
     </section>
     <section>
         //어사이드 현재 예약하는 숙소정보
         <div class="aside_wrap">
             <div class="house_info">
                 <div class="left_img">
-                    <div class="house_img" style="background-image: url(/img/house?default.png);"></div>
                 </div>
                 <div class="right_desc">
-                    <p>house_sort 펜션</p>
-                    <p>house_name 네발친구</p>
+                    <p class="house_sort"></p>
+                    <p class="house_name"></p>
                     <p>
-                        <div class="star_icon" style="background-image: url(/img/common?star.png);"></div>
-                        <span>5.00</span>
-                        <span>(후기 <span>9</span> 개)</span>
-                        <span> • </span>
-                        <span>슈퍼호스트</span>
+                        <div class="star_icon" style="background-image: url(/img/common/star.png);"></div>
+                        <span class="total_point">5.00</span> 
+                        <span>(후기 <span class="review_cnt">9</span> 개)</span>
+                        <span class="super_host"> • 슈퍼호스트</span>
                     </p>
                 </div>
             </div>

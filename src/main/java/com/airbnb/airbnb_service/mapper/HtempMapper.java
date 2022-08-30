@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.airbnb.airbnb_service.data.house.HouseInfoVO;
 import com.airbnb.airbnb_service.data.member.MemberInfoVO;
 import com.airbnb.airbnb_service.data.member.MemberReportVO;
+import com.airbnb.airbnb_service.data.member.MsgInfoVO;
+import com.airbnb.airbnb_service.data.temp.HostCheckoutVO;
 
 @Mapper
 public interface HtempMapper {
@@ -21,4 +24,9 @@ public interface HtempMapper {
 
     public Integer isDupChkMemberReport(Integer mrpt_from_mi_seq, Integer mrpt_to_mi_seq);
     public void insertMemberReport(MemberReportVO data);
+    
+    public List<HostCheckoutVO> selectHostCheckout(Integer seq);
+    public List<HostCheckoutVO> selectHostCheckin(Integer seq);
+    public List<HouseInfoVO> selectHostingHouseInfo(Integer seq, Boolean status);
+    public List<MsgInfoVO> selectHostReviewMsg(Integer seq);
 }

@@ -47,7 +47,7 @@
                     let user_login_tag = 
                         '<div class="popup_login_wrap">'+
                             '<a href="/h/login">로그인</a>'+
-                            '<a href="#">회원가입</a>'+
+                            '<a href="/join">회원가입</a>'+
                         '</div>';
                     let user_guest_tag = 
                         '<div class="popup_host_wrap">'+

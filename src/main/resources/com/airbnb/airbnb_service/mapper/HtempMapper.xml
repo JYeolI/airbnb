@@ -47,6 +47,7 @@
         WHERE mli_mi_seq = #{mi_seq}
         and mli_cl_seq = #{cl_seq}
     </delete>
+
     <select id="isDupChkMemberReport" resultType="java.lang.Integer">
         select count(*) from member_report where mrpt_from_mi_seq = #{mrpt_from_mi_seq} and mrpt_to_mi_seq = #{mrpt_to_mi_seq}
     </select>
@@ -56,4 +57,59 @@
         VALUES
             (#{mrpt_from_mi_seq}, #{mrpt_to_mi_seq}, #{mrpt_type}, #{mrpt_reason})
     </insert>
+    
+    <select id="selectHostCheckout" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
+        select 
+            bi.bi_seq,
+            bi.bi_start_dt,
+            bi.bi_end_dt,
+            hi.hi_seq,
+            hi.hi_name,
+            mi.mi_seq,
+            mi.mi_name
+        from booking_info bi 
+        left join house_info hi 
+        on bi.bi_hi_seq = hi.hi_seq
+        left join member_info mi 
+        on bi.bi_mi_seq = mi.mi_seq 
+        where hi.hi_mi_seq = #{seq}
+        and bi.bi_start_dt <![CDATA[<=]]> now()
+        and bi.bi_end_dt <![CDATA[>=]]> now()
+        and bi.bi_status = 2
+        order by bi.bi_end_dt
+    </select>
+    <select id="selectHostCheckin" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
+        select 
+            bi.bi_seq,
+            bi.bi_start_dt,
+            bi.bi_end_dt,
+            hi.hi_seq,
+            hi.hi_name,
+            mi.mi_seq,
+            mi.mi_name
+        from booking_info bi 
+        left join house_info hi 
+        on bi.bi_hi_seq = hi.hi_seq
+        left join member_info mi 
+        on bi.bi_mi_seq = mi.mi_seq 
+        where hi.hi_mi_seq = #{seq}
+        and bi.bi_start_dt <![CDATA[>=]]> now()
+        and bi.bi_status = 1
+        order by bi.bi_start_dt
+    </select>
+    <select id="selectHostingHouseInfo" resultType="com.airbnb.airbnb_service.data.house.HouseInfoVO">
+        select hi_seq, hi_name from house_info
+        where hi_mi_seq = #{seq}
+        <if test="status == true">
+            and hi_status = 0
+        </if>
+    </select>
+    <select id="selectHostReviewMsg" resultType="com.airbnb.airbnb_service.data.member.MsgInfoVO">
+        select msg.msg_seq, msg.msg_sender_mi_seq, msg.msg_content, mi.mi_name
+        from msg_info msg
+        left join member_info mi 
+        on msg.msg_sender_mi_seq = mi.mi_seq
+        where msg.msg_type = 13
+        and msg.msg_receiver_mi_seq = #{seq}
+    </select>
 </mapper>

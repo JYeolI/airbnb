@@ -12,4 +12,6 @@ public class MsgInfoVO {
     private Integer msg_type;
     private String msg_content;
     private Date msg_reg_dt;
+
+    private String mi_name;
 }

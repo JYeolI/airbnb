@@ -120,4 +120,20 @@ public class Htemp0816APIController {
 
         return resultMap;
     }
+
+    @PostMapping("/host")
+    public Map<String, Object> postHostCheckout(HttpSession session) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        // MemberInfoVO host = (MemberInfoVO)session.getAttribute("user");
+        // Integer host_seq = host.getMi_seq();
+        Integer host_seq = 2;
+
+        resultMap.put("allHouse", temp_mapper.selectHostingHouseInfo(host_seq, false));
+        resultMap.put("checkout", temp_mapper.selectHostCheckout(host_seq));
+        resultMap.put("checkin", temp_mapper.selectHostCheckin(host_seq));
+        resultMap.put("hostingHouse", temp_mapper.selectHostingHouseInfo(host_seq, true));
+        resultMap.put("reviewMsg", temp_mapper.selectHostReviewMsg(host_seq));
+        
+        return resultMap;
+    }
 }

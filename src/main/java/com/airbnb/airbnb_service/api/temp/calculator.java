@@ -7,12 +7,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.airbnb.airbnb_service.data.request.BookingRequest;
 import com.airbnb.airbnb_service.data.request.CalendarRequestVO;
+import com.airbnb.airbnb_service.data.request.HouseReportRequestVO;
 import com.airbnb.airbnb_service.data.response.CalculatorVO;
 import com.airbnb.airbnb_service.data.response.HouseFeeVO;
 import com.airbnb.airbnb_service.data.response.HouseOptionVO;
@@ -101,6 +105,8 @@ public class calculator {
         resultMap.put("houseFee", houseFee);
         resultMap.put("optionList", optList);
         resultMap.put("calculatedPrice", calList);
+        resultMap.put("status", true);
+        resultMap.put("message", "입력 기간에 대한 숙소 가격 정보입니다.");
 
         return resultMap;
     }
@@ -118,5 +124,61 @@ public class calculator {
         calendar.set(Calendar.MILLISECOND, 0);
         
         return calendar;
+    }
+
+    
+    @Transactional
+    @PostMapping("/api/booking")
+    public Map<String, Object> postBooking(
+            HttpSession session,
+            @RequestBody BookingRequest request
+        ) {
+        Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
+        
+        // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        // Integer user_seq = user.getMi_seq();
+        Integer user_seq = 2;
+
+        request.getInfoVO().setGuest_seq(user_seq);
+
+        temp_mapper.insertBookingInfo(request.getInfoVO());
+
+        //generated key 받아와서 세팅
+        Integer booking_seq = request.getInfoVO().getBi_seq();
+        request.getFeeVO().setBooking_seq(booking_seq);
+        request.getGuestVO().setBooking_seq(booking_seq);
+        System.out.println(booking_seq);
+
+        temp_mapper.insertBookingFee(request.getFeeVO());
+        temp_mapper.insertBookingGuest(request.getGuestVO());
+
+        return resultMap;
+    }
+
+    
+    @PostMapping("/api/house/report")
+    public Map<String, Object> postHouseReport(HttpSession session, @RequestBody HouseReportRequestVO request) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        // Integer user_seq = user.getMi_seq();
+        Integer user_seq = 2;
+        Integer house_seq = request.getHouse_seq();
+
+        //중복 신고 여부 확인
+        Boolean dupReport = temp_mapper.selectHouseReportCnt(user_seq, house_seq);
+        if(!dupReport){
+            resultMap.put("status", false);
+            resultMap.put("error", "ERR_DUPLICATED_HOUSE_REPORT");
+            resultMap.put("message", "이미 신고한 숙소입니다.");
+            return resultMap;
+        }
+
+        request.setUser_seq(user_seq);
+        temp_mapper.insertHouseReport(request);
+
+        resultMap.put("status", true);
+        resultMap.put("message", "숙소신고가 완료되었습니다.");
+        return resultMap;
     }
 }

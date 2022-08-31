@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.airbnb.airbnb_service.data.response.TripCountPageVO;
 import com.airbnb.airbnb_service.mapper.BookingMapper;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/api/booking")
 public class BookingAPIController {
     @Autowired BookingMapper booking_mapper;
 
     // 여행 - 예약정보
+    @ApiOperation(value = "여행", notes = "여행")
     @GetMapping("/list/{period}")
     public Map<String, Object> getTripData(HttpSession session, @PathVariable String period, @RequestParam @Nullable Integer page) {
         Map<String,Object> resultMap=new LinkedHashMap<String, Object>();

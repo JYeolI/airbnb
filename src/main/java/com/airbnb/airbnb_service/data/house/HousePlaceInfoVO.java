@@ -7,4 +7,7 @@ public class HousePlaceInfoVO {
     private Integer hpi_seq;
     private Integer hpi_hi_seq;
     private Integer hpi_cp_seq;
+    //category_place
+    private String cp_content;
+
 }

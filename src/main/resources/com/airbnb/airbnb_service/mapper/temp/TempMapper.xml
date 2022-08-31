@@ -94,4 +94,39 @@
         WHERE bi_hi_seq = #{house_seq} AND bi_status = 1 
             AND ( #{dt} BETWEEN date(bi_start_dt) AND date(bi_end_dt) )
     </select>
+
+    
+    <insert id="insertHouseReport">
+        INSERT INTO house_report
+        (hrpt_from_mi_seq, hrpt_to_hi_seq, hrpt_type, hrpt_reason)
+        VALUES
+        (#{user_seq}, #{house_seq}, #{type}, #{reason})
+    </insert>
+    <select id="selectHouseReportCnt" resultType="java.lang.Boolean">
+        SELECT IF(COUNT(hrpt_seq)>0,0,1) FROM house_report
+        WHERE hrpt_from_mi_seq = #{user_seq}
+            AND hrpt_to_hi_seq = #{house_seq}
+    </select>
+
+    <insert id="insertBookingInfo"
+        parameterType="com.airbnb.airbnb_service.data.request.BookingRequest"
+        useGeneratedKeys="true" keyProperty="bi_seq">
+        INSERT INTO booking_info
+        (bi_mi_seq, bi_hi_seq, bi_start_dt, bi_end_dt, bi_guest_phone)
+        VALUES
+        (#{guest_seq},#{house_seq},#{in_dt},#{out_dt},#{guest_phone})
+    </insert>
+    <insert id="insertBookingGuest">
+        INSERT INTO booking_guest_info
+        (bgi_bi_seq,bgi_adult,bgi_child,bgi_infant,bgi_dog)
+        VALUES
+        (#{booking_seq},#{adult},#{child},#{infant},#{dog})
+    </insert>
+    <insert id="insertBookingFee">
+        INSERT INTO booking_fee_info
+        (bfi_bi_seq,bfi_basic_fee,bfi_cleaning_fee,bfi_service_fee,bfi_total_fee)
+        VALUES
+        (#{booking_seq},#{basic_fee},#{cleaning_fee},#{service_fee},#{total_fee})
+    </insert>
+
 </mapper>

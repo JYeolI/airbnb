@@ -58,7 +58,6 @@ public class ImgAPIController {
         } catch (Exception e) {
             System.out.println("파일을 찾을 수 없거나 잘못된 파일 경로 입니다.");
         }
-
         return
             ResponseEntity.ok() //결과로 200ok를 설정
             //파일의 타입을 Spring프레임 워크를 통해 파일 유형을 결정

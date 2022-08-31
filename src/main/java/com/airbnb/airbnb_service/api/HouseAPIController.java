@@ -29,16 +29,19 @@ public class HouseAPIController {
 
     //메인 숙소조회
     @PostMapping("/house/list")
-    public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO request, HttpSession session) {
+    public Map<String,Object> postMainViewData(@RequestBody SearchRequestVO request, HttpSession session, @RequestParam Integer page) {
         Map<String,Object> resultMap = new LinkedHashMap<String, Object>();
         
         // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
         // Integer user_seq = user.getMi_seq();
         Integer user_seq = 1;
+        if(page==null)page=1;
+        Integer offset = (page-1)*40;
 
         resultMap.put("status", true);
         resultMap.put("message", "숙소 데이터가 조회되었습니다.");
-        resultMap.put("houseList", house_mapper.selectSearchHouseList(request, user_seq));
+        resultMap.put("houseList", house_mapper.selectSearchHouseList(request, user_seq, offset));
+        resultMap.put("totalCnt", house_mapper.selectSearchHouseTotalCnt(request, user_seq));
         return resultMap;
     }
     

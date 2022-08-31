@@ -18,7 +18,8 @@ import com.airbnb.airbnb_service.data.response.ProfileHostingHouseVO;
 @Mapper
 public interface HouseMapper {
     //메인
-    public List<MainViewResponseVO> selectSearchHouseList(SearchRequestVO request, Integer user_seq);
+    public List<MainViewResponseVO> selectSearchHouseList(SearchRequestVO request, Integer user_seq, Integer offset);
+    public Integer selectSearchHouseTotalCnt(SearchRequestVO request, Integer user_seq);
     //프로필
     public List<ProfileHostingHouseVO> selectHouseList(Integer member_seq);
     //숙소상세

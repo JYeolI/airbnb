@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airbnb.airbnb_service.mapper.temp.AdministrateMapper">
+    <select id="selectHouseAdministrate" resultType="com.airbnb.airbnb_service.data.house.HouseAdministrateVO">
+        select 
+            hi.hi_seq as seq, 
+            hi.hi_name as name,
+            hi.hi_type as type,
+            hi.hi_description as hi_description,
+            hi.hi_host_phone as phone,
+            hi.hi_refund_day as refund_day,
+            hi.hi_rule as rule,
+            hi.hi_check_in as check_in,
+            hi.hi_check_out as check_out,
+            cate.cs_content as cs_content,
+            cate.csd_content as csd_content,
+            cate.csd_description as csd_description,
+            himg.himg_file as img,
+            hgi.hgi_guest as guest,
+            hgi.hgi_bed as bed,
+            hgi.hgi_bathroom as bathroom,
+            hgi.hgi_bedroom as bedroom,
+            hgi.hgi_dog as dog,
+            country.cc_content as cc_content,
+            country.hai_city as city,
+            country.hai_detail as detail,
+            hfi.hfi_base_price as price,
+            hfi.hfi_cleaning_fee as cleaning,
+            hfi.hfi_service_fee as service
+        from house_info hi 
+        left join
+            (select cs.*, csd.* 
+                from category_sort cs 
+                left join category_sort_detail csd
+                    on cs.cs_seq = csd.csd_cs_seq) cate
+            on hi.hi_csd_seq = cate.csd_seq
+        left join house_guest_info hgi 
+            on hi.hi_seq = hgi.hgi_hi_seq
+        left join house_img himg
+            on hi.hi_seq = himg.himg_hi_seq
+        left join
+            (select hai.*, cc.*
+                from house_address_info hai
+                left join category_country cc
+                    on hai.hai_cc_seq = cc.cc_seq) country
+            on hi.hi_seq = country.hai_hi_seq 
+        left join house_fee_info hfi
+            on hi.hi_seq = hfi.hfi_hi_seq 
+            WHERE hi_mi_seq = #{user_seq} and himg.himg_main = 1
+    </select>
+        <select id="selectHouseInfo" resultType="com.airbnb.airbnb_service.data.house.HouseAdministrateVO">
+            select 
+                hi.hi_seq as seq, 
+                hi.hi_name as name,
+                hi.hi_type as type,
+                hi.hi_description as hi_description,
+                hi.hi_status as status,
+                hi.hi_host_phone as phone,
+                hi.hi_refund_day as refund_day,
+                hi.hi_rule as rule,
+                hi.hi_check_in as check_in,
+                hi.hi_check_out as check_out,
+                cate.cs_content as cs_content,
+                cate.csd_content as csd_content,
+                cate.csd_description as csd_description,
+                himg.himg_file as img,
+                hgi.hgi_guest as guest,
+                hgi.hgi_bed as bed,
+                hgi.hgi_bathroom as bathroom,
+                hgi.hgi_bedroom as bedroom,
+                hgi.hgi_dog as dog,
+                country.cc_content as cc_content,
+                country.hai_city as city,
+                country.hai_detail as detail,
+                hfi.hfi_base_price as price,
+                hfi.hfi_cleaning_fee as cleaning,
+                hfi.hfi_service_fee as service,
+                hdo.hdo_name as hdo_name,
+                hdo.hdo_rate as hdo_rate,
+                hdo.hdo_enable as hdo_enable,
+                hdo.hdo_enable_dt as hdo_enable_dt
+            from house_info hi 
+            left join
+                (select cs.*, csd.* 
+                    from category_sort cs 
+                    left join category_sort_detail csd
+                        on cs.cs_seq = csd.csd_cs_seq) cate
+                on hi.hi_csd_seq = cate.csd_seq
+            left join house_guest_info hgi 
+                on hi.hi_seq = hgi.hgi_hi_seq
+            left join house_img himg
+                on hi.hi_seq = himg.himg_hi_seq
+            left join
+                (select hai.*, cc.*
+                    from house_address_info hai
+                    left join category_country cc
+                        on hai.hai_cc_seq = cc.cc_seq) country
+                on hi.hi_seq = country.hai_hi_seq 
+            left join house_fee_info hfi
+                on hi.hi_seq = hfi.hfi_hi_seq 
+            left join house_daily_option hdo
+                on hi.hi_seq = hdo.hdo_hi_seq
+                WHERE hi_mi_seq = #{user_seq} and himg.himg_main = 1 
+                and hi.hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseImg" resultType="com.airbnb.airbnb_service.data.house.HouseImgVO">
+        select himg_file from house_img where himg_hi_seq = #{house_seq}
+    </select>
+    <select id="selecthousePlace" resultType="com.airbnb.airbnb_service.data.category.CategoryPlaceVO">
+        select cp.cp_content 
+        from house_place_info hpi 
+        left join category_place cp 
+            on hpi.hpi_cp_seq = cp.cp_seq 
+        where hpi_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseMonthly" resultType="com.airbnb.airbnb_service.data.house.HouseMonthlyOptionVO">
+        select hmo_name, hmo_rate, hmo_monthly, hmo_enable, hmo_enable_dt
+        from house_monthly_option
+        where hmo_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseWeekly" resultType="com.airbnb.airbnb_service.data.house.HouseWeeklyOptionVO">
+        select hwo_name, hwo_rate, hwo_weekly, hwo_enable, hwo_enable_dt
+        from house_weekly_option
+        where hwo_hi_seq = #{house_seq}
+    </select>
+    <select id="selectHouseAmenity" resultType="com.airbnb.airbnb_service.data.house.HouseAmenityInfoVO">
+        select ca.ca_type, ca.ca_content, ca.ca_icon
+            from house_amenity_info ham
+            left join category_amenity ca 
+                on ham.ham_ca_seq = ca.ca_seq
+            where ham_hi_seq = #{house_seq}
+    </select>
+</mapper>

@@ -142,7 +142,7 @@
             (#{mrpt_from_mi_seq}, #{mrpt_to_mi_seq}, #{mrpt_type}, #{mrpt_reason})
     </insert>
 
-    <select id="selectHostCheckout" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
+    <select id="selectHostCheckout" resultType="com.airbnb.airbnb_service.data.response.HostCheckoutVO">
         select 
             bi.bi_seq,
             bi.bi_start_dt,
@@ -162,7 +162,7 @@
         and bi.bi_status = 2
         order by bi.bi_end_dt
     </select>
-    <select id="selectHostCheckin" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
+    <select id="selectHostCheckin" resultType="com.airbnb.airbnb_service.data.response.HostCheckoutVO">
         select 
             bi.bi_seq,
             bi.bi_start_dt,

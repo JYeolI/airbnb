@@ -8,9 +8,9 @@ import com.airbnb.airbnb_service.data.house.HouseInfoVO;
 import com.airbnb.airbnb_service.data.member.MemberInfoVO;
 import com.airbnb.airbnb_service.data.member.MemberReportVO;
 import com.airbnb.airbnb_service.data.member.MsgInfoVO;
+import com.airbnb.airbnb_service.data.response.HostCheckoutVO;
 import com.airbnb.airbnb_service.data.response.ProfileVO;
 import com.airbnb.airbnb_service.data.response.WishViewResponseVO;
-import com.airbnb.airbnb_service.data.temp.HostCheckoutVO;
 
 @Mapper
 public interface MemberMapper {    

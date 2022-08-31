@@ -46,4 +46,19 @@ public class MainController {
     public String getMsg() {
         return "/msg";
     }
+    //로그인 ##세션체크
+    @GetMapping("/login")
+    public String getHLogin() {
+        return "/login";
+    }
+    //호스트(메인)
+    @GetMapping("/host")
+    public String getHHost() {
+        return "/host";
+    }
+    //예약
+    @GetMapping("/booking")
+    public String getBooking() {
+        return "/booking";
+    }
 }

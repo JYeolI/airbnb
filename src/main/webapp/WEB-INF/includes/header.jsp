@@ -33,6 +33,15 @@
         .member_info_popup a {display: block; color: #000; text-decoration: none;}
         .member_info_popup a:hover {text-decoration: underline;}
     </style>
+    <!-- <c:if test="${user == null}">
+        <script>
+            $(function() {
+                $("body").html("");
+                alert("먼저 로그인을 해주세요.");
+                location.href = "/";
+            })
+        </script>
+    </c:if>     -->
     <script>
         $(function() {
             $(".member_info_button").click(function() {
@@ -46,7 +55,7 @@
                     let user_info_full_tag = '';
                     let user_login_tag = 
                         '<div class="popup_login_wrap">'+
-                            '<a href="/h/login">로그인</a>'+
+                            '<a href="/login">로그인</a>'+
                             '<a href="/join">회원가입</a>'+
                         '</div>';
                     let user_guest_tag = 
@@ -56,7 +65,7 @@
                         '</div>';
                     let user_host_tag = 
                         '<div class="popup_host_wrap">'+
-                            '<a href="/h/host">숙소 관리</a>'+
+                            '<a href="/host">숙소 관리</a>'+
                             '<a href="#">체험 관리</a>'+
                             '<a href="#">계정</a>'+
                         '</div>';
@@ -64,8 +73,8 @@
                         '<div class="popup_user_wrap">'+
                             '<a href="#">메시지</a>'+
                             '<a href="#">알림</a>'+
-                            '<a href="#">여행</a>'+
-                            '<a href="#">위시리스트</a>'+
+                            '<a href="/trip">여행</a>'+
+                            '<a href="/wish">위시리스트</a>'+
                         '</div>';
                     let user_logout_tag = 
                         '<div class="popup_logout_wrap">'+
@@ -100,6 +109,14 @@
                     })
                 }
             })
+            $(".host_page_button").click(function() {
+                if($(this).children("span").attr("data-grade") == 0) {
+                    location.href = "/hosting";
+                }
+                else if($(this).children("span").attr("data-grade") == 1) {
+                    location.href = "/host";
+                }
+            })
         })
     </script>
 </head>
@@ -115,10 +132,10 @@
 
             <p class="host_page_button">
                 <c:if test="${user == null || user.mi_host_grade == 0}">
-                    <span>호스트 되기</span>
+                    <span data-grade="0">호스트 되기</span>
                 </c:if>
                 <c:if test="${user != null && user.mi_host_grade != 0}">
-                    <span>호스트 모드로 전환</span>
+                    <span data-grade="1">호스트 모드로 전환</span>
                 </c:if>
             </p>
 

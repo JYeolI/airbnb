@@ -9,6 +9,7 @@ import com.airbnb.airbnb_service.data.house.HouseFeeInfoVO;
 import com.airbnb.airbnb_service.data.house.HouseGuestInfoVO;
 import com.airbnb.airbnb_service.data.house.HouseImgVO;
 import com.airbnb.airbnb_service.data.house.HouseInfoVO;
+import com.airbnb.airbnb_service.data.request.HouseReportRequestVO;
 import com.airbnb.airbnb_service.data.request.SearchRequestVO;
 import com.airbnb.airbnb_service.data.response.HouseAmenityVO;
 import com.airbnb.airbnb_service.data.response.HouseDetailVO;
@@ -35,4 +36,7 @@ public interface HouseMapper {
     public void insertHouseAmenity(Integer house_seq, List<Integer> amenity_list);
     public void insertHouseFee(HouseFeeInfoVO data);
     public void insertHouseAddress(HouseAddressInfoVO data);
+    //숙소신고
+    public void insertHouseReport(HouseReportRequestVO request);
+    public Boolean selectHouseReportCnt(Integer user_seq, Integer house_seq);
 }

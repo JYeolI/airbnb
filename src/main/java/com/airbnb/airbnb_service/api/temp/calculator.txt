@@ -1,0 +1,30 @@
+package com.airbnb.airbnb_service.api.temp;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.airbnb.airbnb_service.data.request.BookingRequest;
+import com.airbnb.airbnb_service.data.request.CalendarRequestVO;
+import com.airbnb.airbnb_service.data.request.HouseReportRequestVO;
+import com.airbnb.airbnb_service.data.response.CalculatorVO;
+import com.airbnb.airbnb_service.data.response.HouseFeeVO;
+import com.airbnb.airbnb_service.data.response.HouseOptionVO;
+import com.airbnb.airbnb_service.mapper.temp.TempMapper;
+
+@RestController
+public class calculator {
+    @Autowired TempMapper temp_mapper;
+
+    
+}

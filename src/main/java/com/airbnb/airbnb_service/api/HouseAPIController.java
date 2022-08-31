@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.airbnb.airbnb_service.data.request.HouseReportRequestVO;
 import com.airbnb.airbnb_service.data.request.HouseRequestVO;
 import com.airbnb.airbnb_service.data.request.SearchRequestVO;
 import com.airbnb.airbnb_service.data.response.HouseDetailCntVO;
 import com.airbnb.airbnb_service.data.response.HouseDetailVO;
 import com.airbnb.airbnb_service.mapper.HouseMapper;
 import com.airbnb.airbnb_service.mapper.ReviewMapper;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
@@ -103,6 +107,34 @@ public class HouseAPIController {
         resultMap.put("status", true);
         resultMap.put("message", "숙소가 추가되였습니다.");
 
+        return resultMap;
+    }    
+    
+    @ApiOperation(value = "숙소신고", notes = "숙소신고")
+    @PostMapping("/api/house/report")
+    public Map<String, Object> postHouseReport(HttpSession session, @RequestBody HouseReportRequestVO request) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        // MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        // Integer user_seq = user.getMi_seq();
+        Integer user_seq = 2;
+        Integer house_seq = request.getHouse_seq();
+
+        //중복 신고 여부 확인
+        //dupReport ture:중복 false:중복아님
+        Boolean dupReport = house_mapper.selectHouseReportCnt(user_seq, house_seq);
+        if(dupReport){
+            resultMap.put("status", false);
+            resultMap.put("error", "ERR_DUPLICATED_HOUSE_REPORT");
+            resultMap.put("message", "이미 신고한 숙소입니다.");
+            return resultMap;
+        }
+
+        request.setUser_seq(user_seq);
+        house_mapper.insertHouseReport(request);
+
+        resultMap.put("status", true);
+        resultMap.put("message", "숙소신고가 완료되었습니다.");
         return resultMap;
     }
 }

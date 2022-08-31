@@ -15,6 +15,16 @@
         .sort_detail { display: none; }
         .on { display: block; }
     </style>
+    <c:if test="${user == null}">
+        <script>
+            $(function() {
+                $("body").html("");
+                alert("먼저 로그인을 해주세요.");
+                location.href = "/";
+            })
+        </script>
+    </c:if>
+    
     <script>
 
         $(function(){

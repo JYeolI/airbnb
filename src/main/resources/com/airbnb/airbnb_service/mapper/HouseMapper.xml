@@ -381,4 +381,17 @@
         VALUES
         (#{hai_hi_seq}, #{hai_cc_seq}, #{hai_city}, #{hai_detail})
     </insert>
+    
+    <insert id="insertHouseReport">
+        INSERT INTO house_report
+        (hrpt_from_mi_seq, hrpt_to_hi_seq, hrpt_type, hrpt_reason)
+        VALUES
+        (#{user_seq}, #{house_seq}, #{type}, #{reason})
+    </insert>
+    <select id="selectHouseReportCnt" resultType="java.lang.Boolean">
+        SELECT IF(COUNT(hrpt_seq)>0,1,0) FROM house_report
+        WHERE hrpt_from_mi_seq = #{user_seq}
+            AND hrpt_to_hi_seq = #{house_seq}
+    </select>
+
 </mapper>

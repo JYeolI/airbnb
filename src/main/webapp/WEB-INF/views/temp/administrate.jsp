@@ -38,7 +38,7 @@
                             '<div class="country">'+list.cc_content+'</div>'+
                             '<div class="address"> '+list.city+', '+list.detail+'</div>'+
                             '<div class="fee">'+
-                                '<div class="basic_fee">기본숙박비 <span> &#8361 </span>'+thousands(basic)+'</div>'+
+                                '<div class="basic_fee">기본숙박비 <span> &#8361 </span>'+basic+'</div>'+
                             '</div>'+
                             '<div class="check_in_out">체크인아웃 가능 기간'+
                             '<div>'+list.check_in+' ~ '+list.check_out+'</div>'+

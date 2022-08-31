@@ -64,7 +64,7 @@ function dateBetween(dt1, dt2) {
 
 //금액 천단위 소수점
 function thousands(money){
-    return money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+    return money.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 

@@ -23,8 +23,7 @@
             bfi.bfi_basic_fee as basic_fee,
             bfi.bfi_cleaning_fee as clean_fee,
             bfi.bfi_service_fee as service_fee,
-            bfi.bfi_total_fee as total_fee,
-            IFNULL(wish_seq,0) AS wish_seq
+            bfi.bfi_total_fee as total_fee
         FROM booking_info bi
         LEFT JOIN booking_guest_info bgi 
             ON bi.bi_seq = bgi.bgi_bi_seq 
@@ -37,9 +36,7 @@
         LEFT JOIN category_country cc 
             ON cc.cc_seq = hai.hai_cc_seq
         LEFT JOIN booking_fee_info bfi
-            ON bi.bi_seq = bfi.bfi_seq
-        LEFT JOIN wish_info wish 
-            ON bi.bi_hi_seq = wish.wish_hi_seq AND bi.bi_mi_seq = wish.wish_mi_seq 
+            ON bi.bi_seq = bfi.bfi_bi_seq
         WHERE bi_mi_seq = #{user_seq} AND himg_main = 1
         <if test = "period == 1">
             and bi_status != 2 and date(bi_start_dt) <![CDATA[>=]]> now()

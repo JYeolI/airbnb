@@ -126,7 +126,6 @@
                 let total_fee = list[i].total_fee
                 let tag=
                     '<div class="trip_content">'+
-                        '<p>'+list[i].bi_seq+'</p>'+
                         '<h1 class="house_name">'+
                             list[i].hi_name+
                         '</h1>'+

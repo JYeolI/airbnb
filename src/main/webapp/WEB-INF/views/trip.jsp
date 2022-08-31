@@ -148,11 +148,11 @@
                             '예약한 날짜 : '+makeDate(list[i].bi_reg_dt)+
                         '</p>'+
                         '<div class="fee">'+
-                            '<p class="basic_fee"><span>&#8361 </span>'+thousands(basic)+' x '+between_date+'박'+
-                                '<span> &#8361 </span>'+thousands(basic_fee)+'</p>'+
-                            '<p class="cleaning_fee">청소비 <span>&#8361 </span>'+thousands(clean)+'</p>'+
-                            '<p class="service_fee">서비스 수수료 <span>&#8361 </span>'+thousands(service)+'</p>'+
-                            '<p class="total_fee"> 총 합계 <span>&#8361 </span>'+thousands(total_fee)+'</p>'
+                            '<p class="basic_fee"><span>&#8361 </span>'+basic+' x '+between_date+'박'+
+                                '<span> &#8361 </span>'+basic_fee+'</p>'+
+                            '<p class="cleaning_fee">청소비 <span>&#8361 </span>'+clean+'</p>'+
+                            '<p class="service_fee">서비스 수수료 <span>&#8361 </span>'+service+'</p>'+
+                            '<p class="total_fee"> 총 합계 <span>&#8361 </span>'+total_fee+'</p>'
                         '</div>'+
                     '</div>';
                 $(where).append(tag);

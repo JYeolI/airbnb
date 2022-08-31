@@ -3,8 +3,6 @@ package com.airbnb.airbnb_service.api.temp;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -16,7 +16,7 @@
                 let id = $("#login_id").val();
                 let pwd = $("#login_pwd").val();
                 $.ajax({
-                    url:"/api/h/login?id="+id+"&pwd="+pwd,
+                    url:"/api/member/login?id="+id+"&pwd="+pwd,
                     type:"get",
                     success:function(r) {
                         alert(r.message);

@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.airbnb.airbnb_service.mapper.HtempMapper">
-    <select id="selectLogin" resultType="com.airbnb.airbnb_service.data.member.MemberInfoVO">
+    <!-- <select id="selectLogin" resultType="com.airbnb.airbnb_service.data.member.MemberInfoVO">
         select mi_seq, mi_id, mi_name, mi_gender, mi_description, mi_company, mi_phone, mi_status, mi_host_grade, mi_reg_dt
         from member_info where mi_id = #{id} and mi_pwd = #{pwd}
-    </select>
-    <select id="selectMemberProfileLanguageList" resultType="java.lang.String">
+    </select> -->
+    <!-- <select id="selectMemberProfileLanguageList" resultType="java.lang.String">
         select cl_content AS lang
         from member_info mi
         LEFT JOIN member_lang_info mli
@@ -46,9 +46,9 @@
         DELETE FROM airbnb_db.member_lang_info
         WHERE mli_mi_seq = #{mi_seq}
         and mli_cl_seq = #{cl_seq}
-    </delete>
+    </delete> -->
 
-    <select id="isDupChkMemberReport" resultType="java.lang.Integer">
+    <!-- <select id="isDupChkMemberReport" resultType="java.lang.Integer">
         select count(*) from member_report where mrpt_from_mi_seq = #{mrpt_from_mi_seq} and mrpt_to_mi_seq = #{mrpt_to_mi_seq}
     </select>
     <insert id="insertMemberReport">
@@ -56,9 +56,9 @@
             (mrpt_from_mi_seq, mrpt_to_mi_seq, mrpt_type, mrpt_reason)
         VALUES
             (#{mrpt_from_mi_seq}, #{mrpt_to_mi_seq}, #{mrpt_type}, #{mrpt_reason})
-    </insert>
+    </insert> -->
     
-    <select id="selectHostCheckout" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
+    <!-- <select id="selectHostCheckout" resultType="com.airbnb.airbnb_service.data.temp.HostCheckoutVO">
         select 
             bi.bi_seq,
             bi.bi_start_dt,
@@ -111,5 +111,5 @@
         on msg.msg_sender_mi_seq = mi.mi_seq
         where msg.msg_type = 13
         and msg.msg_receiver_mi_seq = #{seq}
-    </select>
+    </select> -->
 </mapper>

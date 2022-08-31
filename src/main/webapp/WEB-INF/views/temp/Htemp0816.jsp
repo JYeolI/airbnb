@@ -1,7 +1,5 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@include file="/WEB-INF/views/temp/HtempHeader.jsp"%>
+<%@include file="/WEB-INF/includes/header.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -352,7 +350,7 @@
             console.log(mod_data);
 
             $.ajax({
-                url:"/api/h/profile",
+                url:"/api/member/profile",
                 type:"patch",
                 contentType:"application/json",
                 data:JSON.stringify(mod_data),
@@ -421,7 +419,7 @@
             console.log(report_data);
 
             $.ajax({
-                url:"/api/h/member/report",
+                url:"/api/member/report",
                 type:"put",
                 contentType:"application/json",
                 data:JSON.stringify(report_data),

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airbnb.airbnb_service.data.member.MemberInfoVO;
+import com.airbnb.airbnb_service.data.member.MemberReportVO;
 import com.airbnb.airbnb_service.data.response.ProfileHostingHouseVO;
 import com.airbnb.airbnb_service.data.response.ProfileReviewVO;
 import com.airbnb.airbnb_service.data.response.ProfileVO;
 import com.airbnb.airbnb_service.mapper.CategoryMapper;
 import com.airbnb.airbnb_service.mapper.HouseMapper;
-import com.airbnb.airbnb_service.mapper.HtempMapper;
 import com.airbnb.airbnb_service.mapper.MemberMapper;
 import com.airbnb.airbnb_service.mapper.ReviewMapper;
 
@@ -87,14 +89,13 @@ public class MemberAPIController {
     }
 
     //프로필(회원정보)
-    @Autowired HtempMapper Htemp_mapper;
     @GetMapping("/profile")
     public Map<String, Object> getProfileData(@RequestParam Integer member_seq) {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
         // 조회할 회원 ##mi_status확인하고 내보내줘야함
         ProfileVO memberInfo = member_mapper.selectMemberProfile(member_seq);
-        memberInfo.setLang(Htemp_mapper.selectMemberProfileLanguageList(memberInfo.getMi_seq()));
+        memberInfo.setLang(member_mapper.selectMemberProfileLanguageList(memberInfo.getMi_seq()));
 
         Integer status = memberInfo.getMember_status();
         if(status == 0){
@@ -144,6 +145,40 @@ public class MemberAPIController {
         return resultMap;
     }
     
+    //프로필(회원정보 수정)
+    @PatchMapping("/profile")
+    public Map<String, Object> patchProfile(HttpSession session, @RequestBody ProfileVO data) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        MemberInfoVO user = (MemberInfoVO)session.getAttribute("user");
+        // System.out.println(data);
+
+        member_mapper.updateMemberProfile(data.getMember_desc(), data.getCompany(), user.getMi_seq());
+        if(member_mapper.isDupChkMemberProfileAddress(user.getMi_seq())) {
+            member_mapper.updateMemberProfileAddress(user.getMi_seq(), data.getMai_cc_seq(), data.getCity(), data.getMember_address());
+        }
+        else {
+            member_mapper.insertMemberProfileAddress(user.getMi_seq(), data.getMai_cc_seq(), data.getCity(), data.getMember_address());
+        }
+        List<Integer> isDupLang = member_mapper.isDupChkMemberProfileLanguage(user.getMi_seq());
+        // System.out.println("추가할거 : "+data.getLang_seq());
+        // System.out.println("원래 있던거 : "+isDupLang);
+        
+        for(int i=0; i<isDupLang.size(); i++) {
+            if(!(data.getLang_seq().contains(isDupLang.get(i)))) {
+                // System.out.println("삭제할거 : "+isDupLang.get(i));
+                member_mapper.deleteMemberProfileLanguage(user.getMi_seq(), isDupLang.get(i));
+            }
+        }
+        for(int i=0; i<data.getLang_seq().size(); i++) {
+            if(!(isDupLang.contains(data.getLang_seq().get(i)))) {
+                // System.out.println("추가할거 : "+data.getLang_seq().get(i));
+                member_mapper.insertMemberProfileLanguage(user.getMi_seq(), data.getLang_seq().get(i));
+            }
+        }
+
+        return resultMap;
+    }
 
     //회원가입시 아이디 중복검사
     @GetMapping("/join/chk")
@@ -163,4 +198,75 @@ public class MemberAPIController {
         return resultMap;
     }
     
+    //로그인
+    @GetMapping("/login")
+    public Map<String, Object> getHLogin(HttpSession session, @RequestParam String id, @RequestParam String pwd) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        MemberInfoVO user = member_mapper.selectLogin(id, pwd);
+        if(user == null) {
+            resultMap.put("status", false);
+            resultMap.put("message", "아이디 또는 비밀번호가 틀렸습니다.");
+            return resultMap;
+        }
+        session.setAttribute("user", user);
+        // resultMap.put("user", user);
+        resultMap.put("status", true);
+        resultMap.put("message", "로그인 되었습니다.");
+        return resultMap;
+    }
+
+    //로그아웃
+    @PostMapping("/logout")
+    public Map<String, Object> postLogout(HttpSession session) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        session.setAttribute("user", null);
+        resultMap.put("message", "로그아웃 되었습니다.");
+        return resultMap;
+    }
+
+    //회원신고
+    @PutMapping("/report")
+    public Map<String, Object> putMemberReport(HttpSession session, @RequestBody MemberReportVO data) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        MemberInfoVO user = (MemberInfoVO)(session.getAttribute("user"));
+        if(user == null) {
+            resultMap.put("status", -1);
+            resultMap.put("message", "먼저 로그인 해주세요.");
+            return resultMap;
+        }
+        
+        Integer user_seq = user.getMi_seq();
+
+        int dupChk = member_mapper.isDupChkMemberReport(user_seq, data.getMrpt_to_mi_seq());
+        if(dupChk == 0) {
+            data.setMrpt_from_mi_seq(user_seq);
+            member_mapper.insertMemberReport(data);
+            resultMap.put("status", true);
+            resultMap.put("message", "신고되었습니다.");
+        }
+        else {
+            resultMap.put("status", false);
+            resultMap.put("message", "이미 신고한 회원입니다.");
+        }
+
+        return resultMap;
+    }
+
+    //호스트(메인)
+    @PostMapping("/host")
+    public Map<String, Object> postHostCheckout(HttpSession session) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        // MemberInfoVO host = (MemberInfoVO)session.getAttribute("user");
+        // Integer host_seq = host.getMi_seq();
+        Integer host_seq = 2;
+
+        resultMap.put("allHouse", member_mapper.selectHostingHouseInfo(host_seq, false));
+        resultMap.put("checkout", member_mapper.selectHostCheckout(host_seq));
+        resultMap.put("checkin", member_mapper.selectHostCheckin(host_seq));
+        resultMap.put("hostingHouse", member_mapper.selectHostingHouseInfo(host_seq, true));
+        resultMap.put("reviewMsg", member_mapper.selectHostReviewMsg(host_seq));
+        
+        return resultMap;
+    }
 }

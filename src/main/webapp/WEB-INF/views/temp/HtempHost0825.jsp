@@ -1,5 +1,5 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="/WEB-INF/views/temp/HtempHeader.jsp"%>
+<%@include file="/WEB-INF/includes/header.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -41,7 +41,7 @@
                 // 알림 팝업 활성화
             })
             $.ajax({
-                url:"/api/h/host", 
+                url:"/api/member/host", 
                 type:"post",
                 success:function(r) {
                     console.log(r);

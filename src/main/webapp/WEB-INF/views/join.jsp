@@ -34,7 +34,7 @@
             })
             $("#mi_id").change(function() {
                 $.ajax({
-                    url:"/api/h/idchk?id="+$(this).val(),
+                    url:"/api/member/join/chk?id="+$(this).val(),
                     type:"get",
                     success:function(r) {
                         if(r) {
@@ -138,7 +138,7 @@
                 }
                 console.log(JSON.stringify(data));
                 $.ajax({
-                    url:"/api/h/join",
+                    url:"/api/member/join",
                     type:"put",
                     data:JSON.stringify(data),
                     contentType:"application/json",
